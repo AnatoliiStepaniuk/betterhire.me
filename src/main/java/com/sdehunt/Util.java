@@ -33,7 +33,7 @@ public class Util {
     private static final String RDS_PASSWORD ="RDS_PASSWORD";
     private static final String JDBC_URL = "jdbc:mysql://" + params.get(RDS_HOST) + ":" + params.get(RDS_PORT);
 
-    private static final String SSL_CERTIFICATE = "rds-ca-2015-root.pem";
+    private static final String SSL_CERTIFICATE = "certs/rds-ca-2015-root.pem";
 
     private static final String KEY_STORE_TYPE = "JKS";
     private static final String KEY_STORE_PROVIDER = "SUN";
