@@ -1,0 +1,5 @@
+.idea/*
+.aws/*
+*.pem
+*.iml
+rootkey.csv

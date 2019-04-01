@@ -74,9 +74,7 @@ public class Util {
     public static Connection getDBConnection() {
         try {
             setSslProperties();
-            System.out.println("JDBC_URL -> " + JDBC_URL);
             Connection connection = DriverManager.getConnection(JDBC_URL, setMySqlConnectionProperties());
-            System.out.println("CREATED CONNECTION");
             return connection;
         } catch (Exception e) {
             System.out.println(e.getCause());
@@ -99,8 +97,6 @@ public class Util {
         mysqlConnectionProperties.setProperty("useSSL", "true");
         mysqlConnectionProperties.setProperty("user", params.get(RDS_USER));
         mysqlConnectionProperties.setProperty("password", params.get(RDS_PASSWORD));
-        System.out.println("RDS_USER -> " + params.get(RDS_USER));
-        System.out.println("RDS_PASSWORD -> " + params.get(RDS_PASSWORD));
         return mysqlConnectionProperties;
     }
 
