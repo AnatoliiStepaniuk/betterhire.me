@@ -23,5 +23,10 @@ public interface Solution {
      */
     List<String> getFiles();
 
+    /**
+     * Score amount this solution received
+     */
+    long getScore();
 
+    // TODO add creation time
 }

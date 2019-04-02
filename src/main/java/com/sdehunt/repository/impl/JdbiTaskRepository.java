@@ -1,7 +1,8 @@
-package com.sdehunt.repository;
+package com.sdehunt.repository.impl;
 
 import com.sdehunt.model.Task;
 import com.sdehunt.model.impl.TaskImpl;
+import com.sdehunt.repository.TaskRepository;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;

@@ -12,19 +12,22 @@ import java.util.List;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @RestController
+@RequestMapping(path = "/tasks")
 public class TaskController {
 
     @Autowired
     private TaskRepository tasks;
 
-    @RequestMapping(method=GET, path="/tasks")
-    public List<Task> getAllTasks(){
+    @RequestMapping(method = GET, path = "")
+    public List<Task> getAllTasks() {
         return tasks.getAll();
     }
 
-    @RequestMapping(method=GET, path="/tasks/{id}")
-    public Task getTask(@PathVariable("id") String id){
-        return tasks.get(id).orElse(null); //TODO test null
+    @RequestMapping(method = GET, path = "/{id}")
+    public Task getTask(@PathVariable("id") String id) {
+        return tasks.get(id).orElse(null);
     }
+
+    //TODO route for creating task
 
 }
