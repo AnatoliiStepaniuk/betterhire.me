@@ -11,6 +11,7 @@ import org.jdbi.v3.core.statement.StatementContext;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,8 +33,8 @@ public class JdbiSolutionRepository implements SolutionRepository {
 
         jdbi.withHandle(
                 handle -> handle.execute(
-                        "INSERT INTO `sdehunt_db`.`solution` (`id`, `user_id`, `task_id`, `score`) values (?, ?, ?, ?)",
-                        id, solution.getUserId(), solution.getTaskId(), solution.getScore()
+                        "INSERT INTO `sdehunt_db`.`solution` (`id`, `user_id`, `task_id`, `score`, `created`) values (?, ?, ?, ?, ?)",
+                        id, solution.getUserId(), solution.getTaskId(), solution.getScore(), Instant.now().getEpochSecond()
                 )
         );
 
@@ -73,7 +74,8 @@ public class JdbiSolutionRepository implements SolutionRepository {
                     rs.getString("task_id"),
                     rs.getString("user_id"),
                     Collections.EMPTY_LIST,
-                    Long.valueOf(rs.getString("score"))
+                    Long.valueOf(rs.getString("score")),
+                    Instant.ofEpochSecond(rs.getLong("created"))
             );
         }
     }

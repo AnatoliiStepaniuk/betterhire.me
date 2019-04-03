@@ -10,6 +10,7 @@ import org.jdbi.v3.core.statement.StatementContext;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,7 +41,8 @@ public class JdbiTaskRepository implements TaskRepository {
         public Task map(ResultSet rs, StatementContext ctx) throws SQLException {
             return new TaskImpl(
                     rs.getString("id"),
-                    rs.getString("description")
+                    rs.getString("description"),
+                    Instant.ofEpochSecond(rs.getLong("created"))
             );
         }
     }

@@ -2,6 +2,7 @@ package com.sdehunt.model.impl;
 
 import com.sdehunt.model.Solution;
 
+import java.time.Instant;
 import java.util.List;
 
 public class SolutionImpl implements Solution{
@@ -11,16 +12,18 @@ public class SolutionImpl implements Solution{
     private String userId;
     private List<String> files;
     private long score;
+    private Instant created;
 
     public SolutionImpl() {
     }
 
-    public SolutionImpl(String id, String taskId, String userId, List<String> files, long score) {
+    public SolutionImpl(String id, String taskId, String userId, List<String> files, long score, Instant created) {
         this.id = id;
         this.taskId = taskId;
         this.userId = userId;
         this.files = files;
         this.score = score;
+        this.created = created;
     }
 
     public SolutionImpl withTaskId(String taskId) {
@@ -29,7 +32,8 @@ public class SolutionImpl implements Solution{
                 taskId,
                 this.userId,
                 this.files,
-                this.score
+                this.score,
+                this.created
         );
     }
 
@@ -56,5 +60,10 @@ public class SolutionImpl implements Solution{
     @Override
     public long getScore() {
         return score;
+    }
+
+    @Override
+    public Instant getCreated() {
+        return created;
     }
 }

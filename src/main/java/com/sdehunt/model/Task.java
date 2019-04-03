@@ -1,6 +1,9 @@
 package com.sdehunt.model;
 
+import java.time.Instant;
+
 public interface Task {
+
     /**
      * Task identifier
      */
@@ -10,4 +13,9 @@ public interface Task {
      * Task description in Markdown format
      */
     String getDescription();
+
+    /**
+     * Instant when the task was created
+     */
+    Instant getCreated();
 }

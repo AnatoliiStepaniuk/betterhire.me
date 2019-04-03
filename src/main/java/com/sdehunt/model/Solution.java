@@ -1,5 +1,6 @@
 package com.sdehunt.model;
 
+import java.time.Instant;
 import java.util.List;
 
 public interface Solution {
@@ -28,5 +29,9 @@ public interface Solution {
      */
     long getScore();
 
-    // TODO add creation time
+    /**
+     * Instant when solution was created
+     */
+    Instant getCreated();
+
 }
