@@ -13,9 +13,13 @@ import java.sql.SQLException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+
+import static java.lang.String.format;
 
 public class JdbiTaskRepository implements TaskRepository {
 
+    private final static String TABLE_NAME = "`sdehunt_db`.`task`";
     private Jdbi jdbi;
 
     public JdbiTaskRepository(Connection connection) {
@@ -24,16 +28,37 @@ public class JdbiTaskRepository implements TaskRepository {
 
     @Override
     public List<Task> getAll() {
-        return jdbi.withHandle(handle -> handle.select("SELECT * FROM `sdehunt_db`.`task`"))
+        return jdbi.withHandle(db -> db.select(format("SELECT * FROM %s", TABLE_NAME)))
                 .map(new TaskRowMapper())
                 .list();
     }
 
     @Override
     public Optional<Task> get(String id) {
-        return jdbi.withHandle(handle -> handle.select("SELECT * FROM `sdehunt_db`.`task` WHERE id = ?", id))
+        return jdbi.withHandle(db -> db.select(format("SELECT * FROM %s WHERE id = ?", TABLE_NAME), id))
                 .map(new TaskRowMapper())
                 .findFirst();
+    }
+
+    @Override
+    public void delete(String id) {
+        jdbi.withHandle(
+                db -> db.execute(format("DELETE FROM %s WHERE id = ?", TABLE_NAME), id)
+        );
+    }
+
+    @Override
+    public String create(Task task) {
+        String id = UUID.randomUUID().toString();
+        long created = Instant.now().getEpochSecond();
+        jdbi.withHandle(
+                db -> db.execute(
+                        format("INSERT INTO %s (id, description, created) VALUES (?, ?, ?)", TABLE_NAME),
+                        id, task.getDescription(), created
+                )
+        );
+
+        return id;
     }
 
     private class TaskRowMapper implements RowMapper<Task> {

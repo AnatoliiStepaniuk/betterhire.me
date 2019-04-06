@@ -20,4 +20,14 @@ public interface TaskRepository {
      */
     Optional<Task> get(String id);
 
+    /**
+     * Deletes task with provided id
+     */
+    void delete(String id);
+
+    /**
+     * Create tasks and returns its id
+     */
+    String create(Task task);
+
 }

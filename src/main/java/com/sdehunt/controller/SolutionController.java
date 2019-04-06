@@ -5,6 +5,7 @@ import com.sdehunt.model.impl.SolutionImpl;
 import com.sdehunt.repository.SolutionRepository;
 import com.sdehunt.repository.impl.SolutionQueryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,12 +17,12 @@ public class SolutionController {
     @Autowired
     private SolutionRepository solutions;
 
-    @RequestMapping(method = RequestMethod.POST, path = "", consumes = "application/json")
+    @RequestMapping(method = RequestMethod.POST, path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public String save(@PathVariable String taskId, @RequestBody SolutionImpl solution) { // TODO DTO?
         return solutions.save(solution.withTaskId(taskId));
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "", produces = "application/json")
+    @RequestMapping(method = RequestMethod.GET, path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Solution> find(
             @PathVariable String taskId,
             @RequestParam(value = "userId", required = false) String userId

@@ -19,6 +19,10 @@ public class TaskImpl implements Task{
         this.created = created;
     }
 
+    public TaskImpl(String description) {
+        this.description = description;
+    }
+
     @Override
     public String getId() {
         return id;
