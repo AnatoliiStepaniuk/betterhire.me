@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static java.lang.String.format;
@@ -44,6 +45,13 @@ public class JdbiSolutionRepository implements SolutionRepository {
     }
 
     @Override
+    public Optional<Solution> get(String id) {
+        return jdbi.withHandle(
+                db -> db.select(format("SELECT * FROM %s WHERE id = ?", TABLE), id)
+        ).map(new SolutionRowMapper()).findFirst();
+    }
+
+    @Override
     public void delete(String id) {
         jdbi.withHandle(db -> db.execute(format("DELETE FROM %s WHERE id = ?", TABLE), id));
     }
@@ -69,8 +77,7 @@ public class JdbiSolutionRepository implements SolutionRepository {
         String finalSql = sql;
         return jdbi.withHandle(
                 handle -> handle.select(finalSql, params.toArray())
-        ).map(new SolutionRowMapper())
-                .list();
+        ).map(new SolutionRowMapper()).list();
     }
 
     private class SolutionRowMapper implements RowMapper<Solution> {

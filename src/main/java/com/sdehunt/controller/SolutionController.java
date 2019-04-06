@@ -21,7 +21,12 @@ public class SolutionController {
         return solutions.save(solution.withTaskId(taskId));
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, path = "/{id}")
+    @RequestMapping(method = RequestMethod.GET, path = "/solutions/{id}")
+    public Solution get(@PathVariable String id) {
+        return solutions.get(id).orElse(null);
+    }
+
+    @RequestMapping(method = RequestMethod.DELETE, path = "/solutions/{id}")
     public void delete(@PathVariable String id) {
         solutions.delete(id);
     }
