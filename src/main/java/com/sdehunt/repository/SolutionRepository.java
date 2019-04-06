@@ -15,6 +15,11 @@ public interface SolutionRepository {
     String save(Solution solution);
 
     /**
+     * Deletes solution by provided id.
+     */
+    void delete(String id);
+
+    /**
      * Returns solutions for specified query
      */
     List<Solution> query(SolutionQuery request);

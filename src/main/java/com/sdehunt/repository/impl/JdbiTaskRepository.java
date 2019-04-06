@@ -19,7 +19,7 @@ import static java.lang.String.format;
 
 public class JdbiTaskRepository implements TaskRepository {
 
-    private final static String TABLE_NAME = "`sdehunt_db`.`task`";
+    private final static String TABLE = "`sdehunt_db`.`task`";
     private Jdbi jdbi;
 
     public JdbiTaskRepository(Connection connection) {
@@ -28,14 +28,14 @@ public class JdbiTaskRepository implements TaskRepository {
 
     @Override
     public List<Task> getAll() {
-        return jdbi.withHandle(db -> db.select(format("SELECT * FROM %s", TABLE_NAME)))
+        return jdbi.withHandle(db -> db.select(format("SELECT * FROM %s", TABLE)))
                 .map(new TaskRowMapper())
                 .list();
     }
 
     @Override
     public Optional<Task> get(String id) {
-        return jdbi.withHandle(db -> db.select(format("SELECT * FROM %s WHERE id = ?", TABLE_NAME), id))
+        return jdbi.withHandle(db -> db.select(format("SELECT * FROM %s WHERE id = ?", TABLE), id))
                 .map(new TaskRowMapper())
                 .findFirst();
     }
@@ -43,7 +43,7 @@ public class JdbiTaskRepository implements TaskRepository {
     @Override
     public void delete(String id) {
         jdbi.withHandle(
-                db -> db.execute(format("DELETE FROM %s WHERE id = ?", TABLE_NAME), id)
+                db -> db.execute(format("DELETE FROM %s WHERE id = ?", TABLE), id)
         );
     }
 
@@ -53,7 +53,7 @@ public class JdbiTaskRepository implements TaskRepository {
         long created = Instant.now().getEpochSecond();
         jdbi.withHandle(
                 db -> db.execute(
-                        format("INSERT INTO %s (id, description, created) VALUES (?, ?, ?)", TABLE_NAME),
+                        format("INSERT INTO %s (id, description, created) VALUES (?, ?, ?)", TABLE),
                         id, task.getDescription(), created
                 )
         );

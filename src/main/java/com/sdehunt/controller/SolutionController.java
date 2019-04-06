@@ -11,18 +11,22 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/tasks/{taskId}/solutions")
 public class SolutionController {
 
     @Autowired
     private SolutionRepository solutions;
 
-    @RequestMapping(method = RequestMethod.POST, path = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String save(@PathVariable String taskId, @RequestBody SolutionImpl solution) { // TODO DTO?
+    @RequestMapping(method = RequestMethod.POST, path = "/tasks/{taskId}/solutions", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String save(@PathVariable String taskId, @RequestBody SolutionImpl solution) {
         return solutions.save(solution.withTaskId(taskId));
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.DELETE, path = "/{id}")
+    public void delete(@PathVariable String id) {
+        solutions.delete(id);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/tasks/{taskId}/solutions", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Solution> find(
             @PathVariable String taskId,
             @RequestParam(value = "userId", required = false) String userId

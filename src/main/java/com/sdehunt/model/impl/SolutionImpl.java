@@ -3,25 +3,34 @@ package com.sdehunt.model.impl;
 import com.sdehunt.model.Solution;
 
 import java.time.Instant;
-import java.util.List;
 
 public class SolutionImpl implements Solution{
 
     private String id;
     private String taskId;
     private String userId;
-    private List<String> files;
+    private String repoId;
+    private String commit;
     private long score;
     private Instant created;
 
     public SolutionImpl() {
     }
 
-    public SolutionImpl(String id, String taskId, String userId, List<String> files, long score, Instant created) {
+    public SolutionImpl(
+            String id,
+            String taskId,
+            String userId,
+            String repoId,
+            String commit,
+            long score,
+            Instant created
+    ) {
         this.id = id;
         this.taskId = taskId;
         this.userId = userId;
-        this.files = files;
+        this.repoId = repoId;
+        this.commit = commit;
         this.score = score;
         this.created = created;
     }
@@ -31,7 +40,8 @@ public class SolutionImpl implements Solution{
                 this.id,
                 taskId,
                 this.userId,
-                this.files,
+                this.repoId,
+                this.commit,
                 this.score,
                 this.created
         );
@@ -53,8 +63,13 @@ public class SolutionImpl implements Solution{
     }
 
     @Override
-    public List<String> getFiles() {
-        return files;
+    public String getRepoId() {
+        return repoId;
+    }
+
+    @Override
+    public String getCommit() {
+        return commit;
     }
 
     @Override

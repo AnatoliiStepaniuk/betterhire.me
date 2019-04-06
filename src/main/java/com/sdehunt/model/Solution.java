@@ -1,7 +1,6 @@
 package com.sdehunt.model;
 
 import java.time.Instant;
-import java.util.List;
 
 public interface Solution {
     /**
@@ -20,9 +19,14 @@ public interface Solution {
     String getUserId();
 
     /**
-     * List of uri of uploaded files
+     * Id user repository
      */
-    List<String> getFiles();
+    String getRepoId();
+
+    /**
+     * Commit of commit corresponding to current solution
+     */
+    String getCommit();
 
     /**
      * Score amount this solution received

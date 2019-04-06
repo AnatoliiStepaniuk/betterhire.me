@@ -13,11 +13,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import static java.lang.String.format;
+
 public class JdbiSolutionRepository implements SolutionRepository {
+
+    private static final String TABLE = "`sdehunt_db`.`solution`";
 
     private Jdbi jdbi;
 
@@ -25,16 +28,15 @@ public class JdbiSolutionRepository implements SolutionRepository {
         this.jdbi = Jdbi.create(connection);
     }
 
-
     @Override
-    public String save(Solution solution) {
+    public String save(Solution s) {
 
         String id = UUID.randomUUID().toString();
 
         jdbi.withHandle(
-                handle -> handle.execute(
-                        "INSERT INTO `sdehunt_db`.`solution` (`id`, `user_id`, `task_id`, `score`, `created`) values (?, ?, ?, ?, ?)",
-                        id, solution.getUserId(), solution.getTaskId(), solution.getScore(), Instant.now().getEpochSecond()
+                db -> db.execute(
+                        format("INSERT INTO %s (`id`, `task_id`, `user_id`, `repo_id`, `commit`, `score`, `created`) values (?, ?, ?, ?, ?)", TABLE),
+                        id, s.getTaskId(), s.getUserId(), s.getRepoId(), s.getCommit(), s.getScore(), Instant.now().getEpochSecond()
                 )
         );
 
@@ -42,8 +44,13 @@ public class JdbiSolutionRepository implements SolutionRepository {
     }
 
     @Override
+    public void delete(String id) {
+        jdbi.withHandle(db -> db.execute(format("DELETE FROM %s WHERE id = ?", TABLE), id));
+    }
+
+    @Override
     public List<Solution> query(SolutionQuery request) {
-        String sql = "SELECT * FROM `sdehunt_db`.`solution`";
+        String sql = format("SELECT * FROM %s", TABLE);
         List<String> conditions = new ArrayList<>();
         List<Object> params = new ArrayList<>();
         request.getTask().ifPresent(taskId -> {
@@ -73,7 +80,8 @@ public class JdbiSolutionRepository implements SolutionRepository {
                     rs.getString("id"),
                     rs.getString("task_id"),
                     rs.getString("user_id"),
-                    Collections.EMPTY_LIST,
+                    rs.getString("repo_id"),
+                    rs.getString("commit"),
                     Long.valueOf(rs.getString("score")),
                     Instant.ofEpochSecond(rs.getLong("created"))
             );
