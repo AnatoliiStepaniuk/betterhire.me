@@ -9,7 +9,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.isEmptyString;
 
 
-public class TaskApiTest extends AbstractApiTest {
+public class TaskApiTestIT extends AbstractApiTest {
 
     private final static String TASKS_PATH = "/tasks/";
 

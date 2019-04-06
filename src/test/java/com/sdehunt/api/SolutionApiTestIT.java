@@ -11,7 +11,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.isEmptyString;
 import static org.hamcrest.core.Is.is;
 
-public class SolutionApiTest extends AbstractApiTest {
+public class SolutionApiTestIT extends AbstractApiTest {
 
     @Test
     public void crudTest() {
