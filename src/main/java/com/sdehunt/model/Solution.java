@@ -19,9 +19,9 @@ public interface Solution {
     String getUserId();
 
     /**
-     * Id user repository
+     * Identifier of user repository on github (username/reponame)
      */
-    String getRepoId();
+    String getRepo();
 
     /**
      * Commit of commit corresponding to current solution

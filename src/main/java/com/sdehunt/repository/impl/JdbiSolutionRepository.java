@@ -36,8 +36,8 @@ public class JdbiSolutionRepository implements SolutionRepository {
 
         jdbi.withHandle(
                 db -> db.execute(
-                        format("INSERT INTO %s (`id`, `task_id`, `user_id`, `repo_id`, `commit`, `score`, `created`) values (?, ?, ?, ?, ?)", TABLE),
-                        id, s.getTaskId(), s.getUserId(), s.getRepoId(), s.getCommit(), s.getScore(), Instant.now().getEpochSecond()
+                        format("INSERT INTO %s (`id`, `task`, `user`, `repo`, `commit`, `score`, `created`) values (?, ?, ?, ?, ?, ?, ?)", TABLE),
+                        id, s.getTaskId(), s.getUserId(), s.getRepo(), s.getCommit(), s.getScore(), Instant.now().getEpochSecond()
                 )
         );
 
@@ -62,11 +62,11 @@ public class JdbiSolutionRepository implements SolutionRepository {
         List<String> conditions = new ArrayList<>();
         List<Object> params = new ArrayList<>();
         request.getTask().ifPresent(taskId -> {
-            conditions.add("`task_id` = ?");
+            conditions.add("`task` = ?");
             params.add(taskId);
         });
         request.getUser().ifPresent(userId -> {
-            conditions.add("`user_id` = ?");
+            conditions.add("`user` = ?");
             params.add(userId);
         });
 
@@ -85,9 +85,9 @@ public class JdbiSolutionRepository implements SolutionRepository {
         public Solution map(ResultSet rs, StatementContext ctx) throws SQLException {
             return new SolutionImpl(
                     rs.getString("id"),
-                    rs.getString("task_id"),
-                    rs.getString("user_id"),
-                    rs.getString("repo_id"),
+                    rs.getString("task"),
+                    rs.getString("user"),
+                    rs.getString("repo"),
                     rs.getString("commit"),
                     Long.valueOf(rs.getString("score")),
                     Instant.ofEpochSecond(rs.getLong("created"))

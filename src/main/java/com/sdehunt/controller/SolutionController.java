@@ -16,7 +16,7 @@ public class SolutionController {
     @Autowired
     private SolutionRepository solutions;
 
-    @RequestMapping(method = RequestMethod.POST, path = "/tasks/{taskId}/solutions", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.POST, path = "/tasks/{taskId}/solutions", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String save(@PathVariable String taskId, @RequestBody SolutionImpl solution) {
         return solutions.save(solution.withTaskId(taskId));
     }

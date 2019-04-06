@@ -9,7 +9,7 @@ public class SolutionImpl implements Solution{
     private String id;
     private String taskId;
     private String userId;
-    private String repoId;
+    private String repo;
     private String commit;
     private long score;
     private Instant created;
@@ -21,7 +21,7 @@ public class SolutionImpl implements Solution{
             String id,
             String taskId,
             String userId,
-            String repoId,
+            String repo,
             String commit,
             long score,
             Instant created
@@ -29,7 +29,7 @@ public class SolutionImpl implements Solution{
         this.id = id;
         this.taskId = taskId;
         this.userId = userId;
-        this.repoId = repoId;
+        this.repo = repo;
         this.commit = commit;
         this.score = score;
         this.created = created;
@@ -40,7 +40,7 @@ public class SolutionImpl implements Solution{
                 this.id,
                 taskId,
                 this.userId,
-                this.repoId,
+                this.repo,
                 this.commit,
                 this.score,
                 this.created
@@ -63,8 +63,8 @@ public class SolutionImpl implements Solution{
     }
 
     @Override
-    public String getRepoId() {
-        return repoId;
+    public String getRepo() {
+        return repo;
     }
 
     @Override

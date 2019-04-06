@@ -1,35 +1,26 @@
-package com.sdehunt;
+package com.sdehunt.api;
 
-import com.sdehunt.model.Task;
 import com.sdehunt.model.impl.TaskImpl;
-import io.restassured.specification.RequestSpecification;
 import org.junit.Test;
 
 import java.util.UUID;
 
-import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.isEmptyString;
 
 
-public class TaskApiTest {
-
-    private final static String BASE_URI = "http://localhost";
-    private final static int PORT = 8080;
-    private final static String APP_JSON = "application/json";
+public class TaskApiTest extends AbstractApiTest {
 
     private final static String TASKS_PATH = "/tasks/";
-    private final static int SUCCESS = 200;
-
 
     @Test
-    public void getAllTasks() {
+    public void crudTest() {
 
-        Task task = new TaskImpl("task-description-" + UUID.randomUUID());
+        String description = UUID.randomUUID().toString();
 
         // Saving task
         String id = host()
-                .body(task)
+                .body(new TaskImpl(description))
                 .contentType(APP_JSON)
                 .post(TASKS_PATH)
                 .asString();
@@ -40,14 +31,17 @@ public class TaskApiTest {
                 .then()
                 .log().ifValidationFails()
                 .statusCode(SUCCESS)
-                .body("description", equalTo(task.getDescription()));
+                .body("id", is(id))
+                .body("description", is(description));
 
         // Getting all tasks
         host().get(TASKS_PATH)
                 .then()
                 .log().ifValidationFails()
                 .statusCode(SUCCESS)
-                .body("size()", is(1));
+                .body("size()", is(1))
+                .body("[0].id", is(id))
+                .body("[0].description", is(description));
 
         // Deleting task
         host().delete(TASKS_PATH + id)
@@ -55,16 +49,19 @@ public class TaskApiTest {
                 .log().ifValidationFails()
                 .statusCode(SUCCESS);
 
-        // Verify deleted
+        // Verify created
+        host().contentType(APP_JSON)
+                .get(TASKS_PATH + id)
+                .then()
+                .log().ifValidationFails()
+                .statusCode(SUCCESS)
+                .body(isEmptyString());
+
+        // Verify deleted (get all)
         host().get(TASKS_PATH)
                 .then()
                 .statusCode(SUCCESS)
                 .log().ifValidationFails()
                 .body("size()", is(0));
     }
-
-    private RequestSpecification host() {
-        return given().baseUri(BASE_URI).port(PORT);
-    }
-
 }
