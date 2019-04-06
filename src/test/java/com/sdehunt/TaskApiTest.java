@@ -38,26 +38,28 @@ public class TaskApiTest {
         host().contentType(APP_JSON)
                 .get(TASKS_PATH + id)
                 .then()
+                .log().ifValidationFails()
                 .statusCode(SUCCESS)
                 .body("description", equalTo(task.getDescription()));
 
         // Getting all tasks
-        host().log().all()
-                .get(TASKS_PATH)
+        host().get(TASKS_PATH)
                 .then()
-                .log().all()
+                .log().ifValidationFails()
                 .statusCode(SUCCESS)
                 .body("size()", is(1));
 
         // Deleting task
         host().delete(TASKS_PATH + id)
                 .then()
+                .log().ifValidationFails()
                 .statusCode(SUCCESS);
 
         // Verify deleted
         host().get(TASKS_PATH)
                 .then()
                 .statusCode(SUCCESS)
+                .log().ifValidationFails()
                 .body("size()", is(0));
     }
 
