@@ -1,5 +1,6 @@
 package com.sdehunt.repository.impl;
 
+import com.sdehunt.commons.TaskID;
 import com.sdehunt.model.Task;
 import com.sdehunt.model.impl.TaskImpl;
 import com.sdehunt.repository.TaskRepository;
@@ -48,24 +49,21 @@ public class JdbiTaskRepository implements TaskRepository {
     }
 
     @Override
-    public String create(Task task) {
-        String id = UUID.randomUUID().toString();
+    public void create(Task task) {
         long created = Instant.now().getEpochSecond();
         jdbi.withHandle(
                 db -> db.execute(
                         format("INSERT INTO %s (id, description, created) VALUES (?, ?, ?)", TABLE),
-                        id, task.getDescription(), created
+                        task.getId(), task.getDescription(), created
                 )
         );
-
-        return id;
     }
 
     private class TaskRowMapper implements RowMapper<Task> {
         @Override
         public Task map(ResultSet rs, StatementContext ctx) throws SQLException {
             return new TaskImpl(
-                    rs.getString("id"),
+                    TaskID.valueOf(rs.getString("id").toUpperCase()),
                     rs.getString("description"),
                     Instant.ofEpochSecond(rs.getLong("created"))
             );

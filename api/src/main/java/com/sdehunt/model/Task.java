@@ -1,5 +1,7 @@
 package com.sdehunt.model;
 
+import com.sdehunt.commons.TaskID;
+
 import java.time.Instant;
 
 public interface Task {
@@ -7,7 +9,7 @@ public interface Task {
     /**
      * Task identifier
      */
-    String getId(); //TODO int of UUID? maybe UUID in binary form?
+    TaskID getId();
 
     /**
      * Task description in Markdown format

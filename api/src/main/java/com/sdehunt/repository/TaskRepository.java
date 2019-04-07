@@ -26,8 +26,8 @@ public interface TaskRepository {
     void delete(String id);
 
     /**
-     * Create tasks and returns its id
+     * Creates tasks
      */
-    String create(Task task);
+    void create(Task task);
 
 }

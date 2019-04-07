@@ -31,10 +31,9 @@ public class TaskController {
         return tasks.get(id).orElse(null);
     }
 
-    //TODO route for creating task
-    @RequestMapping(method = POST, path = "", produces = APPLICATION_JSON_VALUE)
-    public String create(@RequestBody TaskImpl task) {
-        return tasks.create(task);
+    @RequestMapping(method = POST, path = "")
+    public void create(@RequestBody TaskImpl task) {
+        tasks.create(task);
     }
 
     @RequestMapping(method = DELETE, path = "/{id}")

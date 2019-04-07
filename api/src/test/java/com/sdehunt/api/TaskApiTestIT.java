@@ -16,14 +16,17 @@ public class TaskApiTestIT extends AbstractApiTest {
     @Test
     public void crudTest() {
 
+        String id = UUID.randomUUID().toString();
         String description = UUID.randomUUID().toString();
 
         // Saving task
-        String id = host()
-                .body(new TaskImpl(description))
+        host()
+                .body(new TaskImpl(id, description))
                 .contentType(APP_JSON)
                 .post(TASKS_PATH)
-                .asString();
+                .then()
+                .statusCode(SUCCESS)
+                .body(isEmptyString());
 
         // Verify created
         host().contentType(APP_JSON)
