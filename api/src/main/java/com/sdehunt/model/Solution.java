@@ -1,8 +1,11 @@
 package com.sdehunt.model;
 
+import com.sdehunt.commons.TaskID;
+
 import java.time.Instant;
 
 public interface Solution {
+
     /**
      * Solution identifier
      */
@@ -11,7 +14,7 @@ public interface Solution {
     /**
      * Id of the task this solutions corresponds to
      */
-    String getTaskId();
+    TaskID getTaskId();
 
     /**
      * Id of user that submitted this solution
@@ -38,4 +41,8 @@ public interface Solution {
      */
     Instant getCreated();
 
+    /**
+     * Returns same solution with specified score
+     */
+    Solution withScore(long score);
 }

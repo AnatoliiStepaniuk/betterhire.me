@@ -1,13 +1,15 @@
 package com.sdehunt.model.impl;
 
+import com.sdehunt.commons.TaskID;
 import com.sdehunt.model.Solution;
+import com.sdehunt.model.Task;
 
 import java.time.Instant;
 
-public class SolutionImpl implements Solution{
+public class SolutionImpl implements Solution {
 
     private String id;
-    private String taskId;
+    private TaskID taskId;
     private String userId;
     private String repo;
     private String commit;
@@ -19,7 +21,7 @@ public class SolutionImpl implements Solution{
 
     public SolutionImpl(
             String id,
-            String taskId,
+            TaskID taskId,
             String userId,
             String repo,
             String commit,
@@ -35,25 +37,13 @@ public class SolutionImpl implements Solution{
         this.created = created;
     }
 
-    public SolutionImpl withTaskId(String taskId) {
-        return new SolutionImpl(
-                this.id,
-                taskId,
-                this.userId,
-                this.repo,
-                this.commit,
-                this.score,
-                this.created
-        );
-    }
-
     @Override
     public String getId() {
         return id;
     }
 
     @Override
-    public String getTaskId() {
+    public TaskID getTaskId() {
         return taskId;
     }
 
@@ -81,4 +71,35 @@ public class SolutionImpl implements Solution{
     public Instant getCreated() {
         return created;
     }
+
+    @Override
+    public Solution withScore(long score) {
+        return new SolutionImpl(
+                this.id,
+                this.taskId,
+                this.userId,
+                this.repo,
+                this.commit,
+                score,
+                this.created
+        );
+    }
+
+    // TODO move upper?
+    public SolutionImpl withTaskId(String taskId) {
+        return this.withTaskId(TaskID.valueOf(taskId.toUpperCase()));
+    }
+
+    public SolutionImpl withTaskId(TaskID taskId) {
+        return new SolutionImpl(
+                this.id,
+                taskId,
+                this.userId,
+                this.repo,
+                this.commit,
+                this.score,
+                this.created
+        );
+    }
+
 }

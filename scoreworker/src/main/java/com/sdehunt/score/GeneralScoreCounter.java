@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Counts score of solution for specified task
  */
-public class GeneralScoreCounterImpl {
+public class GeneralScoreCounter {
 
     private static Map<TaskID, TaskScoreCounter> taskCounters = new HashMap<>();
 
@@ -17,7 +17,7 @@ public class GeneralScoreCounterImpl {
         taskCounters.put(TaskID.SLIDES, new SlidesScoreCounter());
     }
 
-    public long count(TaskID taskId, String repo, String commit) {
+    public long count(TaskID taskId, String repo, String commit) { // TODO accept solution object
         return taskCounters.get(taskId).count(repo, commit);
     }
 }

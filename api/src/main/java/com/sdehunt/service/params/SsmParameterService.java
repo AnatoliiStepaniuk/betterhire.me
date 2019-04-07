@@ -1,4 +1,4 @@
-package com.sdehunt.service;
+package com.sdehunt.service.params;
 
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagement;

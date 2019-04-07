@@ -1,8 +1,8 @@
 package com.sdehunt.util;
 
-import com.sdehunt.service.HardCachedParameterService;
-import com.sdehunt.service.ParameterService;
-import com.sdehunt.service.SsmParameterService;
+import com.sdehunt.service.params.HardCachedParameterService;
+import com.sdehunt.service.params.ParameterService;
+import com.sdehunt.service.params.SsmParameterService;
 
 import java.io.File;
 import java.io.FileOutputStream;
