@@ -19,7 +19,7 @@ public class SolutionApiTestIT extends AbstractApiTest {
         String userId = UUID.randomUUID().toString();
         String repo = UUID.randomUUID().toString();
         String commit = UUID.randomUUID().toString().substring(0, 7);
-        long score = new Random().nextLong();
+        long score = Math.abs(new Random().nextLong());
 
         Solution solution = new SolutionImpl(
                 null,

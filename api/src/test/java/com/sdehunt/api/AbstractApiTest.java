@@ -6,7 +6,7 @@ import static io.restassured.RestAssured.given;
 
 public abstract class AbstractApiTest {
     protected final static String BASE_URI = "http://localhost";
-    protected final static int PORT = 8080;
+    protected final static int PORT = 80;
     protected final static String APP_JSON = "application/json";
     protected final static int SUCCESS = 200;
 

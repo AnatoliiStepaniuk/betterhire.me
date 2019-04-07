@@ -1,11 +1,8 @@
-package com.sdehunt;
+package com.sdehunt.util;
 
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.sdehunt.service.HardCachedParameterService;
 import com.sdehunt.service.ParameterService;
 import com.sdehunt.service.SsmParameterService;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,13 +13,9 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.Properties;
 
-public class Util {
-    //AWS Credentials of the IAM user with policy enabling IAM Database Authenticated access to the db by the db user.
-    private static final AWSCredentialsProvider creds = new ProfileCredentialsProvider(".aws/credentials", null);
+public class ConnectionHelper {
 
     private static final ParameterService params = new HardCachedParameterService(new SsmParameterService());
 
@@ -39,31 +32,7 @@ public class Util {
     private static final String KEY_STORE_PROVIDER = "SUN";
     private static final String KEY_STORE_FILE_PREFIX = "sys-connect-via-ssl-test-cacerts";
     private static final String KEY_STORE_FILE_SUFFIX = ".jks";
-    private static final String DEFAULT_KEY_STORE_PASSWORD = "a2134iuhr86w^%";
-
-    public static void main(String[] args) throws Exception {
-        System.out.println(readStringFromDB());
-    }
-
-    public static String readStringFromDB() throws Exception{
-        String str = "empty";
-        //get the connection
-        Connection connection = getDBConnection();
-
-        //verify the connection is successful
-        Statement stmt = connection.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT 'Success!' FROM DUAL;");
-        while (rs.next()) {
-            String id = rs.getString(1);
-            str = id;
-        }
-
-        //close the connection
-        stmt.close();
-        connection.close();
-
-        return str;
-    }
+    private static final String DEFAULT_KEY_STORE_PASSWORD = "a2134iuhr86w^%"; // TODO what happens here? do I update key store files everytime?
 
     /**
      * This method returns a connection to the db instance authenticated using IAM Database Authentication
@@ -131,9 +100,6 @@ public class Util {
     private static X509Certificate createCertificate() throws Exception {
         CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
         URL url = new File(SSL_CERTIFICATE).toURI().toURL();
-        if (url == null) {
-            throw new Exception("SSL file URL is null");
-        }
         try (InputStream certInputStream = url.openStream()) {
             X509Certificate res = (X509Certificate) certFactory.generateCertificate(certInputStream);
             return res;
