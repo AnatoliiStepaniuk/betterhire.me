@@ -1,11 +1,13 @@
 package com.sdehunt.api;
 
+import com.sdehunt.commons.TaskID;
 import com.sdehunt.model.impl.TaskImpl;
 import org.junit.Test;
 
 import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.Matchers.isEmptyString;
 
 
@@ -16,12 +18,12 @@ public class TaskApiTestIT extends AbstractApiTest {
     @Test
     public void crudTest() {
 
-        String id = UUID.randomUUID().toString();
+        TaskID taskId = TaskID.SLIDES;
         String description = UUID.randomUUID().toString();
 
         // Saving task
         host()
-                .body(new TaskImpl(id, description))
+                .body(new TaskImpl(taskId, description))
                 .contentType(APP_JSON)
                 .post(TASKS_PATH)
                 .then()
@@ -30,11 +32,11 @@ public class TaskApiTestIT extends AbstractApiTest {
 
         // Verify created
         host().contentType(APP_JSON)
-                .get(TASKS_PATH + id)
+                .get(TASKS_PATH + taskId.name().toLowerCase())
                 .then()
                 .log().ifValidationFails()
                 .statusCode(SUCCESS)
-                .body("id", is(id))
+                .body("id", equalToIgnoringCase(taskId.name()))
                 .body("description", is(description));
 
         // Getting all tasks
@@ -43,18 +45,18 @@ public class TaskApiTestIT extends AbstractApiTest {
                 .log().ifValidationFails()
                 .statusCode(SUCCESS)
                 .body("size()", is(1))
-                .body("[0].id", is(id))
+                .body("[0].id", equalToIgnoringCase(taskId.name()))
                 .body("[0].description", is(description));
 
         // Deleting task
-        host().delete(TASKS_PATH + id)
+        host().delete(TASKS_PATH + taskId.name().toLowerCase())
                 .then()
                 .log().ifValidationFails()
                 .statusCode(SUCCESS);
 
         // Verify created
         host().contentType(APP_JSON)
-                .get(TASKS_PATH + id)
+                .get(TASKS_PATH + taskId.name().toLowerCase())
                 .then()
                 .log().ifValidationFails()
                 .statusCode(SUCCESS)

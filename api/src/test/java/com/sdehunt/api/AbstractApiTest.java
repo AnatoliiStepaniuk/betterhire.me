@@ -11,6 +11,6 @@ public abstract class AbstractApiTest {
     protected final static int SUCCESS = 200;
 
     protected RequestSpecification host() {
-        return given().baseUri(BASE_URI).port(PORT);
+        return given().baseUri(BASE_URI).port(PORT).log().ifValidationFails();
     }
 }

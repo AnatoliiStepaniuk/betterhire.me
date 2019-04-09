@@ -7,11 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class SolutionService {
 
-    @Autowired
     private GeneralScoreCounter scoreCounter;
 
-    @Autowired
     private SolutionRepository solutionRepository;
+
+    public SolutionService(GeneralScoreCounter scoreCounter, SolutionRepository solutionRepository) {
+        this.scoreCounter = scoreCounter;
+        this.solutionRepository = solutionRepository;
+    }
 
     public long calculateScoreAndSave(Solution s){
         long score = scoreCounter.count(s.getTaskId(), s.getRepo(), s.getCommit());

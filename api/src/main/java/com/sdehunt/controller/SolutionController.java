@@ -4,6 +4,7 @@ import com.sdehunt.model.Solution;
 import com.sdehunt.model.impl.SolutionImpl;
 import com.sdehunt.repository.SolutionRepository;
 import com.sdehunt.repository.impl.SolutionQueryImpl;
+import com.sdehunt.service.solution.SolutionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +17,12 @@ public class SolutionController {
     @Autowired
     private SolutionRepository solutions;
 
+    @Autowired
+    private SolutionService solutionService;
+
     @RequestMapping(method = RequestMethod.POST, path = "/tasks/{taskId}/solutions", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String save(@PathVariable String taskId, @RequestBody SolutionImpl solution) {
-        return solutions.save(solution.withTaskId(taskId));
+    public long save(@PathVariable String taskId, @RequestBody SolutionImpl solution) {
+        return solutionService.calculateScoreAndSave(solution.withTaskId(taskId));
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/solutions/{id}")

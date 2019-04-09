@@ -1,5 +1,6 @@
 package com.sdehunt.repository.impl;
 
+import com.sdehunt.commons.TaskID;
 import com.sdehunt.model.Solution;
 import com.sdehunt.model.impl.SolutionImpl;
 import com.sdehunt.repository.SolutionQuery;
@@ -85,7 +86,7 @@ public class JdbiSolutionRepository implements SolutionRepository {
         public Solution map(ResultSet rs, StatementContext ctx) throws SQLException {
             return new SolutionImpl(
                     rs.getString("id"),
-                    rs.getString("task"),
+                    TaskID.valueOf(rs.getString("task")),
                     rs.getString("user"),
                     rs.getString("repo"),
                     rs.getString("commit"),
