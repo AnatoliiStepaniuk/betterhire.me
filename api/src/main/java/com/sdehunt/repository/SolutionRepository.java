@@ -1,6 +1,7 @@
 package com.sdehunt.repository;
 
 import com.sdehunt.commons.model.Solution;
+import com.sdehunt.repository.impl.SolutionQueryImpl;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,4 +30,11 @@ public interface SolutionRepository {
      * Returns Solutions for specified query
      */
     List<Solution> query(SolutionQuery request);
+
+    /**
+     * Returns Solutions of specified user
+     */
+    default List<Solution> forUser(String userId) {
+        return query(new SolutionQueryImpl().withUser(userId));
+    }
 }

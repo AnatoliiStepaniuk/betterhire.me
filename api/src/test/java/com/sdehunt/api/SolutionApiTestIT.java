@@ -58,6 +58,16 @@ public class SolutionApiTestIT extends AbstractApiTest {
                 .body("repo", equalTo(repo))
                 .body("commit", equalTo(commit));
 
+        host().get("/user/{userId}/solutions", userId)
+                .then().log().ifValidationFails()
+                .statusCode(SUCCESS)
+                .body("size()", equalTo(1))
+                .body("[0].id", equalTo(id))
+                .body("[0].taskId", equalToIgnoringCase(taskId.name()))
+                .body("[0].userId", equalTo(userId))
+                .body("[0].repo", equalTo(repo))
+                .body("[0].commit", equalTo(commit));
+
         // Delete
         host().delete("/solutions/{id}", id)
                 .then().log().ifValidationFails()
