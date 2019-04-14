@@ -19,5 +19,5 @@ public interface Task {
     /**
      * Instant when the task was created
      */
-    Instant getCreated();
+    Instant getCreated(); // TODO do something with json instant mapping and add it to tests
 }

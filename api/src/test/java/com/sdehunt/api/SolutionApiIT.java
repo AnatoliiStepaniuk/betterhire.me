@@ -11,14 +11,14 @@ import java.util.UUID;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 
-public class SolutionApiTestIT extends AbstractApiTest {
+public class SolutionApiIT extends AbstractApiTest {
 
     @Test
     public void crudTest() {
         TaskID taskId = TaskID.SLIDES;
         String userId = UUID.randomUUID().toString();
         String repo = "GRpro/google_hash_code_2019";
-        String commit = "master";
+        String commit = "61f487523ad641cc6fffc44ded7537d94cf0d1eb";
 
         Solution solution = new SolutionImpl(
                 null,
@@ -58,7 +58,7 @@ public class SolutionApiTestIT extends AbstractApiTest {
                 .body("repo", equalTo(repo))
                 .body("commit", equalTo(commit));
 
-        host().get("/user/{userId}/solutions", userId)
+        host().get("/users/{userId}/solutions", userId)
                 .then().log().ifValidationFails()
                 .statusCode(SUCCESS)
                 .body("size()", equalTo(1))

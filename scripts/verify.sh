@@ -1,4 +1,7 @@
 #! /bin/bash
+
+# TODO truncate all tables before tests!!!
+
 # Build
 mvn clean install -DskipITs && docker build -f api/Dockerfile . -t sdehunt
 

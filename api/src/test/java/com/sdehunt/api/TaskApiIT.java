@@ -11,7 +11,7 @@ import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.Matchers.isEmptyString;
 
 
-public class TaskApiTestIT extends AbstractApiTest {
+public class TaskApiIT extends AbstractApiTest {
 
     private final static String TASKS_PATH = "/tasks/";
 

@@ -5,14 +5,18 @@ import com.sdehunt.commons.params.ParameterService;
 import com.sdehunt.commons.params.SsmParameterService;
 import com.sdehunt.repository.SolutionRepository;
 import com.sdehunt.repository.TaskRepository;
+import com.sdehunt.repository.UserRepository;
 import com.sdehunt.repository.impl.JdbiSolutionRepository;
 import com.sdehunt.repository.impl.JdbiTaskRepository;
+import com.sdehunt.repository.impl.JdbiUserRepository;
 import com.sdehunt.score.GeneralScoreCounter;
 import com.sdehunt.service.solution.SolutionService;
 import com.sdehunt.util.ConnectionHelper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+
+import java.sql.Connection;
 
 @SpringBootApplication
 public class Application {
@@ -27,14 +31,25 @@ public class Application {
     }
 
     @Bean
-    public TaskRepository taskRepository() {
-            return new JdbiTaskRepository(ConnectionHelper.getDBConnection());
+    public Connection connection() {
+        return ConnectionHelper.getDBConnection();
     }
 
     @Bean
-    public SolutionRepository solutionRepository() {
-        return new JdbiSolutionRepository(ConnectionHelper.getDBConnection());
+    public TaskRepository taskRepository(Connection connection) {
+        return new JdbiTaskRepository(connection);
     }
+
+    @Bean
+    public SolutionRepository solutionRepository(Connection connection) {
+        return new JdbiSolutionRepository(connection);
+    }
+
+    @Bean
+    public UserRepository userRepository(Connection connection) {
+        return new JdbiUserRepository(connection);
+    }
+
 
     @Bean
     public GeneralScoreCounter generalScoreCounter(){
