@@ -2,6 +2,7 @@ package com.sdehunt.score;
 
 import com.sdehunt.commons.GithubClient;
 import com.sdehunt.commons.TaskID;
+import com.sdehunt.commons.model.Solution;
 import com.sdehunt.score.slides.SlidesScoreCounter;
 
 import java.util.HashMap;
@@ -18,7 +19,7 @@ public class GeneralScoreCounter {
         taskCounters.put(TaskID.SLIDES, new SlidesScoreCounter(githubClient));
     }
 
-    public long count(TaskID taskId, String repo, String commit) { // TODO accept solution object
-        return taskCounters.get(taskId).count(repo, commit);
+    public long count(Solution solution) {
+        return taskCounters.get(solution.getTaskId()).count(solution.getRepo(), solution.getCommit());
     }
 }

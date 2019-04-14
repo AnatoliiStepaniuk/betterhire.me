@@ -30,12 +30,12 @@ public class SlidesScoreCounter implements TaskScoreCounter {
     @Override
     public long count(String repo, String commit) {
 
-        for (String f : inputFiles) {
-            githubClient.download(INPUT_REPO, INPUT_BRANCH, f);
+        for (String f : inputFiles) { // TODO it once
+            githubClient.download(INPUT_REPO, INPUT_BRANCH, f);// TODO name files so that it does not clunch with files for other tasks
         }
         for (String f : solutionFiles) {
-            githubClient.download(repo, commit, f);
-        }
+            githubClient.download(repo, commit, f); // TODO solution files downloader
+        } // TODO clean solution files after finishing
 
         long score = 0;
         for (int i = 0; i < inputFiles.size(); i++) {

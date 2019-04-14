@@ -1,7 +1,7 @@
-package com.sdehunt.model.impl;
+package com.sdehunt.commons.model.impl;
 
 import com.sdehunt.commons.TaskID;
-import com.sdehunt.model.Task;
+import com.sdehunt.commons.model.Task;
 
 import java.time.Instant;
 

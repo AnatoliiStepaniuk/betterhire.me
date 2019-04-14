@@ -1,7 +1,7 @@
 package com.sdehunt.api;
 
 import com.sdehunt.commons.TaskID;
-import com.sdehunt.model.impl.TaskImpl;
+import com.sdehunt.commons.model.impl.TaskImpl;
 import org.junit.Test;
 
 import java.util.UUID;

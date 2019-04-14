@@ -1,4 +1,4 @@
-package com.sdehunt.model;
+package com.sdehunt.commons.model;
 
 import com.sdehunt.commons.TaskID;
 

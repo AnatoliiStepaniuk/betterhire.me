@@ -1,8 +1,8 @@
 package com.sdehunt.repository.impl;
 
 import com.sdehunt.commons.TaskID;
-import com.sdehunt.model.Solution;
-import com.sdehunt.model.impl.SolutionImpl;
+import com.sdehunt.commons.model.Solution;
+import com.sdehunt.commons.model.impl.SolutionImpl;
 import com.sdehunt.repository.SolutionQuery;
 import com.sdehunt.repository.SolutionRepository;
 import org.jdbi.v3.core.Jdbi;

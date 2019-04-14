@@ -1,6 +1,6 @@
 package com.sdehunt.repository;
 
-import com.sdehunt.model.Task;
+import com.sdehunt.commons.model.Task;
 
 import java.util.List;
 import java.util.Optional;

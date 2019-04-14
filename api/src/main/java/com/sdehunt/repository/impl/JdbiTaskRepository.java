@@ -1,8 +1,8 @@
 package com.sdehunt.repository.impl;
 
 import com.sdehunt.commons.TaskID;
-import com.sdehunt.model.Task;
-import com.sdehunt.model.impl.TaskImpl;
+import com.sdehunt.commons.model.Task;
+import com.sdehunt.commons.model.impl.TaskImpl;
 import com.sdehunt.repository.TaskRepository;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.RowMapper;
@@ -14,7 +14,6 @@ import java.sql.SQLException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static java.lang.String.format;
 

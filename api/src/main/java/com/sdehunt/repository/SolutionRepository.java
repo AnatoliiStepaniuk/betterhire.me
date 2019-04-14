@@ -1,6 +1,6 @@
 package com.sdehunt.repository;
 
-import com.sdehunt.model.Solution;
+import com.sdehunt.commons.model.Solution;
 
 import java.util.List;
 import java.util.Optional;

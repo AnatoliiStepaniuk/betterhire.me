@@ -1,7 +1,7 @@
 package com.sdehunt.controller;
 
-import com.sdehunt.model.Task;
-import com.sdehunt.model.impl.TaskImpl;
+import com.sdehunt.commons.model.Task;
+import com.sdehunt.commons.model.impl.TaskImpl;
 import com.sdehunt.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;

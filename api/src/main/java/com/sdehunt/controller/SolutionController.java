@@ -1,7 +1,7 @@
 package com.sdehunt.controller;
 
-import com.sdehunt.model.Solution;
-import com.sdehunt.model.impl.SolutionImpl;
+import com.sdehunt.commons.model.Solution;
+import com.sdehunt.commons.model.impl.SolutionImpl;
 import com.sdehunt.repository.SolutionRepository;
 import com.sdehunt.repository.impl.SolutionQueryImpl;
 import com.sdehunt.service.solution.SolutionService;

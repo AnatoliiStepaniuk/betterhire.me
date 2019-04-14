@@ -1,9 +1,8 @@
 package com.sdehunt.service.solution;
 
-import com.sdehunt.model.Solution;
+import com.sdehunt.commons.model.Solution;
 import com.sdehunt.repository.SolutionRepository;
 import com.sdehunt.score.GeneralScoreCounter;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class SolutionService {
 
@@ -17,7 +16,7 @@ public class SolutionService {
     }
 
     public long calculateScoreAndSave(Solution s){
-        long score = scoreCounter.count(s.getTaskId(), s.getRepo(), s.getCommit());
+        long score = scoreCounter.count(s);
         solutionRepository.save(s.withScore(score));
         return score;
     }
