@@ -1,4 +1,4 @@
-package com.sdehunt.service.params;
+package com.sdehunt.commons.params;
 
 /**
  * Manages stored parameters

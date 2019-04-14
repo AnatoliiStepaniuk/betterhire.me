@@ -1,8 +1,8 @@
 package com.sdehunt.util;
 
-import com.sdehunt.service.params.HardCachedParameterService;
-import com.sdehunt.service.params.ParameterService;
-import com.sdehunt.service.params.SsmParameterService;
+import com.sdehunt.commons.params.HardCachedParameterService;
+import com.sdehunt.commons.params.ParameterService;
+import com.sdehunt.commons.params.SsmParameterService;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -42,7 +42,7 @@ public class ConnectionHelper {
      */
     public static Connection getDBConnection() {
         try {
-            setSslProperties();
+            //setSslProperties(); // TODO
             Connection connection = DriverManager.getConnection(JDBC_URL, setMySqlConnectionProperties());
             return connection;
         } catch (Exception e) {

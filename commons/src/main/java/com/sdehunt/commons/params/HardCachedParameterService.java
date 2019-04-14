@@ -1,4 +1,4 @@
-package com.sdehunt.service.params;
+package com.sdehunt.commons.params;
 
 import java.util.HashMap;
 import java.util.Map;

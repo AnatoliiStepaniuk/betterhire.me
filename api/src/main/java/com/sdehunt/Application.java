@@ -1,5 +1,8 @@
 package com.sdehunt;
 
+import com.sdehunt.commons.params.HardCachedParameterService;
+import com.sdehunt.commons.params.ParameterService;
+import com.sdehunt.commons.params.SsmParameterService;
 import com.sdehunt.repository.SolutionRepository;
 import com.sdehunt.repository.TaskRepository;
 import com.sdehunt.repository.impl.JdbiSolutionRepository;
@@ -16,6 +19,11 @@ public class Application {
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
+    }
+
+    @Bean
+    public ParameterService parameterService() {
+        return new HardCachedParameterService(new SsmParameterService());
     }
 
     @Bean

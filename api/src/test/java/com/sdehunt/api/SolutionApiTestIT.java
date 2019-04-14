@@ -3,16 +3,12 @@ package com.sdehunt.api;
 import com.sdehunt.commons.TaskID;
 import com.sdehunt.model.Solution;
 import com.sdehunt.model.impl.SolutionImpl;
-import io.restassured.response.Response;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Random;
 import java.util.UUID;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.equalToIgnoringCase;
-import static org.hamcrest.Matchers.isEmptyString;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 
 public class SolutionApiTestIT extends AbstractApiTest {
@@ -21,8 +17,8 @@ public class SolutionApiTestIT extends AbstractApiTest {
     public void crudTest() {
         TaskID taskId = TaskID.SLIDES;
         String userId = UUID.randomUUID().toString();
-        String repo = UUID.randomUUID().toString();
-        String commit = UUID.randomUUID().toString().substring(0, 7);
+        String repo = "GRpro/google_hash_code_2019";
+        String commit = "master";
 
         Solution solution = new SolutionImpl(
                 null,

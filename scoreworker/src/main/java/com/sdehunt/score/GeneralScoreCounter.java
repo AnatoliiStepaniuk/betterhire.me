@@ -1,5 +1,6 @@
 package com.sdehunt.score;
 
+import com.sdehunt.commons.GithubClient;
 import com.sdehunt.commons.TaskID;
 import com.sdehunt.score.slides.SlidesScoreCounter;
 
@@ -12,9 +13,9 @@ import java.util.Map;
 public class GeneralScoreCounter {
 
     private static Map<TaskID, TaskScoreCounter> taskCounters = new HashMap<>();
-
+    private static GithubClient githubClient = new GithubClient();
     static {
-        taskCounters.put(TaskID.SLIDES, new SlidesScoreCounter());
+        taskCounters.put(TaskID.SLIDES, new SlidesScoreCounter(githubClient));
     }
 
     public long count(TaskID taskId, String repo, String commit) { // TODO accept solution object

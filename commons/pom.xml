@@ -11,5 +11,15 @@
 
     <artifactId>commons</artifactId>
 
+    <dependencies>
+
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk</artifactId>
+            <version>1.11.386</version>
+        </dependency>
+
+    </dependencies>
+
 
 </project>

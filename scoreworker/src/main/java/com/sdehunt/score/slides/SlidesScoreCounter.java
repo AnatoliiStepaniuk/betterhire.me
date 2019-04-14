@@ -1,14 +1,13 @@
 package com.sdehunt.score.slides;
 
+import com.sdehunt.commons.FileUtils;
+import com.sdehunt.commons.GithubClient;
 import com.sdehunt.score.TaskScoreCounter;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Calculates score for hashcode Slides tasks
@@ -17,25 +16,40 @@ public class SlidesScoreCounter implements TaskScoreCounter {
 
     private final PicturesReader picturesReader = new EagerPicturesReader();
 
-    private static final String PICTURES_FILE = "/Users/anatolii.stepaniuk/Code/sdehunt/scoreworker/src/main/resources/a_input.txt";
-    private static final String SOLUTION_FILE = "/Users/anatolii.stepaniuk/Code/sdehunt/scoreworker/src/main/resources/a_result.txt";
+    private static final String INPUT_REPO = "GRpro/google_hash_code_2019";
+    private static final String INPUT_BRANCH = "master";
+    private static final List<String> inputFiles = Arrays.asList("solutions/a_input.txt", "solutions/b_input.txt", "solutions/c_input.txt", "solutions/d_input.txt", "solutions/e_input.txt");
+    private static final List<String> solutionFiles = Arrays.asList("solutions/a_result.txt", "solutions/b_result.txt", "solutions/c_result.txt", "solutions/d_result.txt", "solutions/e_result.txt");
+
+    private final GithubClient githubClient;
+
+    public SlidesScoreCounter(GithubClient githubClient) {
+        this.githubClient = githubClient;
+    }
 
     @Override
     public long count(String repo, String commit) {
 
-        // TODO use repo and commit
+        for (String f : inputFiles) {
+            githubClient.download(INPUT_REPO, INPUT_BRANCH, f);
+        }
+        for (String f : solutionFiles) {
+            githubClient.download(repo, commit, f);
+        }
 
-        Map<Integer, Picture> pictures = picturesReader.readPictures(PICTURES_FILE);
         long score = 0;
-        try {
-            List<String> lines = Files.readAllLines(Paths.get(SOLUTION_FILE));
+        for (int i = 0; i < inputFiles.size(); i++) {
+            Map<Integer, Picture> pictures = picturesReader.readPictures(FileUtils.fileName(inputFiles.get(i)));
+            try {
+                List<String> lines = Files.readAllLines(Paths.get(FileUtils.fileName(solutionFiles.get(i))));
 
-            for (int i = 1; i < lines.size() - 1; i++) {
-                score += countScore(getTags(pictures, lines.get(i)), getTags(pictures, lines.get(i + 1)));
+                for (int l = 1; l < lines.size() - 1; l++) {
+                    score += countScore(getTags(pictures, lines.get(l)), getTags(pictures, lines.get(l + 1)));
+                }
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
 
         return score;
