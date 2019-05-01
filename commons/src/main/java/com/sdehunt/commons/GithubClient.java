@@ -19,7 +19,7 @@ import java.nio.file.Paths;
 public class GithubClient {
 
     private final static String DOMAIN = "https://raw.githubusercontent.com";
-    private static final String ACCESS_TOKEN = "GITHUB_ACCESS_TOKEN"; // TODO autowired?
+    private static final String ACCESS_TOKEN = "GITHUB_ACCESS_TOKEN"; //  TODO autowired?
     private static final ParameterService params = new HardCachedParameterService(new SsmParameterService());
     private final HttpClient client = HttpClient.newHttpClient(); // TODO autowired?
 
