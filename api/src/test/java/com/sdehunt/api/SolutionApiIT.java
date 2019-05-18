@@ -1,9 +1,8 @@
 package com.sdehunt.api;
 
 import com.sdehunt.commons.TaskID;
-import com.sdehunt.commons.model.impl.SolutionImpl;
 import com.sdehunt.dto.SaveSolutionDTO;
-import org.junit.Assert;
+import com.sdehunt.dto.SolutionScoreDTO;
 import org.junit.Test;
 
 import java.util.UUID;
@@ -15,7 +14,7 @@ public class SolutionApiIT extends AbstractApiTest {
 
     @Test
     public void crudTest() {
-        TaskID taskId = TaskID.SLIDES;
+        TaskID taskId = TaskID.SLIDES_TEST;
         String userId = UUID.randomUUID().toString();
         String repo = "AnatoliiStepaniuk/google_hash_code_2019";
         String commit = "61f487523ad641cc6fffc44ded7537d94cf0d1eb";
@@ -27,22 +26,21 @@ public class SolutionApiIT extends AbstractApiTest {
                 .build();
 
         // Saving solution
-        long score = Long.valueOf(host()
-                .contentType(APP_JSON)
+        SolutionScoreDTO response = host().contentType(APP_JSON)
                 .body(solutionDTO)
                 .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
-                .asString());
+                .as(SolutionScoreDTO.class);
+
+        String id = response.getSolutionId();
 
         // Query
-        SolutionImpl[] body = host().get("/tasks/{taskId}/solutions?userId=" + userId, taskId)
-                .as(SolutionImpl[].class);
-        Assert.assertEquals(1, body.length);
-        Assert.assertEquals(taskId, body[0].getTaskId());
-        Assert.assertEquals(score, body[0].getScore());
-        Assert.assertEquals(userId, body[0].getUserId());
-        Assert.assertEquals(repo, body[0].getRepo());
-        Assert.assertEquals(commit, body[0].getCommit());
-        String id = body[0].getId();
+        host().get("/tasks/{taskId}/solutions?userId=" + userId, taskId).then()
+                .body("size()", equalTo(1))
+                .body("[0].taskId", equalTo(taskId.name()))
+                .body("[0].score", equalTo((int) response.getScore()))
+                .body("[0].userId", equalTo(userId))
+                .body("[0].repo", equalTo(repo))
+                .body("[0].commit", equalTo(commit));
 
         // Verify save
         host().get("/solutions/" + id)

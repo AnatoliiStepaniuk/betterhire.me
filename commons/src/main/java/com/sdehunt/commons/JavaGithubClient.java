@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdehunt.commons.params.HardCachedParameterService;
 import com.sdehunt.commons.params.ParameterService;
 import com.sdehunt.commons.params.SsmParameterService;
+import lombok.SneakyThrows;
 
 import java.io.IOException;
 import java.net.URI;
@@ -28,33 +29,24 @@ public class JavaGithubClient implements GithubClient {
     private final HttpClient client = HttpClient.newHttpClient(); // TODO autowired?
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    @SneakyThrows
     public void download(String repo, String commit, String file) {
-        try {
-            URI uri = new URI(RAW_DOMAIN + "/" + repo + "/" + commit + "/" + file);
-            HttpRequest request = HttpRequest.newBuilder()
-                    .header("Authorization", "token " + params.get(ACCESS_TOKEN))
-                    .uri(uri)
-                    .build();
+        URI uri = new URI(RAW_DOMAIN + "/" + repo + "/" + commit + "/" + file);
+        HttpRequest request = HttpRequest.newBuilder()
+                .header("Authorization", "token " + params.get(ACCESS_TOKEN))
+                .uri(uri)
+                .build();
 
-            HttpResponse<Path> response = client.send(request, HttpResponse.BodyHandlers.ofFile(createFile(file)));
+        HttpResponse<Path> response = client.send(request, HttpResponse.BodyHandlers.ofFile(createFile(file)));
 
-            if (response.statusCode() == 503) { // Rarely reproduced issue of returning 503 status code
-                response = client.send(request, HttpResponse.BodyHandlers.ofFile(createFile(file)));
-            }
+        if (response.statusCode() == 503) { // Rarely reproduced issue of returning 503 status code
+            response = client.send(request, HttpResponse.BodyHandlers.ofFile(createFile(file)));
+        }
 
-            if (response.statusCode() != 200) {
-                throw new RuntimeException("Status code " + response.statusCode() + " for URI " + uri);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        if (response.statusCode() != 200) {
+            throw new RuntimeException("Status code " + response.statusCode() + " for URI " + uri);
         }
     }
-
-
-    /*
-        For https://github.com/AnatoliiStepaniuk/sdehunt/tree/test-branch should return 0f3d6f47337ca63bcd87a3bd20a4d1e90bced703
-        For https://github.com/AnatoliiStepaniuk/sdehunt/tree/master or https://github.com/AnatoliiStepaniuk/sdehunt should return ad903026b3541fddf80f23b99ab48eae27a03a1f
-     */
 
     @Override
     public String getCommit(String repo, String branch) {

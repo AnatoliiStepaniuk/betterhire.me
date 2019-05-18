@@ -2,6 +2,7 @@ package com.sdehunt.service.solution;
 
 import com.sdehunt.commons.GithubClient;
 import com.sdehunt.commons.model.Solution;
+import com.sdehunt.dto.SolutionScoreDTO;
 import com.sdehunt.repository.SolutionRepository;
 import com.sdehunt.score.GeneralScoreCounter;
 
@@ -23,7 +24,7 @@ public class SolutionService {
         this.githubClient = githubClient;
     }
 
-    public long calculateScoreAndSave(Solution solution) {
+    public SolutionScoreDTO calculateScoreAndSave(Solution solution) {
 
         if (solution.getCommit().equalsIgnoreCase("master")) { // TODO better create method isBranch
             String commit = githubClient.getCommit(solution.getRepo(), solution.getCommit());
@@ -31,7 +32,12 @@ public class SolutionService {
         }
 
         long score = scoreCounter.count(solution);
-        solutionRepository.save(solution.setScore(score)); // TODO resolve commit (if master)
-        return score;
+
+        String solutionId = solutionRepository.save(solution.setScore(score)); // TODO resolve commit (if master)
+
+        return SolutionScoreDTO.builder()
+                .solutionId(solutionId)
+                .score(score)
+                .build();
     }
 }

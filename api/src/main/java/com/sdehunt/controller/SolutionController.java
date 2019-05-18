@@ -4,6 +4,7 @@ import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.impl.SolutionImpl;
 import com.sdehunt.dto.SaveSolutionDTO;
+import com.sdehunt.dto.SolutionScoreDTO;
 import com.sdehunt.repository.SolutionRepository;
 import com.sdehunt.repository.impl.SolutionQueryImpl;
 import com.sdehunt.service.solution.SolutionService;
@@ -28,13 +29,14 @@ public class SolutionController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public long save(@PathVariable String taskId, @RequestBody SaveSolutionDTO solutionRequest) {
+    public SolutionScoreDTO save(@PathVariable String taskId, @RequestBody SaveSolutionDTO solutionRequest) {
         Solution solution = SolutionImpl.builder()
                 .userId(solutionRequest.getUserId())
                 .repo(solutionRequest.getRepo())
                 .commit(solutionRequest.getCommit())
                 .taskId(TaskID.of(taskId))
                 .build();
+
         return solutionService.calculateScoreAndSave(solution);
     }
 
