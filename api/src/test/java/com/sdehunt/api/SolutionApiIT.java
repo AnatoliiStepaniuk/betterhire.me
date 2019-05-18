@@ -1,8 +1,8 @@
 package com.sdehunt.api;
 
 import com.sdehunt.commons.TaskID;
-import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.impl.SolutionImpl;
+import com.sdehunt.dto.SaveSolutionDTO;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -20,20 +20,16 @@ public class SolutionApiIT extends AbstractApiTest {
         String repo = "AnatoliiStepaniuk/google_hash_code_2019";
         String commit = "61f487523ad641cc6fffc44ded7537d94cf0d1eb";
 
-        Solution solution = new SolutionImpl(
-                null,
-                TaskID.SLIDES,
-                userId,
-                repo,
-                commit,
-                0,
-                null
-        );
+        SaveSolutionDTO solutionDTO = SaveSolutionDTO.builder()
+                .userId(userId)
+                .repo(repo)
+                .commit(commit)
+                .build();
 
         // Saving solution
         long score = Long.valueOf(host()
                 .contentType(APP_JSON)
-                .body(solution)
+                .body(solutionDTO)
                 .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
                 .asString());
 
