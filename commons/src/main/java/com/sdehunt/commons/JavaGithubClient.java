@@ -38,6 +38,10 @@ public class JavaGithubClient implements GithubClient {
 
             HttpResponse<Path> response = client.send(request, HttpResponse.BodyHandlers.ofFile(createFile(file)));
 
+            if (response.statusCode() == 503) { // Rarely reproduced issue of returning 503 status code
+                response = client.send(request, HttpResponse.BodyHandlers.ofFile(createFile(file)));
+            }
+
             if (response.statusCode() != 200) {
                 throw new RuntimeException("Status code " + response.statusCode() + " for URI " + uri);
             }

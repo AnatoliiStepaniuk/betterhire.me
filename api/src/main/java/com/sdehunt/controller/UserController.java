@@ -35,8 +35,8 @@ public class UserController {
     }
 
     @RequestMapping(path = "/{userId}", method = RequestMethod.PUT)
-    public UserImpl update(@RequestBody UserImpl user) {
-        return new UserImpl(users.update(user));
+    public UserImpl update(@PathVariable("userId") String userId, @RequestBody UserImpl user) {
+        return new UserImpl(users.update(user.setId(userId)));
     }
 
     @RequestMapping(path = "/{userId}", method = RequestMethod.DELETE)

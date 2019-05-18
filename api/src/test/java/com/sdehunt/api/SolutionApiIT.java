@@ -17,7 +17,7 @@ public class SolutionApiIT extends AbstractApiTest {
     public void crudTest() {
         TaskID taskId = TaskID.SLIDES;
         String userId = UUID.randomUUID().toString();
-        String repo = "GRpro/google_hash_code_2019";
+        String repo = "AnatoliiStepaniuk/google_hash_code_2019";
         String commit = "61f487523ad641cc6fffc44ded7537d94cf0d1eb";
 
         Solution solution = new SolutionImpl(
@@ -38,7 +38,7 @@ public class SolutionApiIT extends AbstractApiTest {
                 .asString());
 
         // Query
-        SolutionImpl[] body = host().get("/tasks/{taskId}/solutions?userId = " + userId, taskId)
+        SolutionImpl[] body = host().get("/tasks/{taskId}/solutions?userId=" + userId, taskId)
                 .as(SolutionImpl[].class);
         Assert.assertEquals(1, body.length);
         Assert.assertEquals(taskId, body[0].getTaskId());
@@ -80,7 +80,7 @@ public class SolutionApiIT extends AbstractApiTest {
                 .body(isEmptyString());
 
         // Verify delete (query)
-        host().get("/tasks/{taskId}/solutions?userId = " + userId, taskId.name().toLowerCase())
+        host().get("/tasks/{taskId}/solutions?userId=" + userId, taskId.name().toLowerCase())
                 .then().log().ifValidationFails()
                 .statusCode(SUCCESS)
                 .body("size()", is(0));

@@ -1,7 +1,7 @@
 package com.sdehunt.score.slides;
 
 import com.sdehunt.commons.FileUtils;
-import com.sdehunt.commons.GithubClient;
+import com.sdehunt.commons.JavaGithubClient;
 import com.sdehunt.score.TaskScoreCounter;
 
 import java.io.IOException;
@@ -16,14 +16,14 @@ public class SlidesScoreCounter implements TaskScoreCounter {
 
     private final PicturesReader picturesReader = new EagerPicturesReader();
 
-    private static final String INPUT_REPO = "GRpro/google_hash_code_2019";
+    private static final String INPUT_REPO = "AnatoliiStepaniuk/google_hash_code_2019";
     private static final String INPUT_BRANCH = "master";
     private static final List<String> inputFiles = Arrays.asList("solutions/a_input.txt", "solutions/b_input.txt", "solutions/c_input.txt", "solutions/d_input.txt", "solutions/e_input.txt");
     private static final List<String> solutionFiles = Arrays.asList("solutions/a_result.txt", "solutions/b_result.txt", "solutions/c_result.txt", "solutions/d_result.txt", "solutions/e_result.txt");
 
-    private final GithubClient githubClient;
+    private final JavaGithubClient githubClient;
 
-    public SlidesScoreCounter(GithubClient githubClient) {
+    public SlidesScoreCounter(JavaGithubClient githubClient) {
         this.githubClient = githubClient;
     }
 

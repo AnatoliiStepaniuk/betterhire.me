@@ -8,6 +8,12 @@
     <artifactId>platform</artifactId><!--TODO rename to parent or main or root ?-->
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+    </properties>
+
     <modules>
         <module>api</module>
         <module>scoreworker</module>
