@@ -3,8 +3,10 @@ package com.sdehunt.api;
 import com.sdehunt.commons.model.User;
 import com.sdehunt.commons.model.impl.UserImpl;
 import io.restassured.response.Response;
+import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Collection;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.isEmptyString;
@@ -17,6 +19,8 @@ public class UserApiIT extends AbstractApiTest {
         String email = UUID.randomUUID().toString() + "@gmail.com";
         String github = "GH" + UUID.randomUUID().toString();
         String linkedIn = "LI" + UUID.randomUUID().toString();
+
+        int usersCountBefore = host().get("/users").as(Collection.class).size();
 
         Response response = host()
                 .contentType(APP_JSON)
@@ -33,6 +37,9 @@ public class UserApiIT extends AbstractApiTest {
                 .then().log().ifValidationFails()
                 .body("id", is(user.getId()))
                 .body("email", is(user.getEmail()));
+
+        int usersCountAfter = host().get("/users").as(Collection.class).size();
+        Assert.assertEquals(usersCountBefore + 1, usersCountAfter);
 
         host().contentType(APP_JSON)
                 .body(user.setGithub(github).setLinkedIn(linkedIn))
@@ -56,6 +63,9 @@ public class UserApiIT extends AbstractApiTest {
                 .then().log().ifValidationFails()
                 .statusCode(SUCCESS)
                 .body(isEmptyString());
+
+        int usersCountAfterRemoval = host().get("/users").as(Collection.class).size();
+        Assert.assertEquals(usersCountBefore, usersCountAfterRemoval);
 
         host().get("/users/{userId}", user.getId())
                 .then().log().ifValidationFails()

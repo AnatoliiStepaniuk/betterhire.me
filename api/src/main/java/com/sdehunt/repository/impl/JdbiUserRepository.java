@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -40,8 +41,7 @@ public class JdbiUserRepository implements UserRepository {
     public Optional<User> get(String userId) {
         return jdbi.withHandle(
                 db -> db.select(format("SELECT * FROM %s WHERE id = ?", TABLE), userId)
-        ).map(new UserRowMapper())
-                .findFirst();
+        ).map(new UserRowMapper()).findFirst();
     }
 
     @Override
@@ -60,6 +60,13 @@ public class JdbiUserRepository implements UserRepository {
         jdbi.withHandle(
                 db -> db.execute(format("DELETE FROM %s WHERE id = ?", TABLE), userId)
         );
+    }
+
+    @Override
+    public Collection<User> getAll() {
+        return jdbi.withHandle(
+                db -> db.select(format("SELECT * FROM %s", TABLE))
+        ).map(new UserRowMapper()).list();
     }
 
     private class UserRowMapper implements RowMapper<User> {

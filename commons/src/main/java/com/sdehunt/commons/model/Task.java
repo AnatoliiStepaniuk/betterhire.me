@@ -10,7 +10,7 @@ public interface Task {
      * Task identifier
      */
     TaskID getId();
-
+    // TODO add name
     /**
      * Task description in Markdown format
      */
