@@ -26,9 +26,9 @@ public class TaskController {
         return tasks.getAll();
     }
 
-    @RequestMapping(method = GET, path = "/{id}", produces = APPLICATION_JSON_VALUE)
-    public Task get(@PathVariable("id") String id) {
-        return tasks.get(id).orElse(null);
+    @RequestMapping(method = GET, path = "/{taskId}", produces = APPLICATION_JSON_VALUE)
+    public Task get(@PathVariable("taskId") String taskId) {
+        return tasks.get(taskId).orElse(null);
     }
 
     @RequestMapping(method = POST, path = "")
@@ -36,8 +36,8 @@ public class TaskController {
         tasks.create(task);
     }
 
-    @RequestMapping(method = DELETE, path = "/{id}")
-    public void delete(@PathVariable("id") String id) {
-        tasks.delete(id);
+    @RequestMapping(method = DELETE, path = "/{taskId}")
+    public void delete(@PathVariable("taskId") String taskId) {
+        tasks.delete(taskId);
     }
 }

@@ -41,8 +41,22 @@ public interface Solution {
      */
     Instant getCreated();
 
-    /**
-     * Returns same solution with specified score
+
+    /*
+        Setters
      */
-    Solution withScore(long score);
+
+    Solution setId(String id);
+
+    Solution setTaskId(TaskID taskId);
+
+    Solution setUserId(String userId);
+
+    Solution setRepo(String repo);
+
+    Solution setCommit(String commit);
+
+    Solution setScore(long score);
+
+    Solution setCreated(Instant created);
 }

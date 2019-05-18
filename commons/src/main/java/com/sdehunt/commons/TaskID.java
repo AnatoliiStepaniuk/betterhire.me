@@ -5,6 +5,10 @@ package com.sdehunt.commons;
  */
 public enum TaskID {
 
-    SLIDES
+    SLIDES;
+
+    public static TaskID of(String taskId) {
+        return TaskID.valueOf(taskId.toUpperCase());
+    }
 
 }

@@ -17,7 +17,7 @@ public class SolutionService {
 
     public long calculateScoreAndSave(Solution s){
         long score = scoreCounter.count(s);
-        solutionRepository.save(s.withScore(score));
+        solutionRepository.save(s.setScore(score)); // TODO resolve commit (if master)
         return score;
     }
 }
