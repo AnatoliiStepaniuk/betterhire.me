@@ -20,4 +20,10 @@ public interface Task {
      * Instant when the task was created
      */
     Instant getCreated(); // TODO do something with json instant mapping and add it to tests
+
+    /**
+     * Instant when the task was updated
+     */
+    Instant getUpdated();
+
 }

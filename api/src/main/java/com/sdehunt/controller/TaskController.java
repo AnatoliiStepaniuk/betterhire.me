@@ -32,9 +32,11 @@ public class TaskController {
     }
 
     @RequestMapping(method = POST, path = "")
-    public void create(@RequestBody TaskImpl task) {
+    public void create(@RequestBody TaskImpl task) { // TODO use createTaskDTO (without id)
         tasks.create(task);
     }
+
+    // TODO add route for task update
 
     @RequestMapping(method = DELETE, path = "/{taskId}")
     public void delete(@PathVariable("taskId") String taskId) {

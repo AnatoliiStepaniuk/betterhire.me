@@ -49,11 +49,11 @@ public class JdbiTaskRepository implements TaskRepository {
 
     @Override
     public void create(Task task) {
-        long created = Instant.now().getEpochSecond();
+        long now = Instant.now().getEpochSecond();
         jdbi.withHandle(
                 db -> db.execute(
-                        format("INSERT INTO %s (id, description, created) VALUES (?, ?, ?)", TABLE),
-                        task.getId(), task.getDescription(), created
+                        format("INSERT INTO %s (id, description, created, updated) VALUES (?, ?, ?, ?)", TABLE),
+                        task.getId(), task.getDescription(), now, now
                 )
         );
     }
@@ -64,7 +64,8 @@ public class JdbiTaskRepository implements TaskRepository {
             return new TaskImpl(
                     TaskID.valueOf(rs.getString("id").toUpperCase()),
                     rs.getString("description"),
-                    Instant.ofEpochSecond(rs.getLong("created"))
+                    Instant.ofEpochSecond(rs.getLong("created")),
+                    Instant.ofEpochSecond(rs.getLong("updated"))
             );
         }
     }

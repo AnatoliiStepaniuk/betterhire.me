@@ -10,14 +10,16 @@ public class TaskImpl implements Task{
     private TaskID id;
     private String description;
     private Instant created;
+    private Instant updated;
 
     public TaskImpl() {
     }
 
-    public TaskImpl(TaskID id, String description, Instant created) {
+    public TaskImpl(TaskID id, String description, Instant created, Instant updated) {
         this.id = id;
         this.description = description;
         this.created = created;
+        this.updated = updated;
     }
 
     public TaskImpl(TaskID id, String description) {
@@ -38,5 +40,10 @@ public class TaskImpl implements Task{
     @Override
     public Instant getCreated() {
         return created;
+    }
+
+    @Override
+    public Instant getUpdated() {
+        return updated;
     }
 }

@@ -10,7 +10,7 @@ import org.junit.Test;
 import java.util.Collection;
 import java.util.UUID;
 
-import static org.hamcrest.Matchers.isEmptyString;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 
 public class UserApiIT extends AbstractApiTest {
@@ -46,7 +46,9 @@ public class UserApiIT extends AbstractApiTest {
                 .body("id", is(user.getId()))
                 .body("email", is(user.getEmail()))
                 .body("github", is(user.getGithub()))
-                .body("linkedIn", is(user.getLinkedIn()));
+                .body("linkedIn", is(user.getLinkedIn()))
+                .body("created", notNullValue())
+                .body("updated", notNullValue());
 
         int usersCountAfter = host().get("/users").as(Collection.class).size();
         Assert.assertEquals(usersCountBefore + 1, usersCountAfter);
@@ -64,7 +66,9 @@ public class UserApiIT extends AbstractApiTest {
                 .body("id", is(user.getId()))
                 .body("email", is(updateRequest.getEmail()))
                 .body("github", is(updateRequest.getGithub()))
-                .body("linkedIn", is(updateRequest.getLinkedIn()));
+                .body("linkedIn", is(updateRequest.getLinkedIn()))
+                .body("updated", notNullValue())
+                .body("updated", not(equalTo(user.getCreated())));
 
         host().get("/users/{userId}", user.getId())
                 .then().log().ifValidationFails()
@@ -72,7 +76,9 @@ public class UserApiIT extends AbstractApiTest {
                 .body("id", is(user.getId()))
                 .body("email", is(updateRequest.getEmail()))
                 .body("github", is(updateRequest.getGithub()))
-                .body("linkedIn", is(updateRequest.getLinkedIn()));
+                .body("linkedIn", is(updateRequest.getLinkedIn()))
+                .body("updated", notNullValue())
+                .body("updated", not(equalTo(user.getCreated())));
 
         host().delete("/users/{userId}", user.getId())
                 .then().log().ifValidationFails()

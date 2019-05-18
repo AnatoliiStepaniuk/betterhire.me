@@ -7,8 +7,7 @@ import org.junit.Test;
 import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.equalToIgnoringCase;
-import static org.hamcrest.Matchers.isEmptyString;
+import static org.hamcrest.Matchers.*;
 
 
 public class TaskApiIT extends AbstractApiTest {
@@ -46,7 +45,9 @@ public class TaskApiIT extends AbstractApiTest {
                 .statusCode(SUCCESS)
                 .body("size()", is(1))
                 .body("[0].id", equalToIgnoringCase(taskId.name()))
-                .body("[0].description", is(description));
+                .body("[0].description", is(description))
+                .body("[0].created", notNullValue())
+                .body("[0].updated", notNullValue());
 
         // Deleting task
         host().delete(TASKS_PATH + taskId.name().toLowerCase())
@@ -59,7 +60,7 @@ public class TaskApiIT extends AbstractApiTest {
                 .get(TASKS_PATH + taskId.name().toLowerCase())
                 .then()
                 .log().ifValidationFails()
-                .statusCode(SUCCESS)
+                .statusCode(SUCCESS) // TODO 404
                 .body(isEmptyString());
 
         // Verify deleted (get all)
