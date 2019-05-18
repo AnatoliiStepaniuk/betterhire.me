@@ -2,6 +2,7 @@ package com.sdehunt.api;
 
 import com.sdehunt.commons.model.User;
 import com.sdehunt.commons.model.impl.UserImpl;
+import com.sdehunt.dto.CreateUserDTO;
 import io.restassured.response.Response;
 import org.junit.Assert;
 import org.junit.Test;
@@ -22,27 +23,41 @@ public class UserApiIT extends AbstractApiTest {
 
         int usersCountBefore = host().get("/users").as(Collection.class).size();
 
+        CreateUserDTO createRequest = new CreateUserDTO()
+                .setEmail(email)
+                .setGithub(github)
+                .setLinkedIn(linkedIn);
+
         Response response = host()
                 .contentType(APP_JSON)
-                .body(new UserImpl().setEmail(email))
+                .body(createRequest)
                 .post("/users");
 
         response.then().log().ifValidationFails()
                 .statusCode(SUCCESS)
-                .body("email", is(email));
+                .body("email", is(email))
+                .body("github", is(github))
+                .body("linkedIn", is(linkedIn));
 
         User user = response.as(UserImpl.class);
 
         host().get("/users/{userId}", user.getId())
                 .then().log().ifValidationFails()
                 .body("id", is(user.getId()))
-                .body("email", is(user.getEmail()));
+                .body("email", is(user.getEmail()))
+                .body("github", is(user.getGithub()))
+                .body("linkedIn", is(user.getLinkedIn()));
 
         int usersCountAfter = host().get("/users").as(Collection.class).size();
         Assert.assertEquals(usersCountBefore + 1, usersCountAfter);
 
+        user
+                .setEmail(user.getEmail() + "2")
+                .setGithub(user.getGithub() + "2")
+                .setLinkedIn(user.getLinkedIn() + "2");
+
         host().contentType(APP_JSON)
-                .body(user.setGithub(github).setLinkedIn(linkedIn))
+                .body(user)
                 .put("/users/{userId}", user.getId())
                 .then().log().ifValidationFails()
                 .statusCode(SUCCESS)

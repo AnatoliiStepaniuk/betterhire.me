@@ -5,6 +5,7 @@ import com.sdehunt.commons.model.User;
 import java.time.Instant;
 import java.util.Objects;
 
+// TODO replace with lombok boilerplate like this
 public class UserImpl implements User {
 
     private String id;

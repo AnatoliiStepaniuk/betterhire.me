@@ -3,6 +3,7 @@ package com.sdehunt.controller;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.User;
 import com.sdehunt.commons.model.impl.UserImpl;
+import com.sdehunt.dto.CreateUserDTO;
 import com.sdehunt.repository.SolutionRepository;
 import com.sdehunt.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,12 @@ public class UserController {
     }
 
     @RequestMapping(path = "", method = RequestMethod.POST)
-    public UserImpl create(@RequestBody UserImpl user) {// TODO all fields are null
+    public UserImpl create(@RequestBody CreateUserDTO createUserRequest) {// TODO all fields are null
+        User user = new UserImpl()
+                .setEmail(createUserRequest.getEmail())
+                .setGithub(createUserRequest.getGithub())
+                .setLinkedIn(createUserRequest.getLinkedIn());
+
         return new UserImpl(users.create(user));
     }
 
