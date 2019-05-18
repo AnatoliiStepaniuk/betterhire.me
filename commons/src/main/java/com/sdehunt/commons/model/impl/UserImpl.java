@@ -13,20 +13,22 @@ public class UserImpl implements User {
     private String github;
     private String linkedIn;
     private Instant created;
+    private Instant updated;
 
     public UserImpl() {
     }
 
     public UserImpl(User user) {
-        this(user.getId(), user.getEmail(), user.getGithub(), user.getLinkedIn(), user.getCreated());
+        this(user.getId(), user.getEmail(), user.getGithub(), user.getLinkedIn(), user.getCreated(), user.getUpdated());
     }
 
-    public UserImpl(String id, String email, String github, String linkedIn, Instant created) {
+    public UserImpl(String id, String email, String github, String linkedIn, Instant created, Instant updated) {
         this.id = id;
         this.email = email;
         this.github = github;
         this.linkedIn = linkedIn;
         this.created = created;
+        this.updated = updated;
     }
 
     @Override
@@ -80,6 +82,17 @@ public class UserImpl implements User {
     }
 
     @Override
+    public Instant getUpdated() {
+        return updated;
+    }
+
+    @Override
+    public UserImpl setUpdated(Instant updated) {
+        this.updated = updated;
+        return this;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -88,7 +101,8 @@ public class UserImpl implements User {
                 Objects.equals(email, user.email) &&
                 Objects.equals(github, user.github) &&
                 Objects.equals(linkedIn, user.linkedIn) &&
-                Objects.equals(created, user.created);
+                Objects.equals(created, user.created) &&
+                Objects.equals(updated, user.updated);
     }
 
     @Override
@@ -104,6 +118,7 @@ public class UserImpl implements User {
                 ", github='" + github + '\'' +
                 ", linkedIn='" + linkedIn + '\'' +
                 ", created=" + created +
+                ", updated=" + updated +
                 '}';
     }
 }

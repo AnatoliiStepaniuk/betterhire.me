@@ -28,7 +28,7 @@ public class UserController {
     }
 
     @RequestMapping(path = "", method = RequestMethod.POST)
-    public User create(@RequestBody CreateUserDTO createUserRequest) {// TODO all fields are null
+    public User create(@RequestBody CreateUserDTO createUserRequest) {
         User user = new UserImpl()
                 .setEmail(createUserRequest.getEmail())
                 .setGithub(createUserRequest.getGithub())

@@ -28,10 +28,11 @@ public class JdbiUserRepository implements UserRepository {
     @Override
     public User create(User user) {
         user.setId(UUID.randomUUID().toString());
+        long now = Instant.now().getEpochSecond();
         jdbi.withHandle(
                 db -> db.execute(
-                        format("INSERT INTO %s (`id`, `email`, `github`, `linkedin`, `created`) VALUES(?, ?, ?, ?, ?)", TABLE),
-                        user.getId(), user.getEmail(), user.getGithub(), user.getLinkedIn(), Instant.now().getEpochSecond()
+                        format("INSERT INTO %s (`id`, `email`, `github`, `linkedin`, `created`, `updated`) VALUES(?, ?, ?, ?, ?, ?)", TABLE),
+                        user.getId(), user.getEmail(), user.getGithub(), user.getLinkedIn(), now, now
                 ));
 
         return get(user.getId()).orElse(null);
@@ -48,8 +49,8 @@ public class JdbiUserRepository implements UserRepository {
     public User update(User user) {
         jdbi.withHandle(
                 db -> db.execute(
-                        format("UPDATE %s SET email = ?, github = ?, linkedin = ? WHERE id = ?", TABLE),
-                        user.getEmail(), user.getGithub(), user.getLinkedIn(), user.getId())
+                        format("UPDATE %s SET email = ?, github = ?, linkedin = ?, updated = ? WHERE id = ?", TABLE),
+                        user.getEmail(), user.getGithub(), user.getLinkedIn(), Instant.now().getEpochSecond(), user.getId())
         );
 
         return get(user.getId()).orElse(null); // TODO throw exception if not found
@@ -77,7 +78,8 @@ public class JdbiUserRepository implements UserRepository {
                     rs.getString("email"),
                     rs.getString("github"),
                     rs.getString("linkedin"),
-                    Instant.ofEpochSecond(rs.getLong("created"))
+                    Instant.ofEpochSecond(rs.getLong("created")),
+                    Instant.ofEpochSecond(rs.getLong("updated"))
             );
         }
     }
