@@ -51,28 +51,28 @@ public class UserApiIT extends AbstractApiTest {
         int usersCountAfter = host().get("/users").as(Collection.class).size();
         Assert.assertEquals(usersCountBefore + 1, usersCountAfter);
 
-        user
+        CreateUserDTO updateRequest = new CreateUserDTO()
                 .setEmail(user.getEmail() + "2")
                 .setGithub(user.getGithub() + "2")
                 .setLinkedIn(user.getLinkedIn() + "2");
 
         host().contentType(APP_JSON)
-                .body(user)
+                .body(updateRequest)
                 .put("/users/{userId}", user.getId())
                 .then().log().ifValidationFails()
                 .statusCode(SUCCESS)
                 .body("id", is(user.getId()))
-                .body("email", is(user.getEmail()))
-                .body("github", is(user.getGithub()))
-                .body("linkedIn", is(user.getLinkedIn()));
+                .body("email", is(updateRequest.getEmail()))
+                .body("github", is(updateRequest.getGithub()))
+                .body("linkedIn", is(updateRequest.getLinkedIn()));
 
         host().get("/users/{userId}", user.getId())
                 .then().log().ifValidationFails()
                 .statusCode(SUCCESS)
                 .body("id", is(user.getId()))
-                .body("email", is(user.getEmail()))
-                .body("github", is(user.getGithub()))
-                .body("linkedIn", is(user.getLinkedIn()));
+                .body("email", is(updateRequest.getEmail()))
+                .body("github", is(updateRequest.getGithub()))
+                .body("linkedIn", is(updateRequest.getLinkedIn()));
 
         host().delete("/users/{userId}", user.getId())
                 .then().log().ifValidationFails()
