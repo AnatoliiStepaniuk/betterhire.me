@@ -1,6 +1,6 @@
 package com.sdehunt.score;
 
-import com.sdehunt.commons.JavaGithubClient;
+import com.sdehunt.commons.GithubClient;
 import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.score.slides.SlidesScoreCounter;
@@ -13,10 +13,15 @@ import java.util.Map;
  */
 public class GeneralScoreCounter {
 
-    private static Map<TaskID, TaskScoreCounter> taskCounters = new HashMap<>();
-    private static JavaGithubClient githubClient = new JavaGithubClient();
-    static {
+    private Map<TaskID, TaskScoreCounter> taskCounters = new HashMap<>();
+    private GithubClient githubClient;
+
+    {
         taskCounters.put(TaskID.SLIDES, new SlidesScoreCounter(githubClient));
+    }
+
+    public GeneralScoreCounter(GithubClient githubClient) {
+        this.githubClient = githubClient;
     }
 
     public long count(Solution solution) {

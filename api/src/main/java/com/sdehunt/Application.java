@@ -1,5 +1,7 @@
 package com.sdehunt;
 
+import com.sdehunt.commons.GithubClient;
+import com.sdehunt.commons.JavaGithubClient;
 import com.sdehunt.commons.params.HardCachedParameterService;
 import com.sdehunt.commons.params.ParameterService;
 import com.sdehunt.commons.params.SsmParameterService;
@@ -67,8 +69,13 @@ public class Application {
 
 
     @Bean
-    public GeneralScoreCounter generalScoreCounter(){
-        return new GeneralScoreCounter();
+    public GithubClient githubClient() {
+        return new JavaGithubClient();
+    }
+
+    @Bean
+    public GeneralScoreCounter generalScoreCounter(GithubClient githubClient) {
+        return new GeneralScoreCounter(githubClient);
     }
 
     @Bean
