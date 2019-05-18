@@ -18,13 +18,31 @@ public class SlidesScoreCounter implements TaskScoreCounter {
 
     private static final String INPUT_REPO = "AnatoliiStepaniuk/google_hash_code_2019";
     private static final String INPUT_BRANCH = "master";
-    private static final List<String> inputFiles = Arrays.asList("solutions/a_input.txt", "solutions/b_input.txt", "solutions/c_input.txt", "solutions/d_input.txt", "solutions/e_input.txt");
-    private static final List<String> solutionFiles = Arrays.asList("solutions/a_result.txt", "solutions/b_result.txt", "solutions/c_result.txt", "solutions/d_result.txt", "solutions/e_result.txt");
+    private List<String> inputFiles;
+    private List<String> solutionFiles;
 
     private final GithubClient githubClient;
 
     public SlidesScoreCounter(GithubClient githubClient) {
+        this(
+                githubClient,
+                Arrays.asList("solutions/a_input.txt", "solutions/b_input.txt", "solutions/c_input.txt", "solutions/d_input.txt", "solutions/e_input.txt"),
+                Arrays.asList("solutions/a_result.txt", "solutions/b_result.txt", "solutions/c_result.txt", "solutions/d_result.txt", "solutions/e_result.txt")
+        );
+    }
+
+    public SlidesScoreCounter(GithubClient githubClient, List<String> inputFiles, List<String> solutionFiles) {
         this.githubClient = githubClient;
+        this.inputFiles = inputFiles;
+        this.solutionFiles = solutionFiles;
+    }
+
+    public static SlidesScoreCounter test(GithubClient githubClient) {
+        return new SlidesScoreCounter(
+                githubClient,
+                Collections.singletonList("solutions/a_input.txt"),
+                Collections.singletonList("solutions/a_result.txt")
+        );
     }
 
     @Override

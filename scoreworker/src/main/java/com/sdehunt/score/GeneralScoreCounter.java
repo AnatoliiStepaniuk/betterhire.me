@@ -17,6 +17,7 @@ public class GeneralScoreCounter {
 
     public GeneralScoreCounter(GithubClient githubClient) {
         taskCounters.put(TaskID.SLIDES, new SlidesScoreCounter(githubClient));
+        taskCounters.put(TaskID.SLIDES_TEST, SlidesScoreCounter.test(githubClient));
     }
 
     public long count(Solution solution) {
