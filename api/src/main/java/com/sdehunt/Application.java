@@ -79,7 +79,11 @@ public class Application {
     }
 
     @Bean
-    public SolutionService solutionService(GeneralScoreCounter scoreCounter, SolutionRepository solutionRepository){
-        return new SolutionService(scoreCounter, solutionRepository);
+    public SolutionService solutionService(
+            GeneralScoreCounter scoreCounter,
+            SolutionRepository solutionRepository,
+            GithubClient githubClient
+    ) {
+        return new SolutionService(scoreCounter, solutionRepository, githubClient);
     }
 }

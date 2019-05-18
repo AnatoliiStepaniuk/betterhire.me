@@ -14,14 +14,9 @@ import java.util.Map;
 public class GeneralScoreCounter {
 
     private Map<TaskID, TaskScoreCounter> taskCounters = new HashMap<>();
-    private GithubClient githubClient;
-
-    {
-        taskCounters.put(TaskID.SLIDES, new SlidesScoreCounter(githubClient));
-    }
 
     public GeneralScoreCounter(GithubClient githubClient) {
-        this.githubClient = githubClient;
+        taskCounters.put(TaskID.SLIDES, new SlidesScoreCounter(githubClient));
     }
 
     public long count(Solution solution) {
