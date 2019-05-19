@@ -21,7 +21,7 @@ public class TaskController {
     @Autowired
     private TaskRepository tasks;
 
-    @RequestMapping(method = GET, path = "", produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(method = GET, path = "", produces = APPLICATION_JSON_VALUE) // TODO use field `enabled`
     public List<Task> getAll() {
         return tasks.getAll();
     }
@@ -31,14 +31,12 @@ public class TaskController {
         return tasks.get(taskId).orElse(null);
     }
 
-    @RequestMapping(method = POST, path = "")
-    public void create(@RequestBody TaskImpl task) { // TODO use createTaskDTO (without id)
-        tasks.create(task);
+    @RequestMapping(method = PUT, path = "/{taskId}")
+    public void update(@RequestBody TaskImpl task) { // TODO use DTO
+        tasks.update(task);
     }
 
-    // TODO add route for task update
-
-    @RequestMapping(method = DELETE, path = "/{taskId}")
+    @RequestMapping(method = DELETE, path = "/{taskId}") // TODO add field enabled
     public void delete(@PathVariable("taskId") String taskId) {
         tasks.delete(taskId);
     }

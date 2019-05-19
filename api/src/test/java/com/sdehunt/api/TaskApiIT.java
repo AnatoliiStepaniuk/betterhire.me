@@ -1,9 +1,12 @@
 package com.sdehunt.api;
 
 import com.sdehunt.commons.TaskID;
+import com.sdehunt.commons.model.Task;
 import com.sdehunt.commons.model.impl.TaskImpl;
+import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -15,21 +18,29 @@ public class TaskApiIT extends AbstractApiTest {
     private final static String TASKS_PATH = "/tasks/";
 
     @Test
-    public void crudTest() {
+    public void updateTaskTest() {
 
-        TaskID taskId = TaskID.SLIDES;
+        TaskID taskId = TaskID.SLIDES_TEST;
         String description = UUID.randomUUID().toString();
 
-        // Saving task
+        // Verify task is present
+        host().contentType(APP_JSON)
+                .get(TASKS_PATH + taskId.name().toLowerCase())
+                .then()
+                .log().ifValidationFails()
+                .statusCode(SUCCESS)
+                .body(not(isEmptyOrNullString()));
+
+        // Updating task
         host()
                 .body(new TaskImpl(taskId, description))
                 .contentType(APP_JSON)
-                .post(TASKS_PATH)
+                .put(TASKS_PATH + taskId.name().toLowerCase())
                 .then()
                 .statusCode(SUCCESS)
                 .body(isEmptyString());
 
-        // Verify created
+        // Verify updated
         host().contentType(APP_JSON)
                 .get(TASKS_PATH + taskId.name().toLowerCase())
                 .then()
@@ -39,35 +50,13 @@ public class TaskApiIT extends AbstractApiTest {
                 .body("description", is(description));
 
         // Getting all tasks
-        host().get(TASKS_PATH)
-                .then()
-                .log().ifValidationFails()
-                .statusCode(SUCCESS)
-                .body("size()", is(1))
-                .body("[0].id", equalToIgnoringCase(taskId.name()))
-                .body("[0].description", is(description))
-                .body("[0].created", notNullValue())
-                .body("[0].updated", notNullValue());
+        TaskImpl[] tasks = host().get(TASKS_PATH)
+                .as(TaskImpl[].class);
 
-        // Deleting task
-        host().delete(TASKS_PATH + taskId.name().toLowerCase())
-                .then()
-                .log().ifValidationFails()
-                .statusCode(SUCCESS);
-
-        // Verify created
-        host().contentType(APP_JSON)
-                .get(TASKS_PATH + taskId.name().toLowerCase())
-                .then()
-                .log().ifValidationFails()
-                .statusCode(SUCCESS) // TODO 404
-                .body(isEmptyString());
-
-        // Verify deleted (get all)
-        host().get(TASKS_PATH)
-                .then()
-                .statusCode(SUCCESS)
-                .log().ifValidationFails()
-                .body("size()", is(0));
+        Task foundTask = Arrays.stream(tasks)
+                .filter(t -> t.getId() == taskId)
+                .findFirst()
+                .orElseThrow();
+        Assert.assertEquals(description, foundTask.getDescription());
     }
 }

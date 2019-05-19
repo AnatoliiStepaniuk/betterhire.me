@@ -86,7 +86,7 @@ public class JdbiSolutionRepository implements SolutionRepository {
         public Solution map(ResultSet rs, StatementContext ctx) throws SQLException {
             return new SolutionImpl(
                     rs.getString("id"),
-                    TaskID.valueOf(rs.getString("task")),
+                    TaskID.valueOf(rs.getString("task").toUpperCase()),
                     rs.getString("user"),
                     rs.getString("repo"),
                     rs.getString("commit"),
