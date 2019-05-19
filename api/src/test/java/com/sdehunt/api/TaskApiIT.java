@@ -3,6 +3,7 @@ package com.sdehunt.api;
 import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.Task;
 import com.sdehunt.commons.model.impl.TaskImpl;
+import com.sdehunt.dto.UpdateTaskDTO;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -33,7 +34,7 @@ public class TaskApiIT extends AbstractApiTest {
 
         // Updating task
         host()
-                .body(new TaskImpl(taskId, description))
+                .body(new UpdateTaskDTO().setDescription(description))
                 .contentType(APP_JSON)
                 .put(TASKS_PATH + taskId.name().toLowerCase())
                 .then()
