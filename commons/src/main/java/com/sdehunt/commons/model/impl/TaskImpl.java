@@ -2,9 +2,11 @@ package com.sdehunt.commons.model.impl;
 
 import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.Task;
+import lombok.Data;
 
 import java.time.Instant;
 
+@Data
 public class TaskImpl implements Task{
 
     private TaskID id;

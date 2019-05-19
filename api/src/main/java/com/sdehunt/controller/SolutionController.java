@@ -30,12 +30,11 @@ public class SolutionController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public SolutionScoreDTO save(@PathVariable String taskId, @RequestBody SaveSolutionDTO solutionRequest) {
-        Solution solution = SolutionImpl.builder()
-                .userId(solutionRequest.getUserId())
-                .repo(solutionRequest.getRepo())
-                .commit(solutionRequest.getCommit())
-                .taskId(TaskID.of(taskId))
-                .build();
+        Solution solution = new SolutionImpl()
+                .setUserId(solutionRequest.getUserId())
+                .setRepo(solutionRequest.getRepo())
+                .setCommit(solutionRequest.getCommit())
+                .setTaskId(TaskID.of(taskId));
 
         return solutionService.calculateScoreAndSave(solution);
     }

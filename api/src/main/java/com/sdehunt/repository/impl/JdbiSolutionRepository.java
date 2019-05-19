@@ -84,15 +84,14 @@ public class JdbiSolutionRepository implements SolutionRepository {
     private class SolutionRowMapper implements RowMapper<Solution> {
         @Override
         public Solution map(ResultSet rs, StatementContext ctx) throws SQLException {
-            return new SolutionImpl(
-                    rs.getString("id"),
-                    TaskID.valueOf(rs.getString("task").toUpperCase()),
-                    rs.getString("user"),
-                    rs.getString("repo"),
-                    rs.getString("commit"),
-                    Long.valueOf(rs.getString("score")),
-                    Instant.ofEpochSecond(rs.getLong("created"))
-            );
+            return new SolutionImpl()
+                    .setId(rs.getString("id"))
+                    .setTaskId(TaskID.of(rs.getString("task")))
+                    .setUserId(rs.getString("user"))
+                    .setRepo(rs.getString("repo"))
+                    .setCommit(rs.getString("commit"))
+                    .setScore(Long.valueOf(rs.getString("score")))
+                    .setCreated(Instant.ofEpochSecond(rs.getLong("created")));
         }
     }
 }
