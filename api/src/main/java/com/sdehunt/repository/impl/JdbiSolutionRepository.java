@@ -2,7 +2,6 @@ package com.sdehunt.repository.impl;
 
 import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.Solution;
-import com.sdehunt.commons.model.impl.SolutionImpl;
 import com.sdehunt.repository.SolutionQuery;
 import com.sdehunt.repository.SolutionRepository;
 import org.jdbi.v3.core.Jdbi;
@@ -84,7 +83,7 @@ public class JdbiSolutionRepository implements SolutionRepository {
     private class SolutionRowMapper implements RowMapper<Solution> {
         @Override
         public Solution map(ResultSet rs, StatementContext ctx) throws SQLException {
-            return new SolutionImpl()
+            return new Solution()
                     .setId(rs.getString("id"))
                     .setTaskId(TaskID.of(rs.getString("task")))
                     .setUserId(rs.getString("user"))

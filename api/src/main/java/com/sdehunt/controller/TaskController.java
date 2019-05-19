@@ -2,7 +2,6 @@ package com.sdehunt.controller;
 
 import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.Task;
-import com.sdehunt.commons.model.impl.TaskImpl;
 import com.sdehunt.dto.UpdateTaskDTO;
 import com.sdehunt.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +35,7 @@ public class TaskController {
     @RequestMapping(method = PUT, path = "/{taskId}")
     public void update(@PathVariable("taskId") String taskId, @RequestBody UpdateTaskDTO updateTaskRequest) {
         tasks.update(
-                new TaskImpl()
+                new Task()
                         .setId(TaskID.of(taskId))
                         .setDescription(updateTaskRequest.getDescription())
         );

@@ -2,7 +2,6 @@ package com.sdehunt.repository.impl;
 
 import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.Task;
-import com.sdehunt.commons.model.impl.TaskImpl;
 import com.sdehunt.repository.TaskRepository;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.RowMapper;
@@ -61,12 +60,11 @@ public class JdbiTaskRepository implements TaskRepository {
     private class TaskRowMapper implements RowMapper<Task> {
         @Override
         public Task map(ResultSet rs, StatementContext ctx) throws SQLException {
-            return new TaskImpl(
-                    TaskID.valueOf(rs.getString("id").toUpperCase()),
-                    rs.getString("description"),
-                    Instant.ofEpochSecond(rs.getLong("created")),
-                    Instant.ofEpochSecond(rs.getLong("updated"))
-            );
+            return new Task()
+                    .setId(TaskID.of(rs.getString("id")))
+                    .setDescription(rs.getString("description"))
+                    .setCreated(Instant.ofEpochSecond(rs.getLong("created")))
+                    .setUpdated(Instant.ofEpochSecond(rs.getLong("updated")));
         }
     }
 }

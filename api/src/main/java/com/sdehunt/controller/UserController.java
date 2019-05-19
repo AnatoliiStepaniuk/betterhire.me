@@ -2,7 +2,6 @@ package com.sdehunt.controller;
 
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.User;
-import com.sdehunt.commons.model.impl.UserImpl;
 import com.sdehunt.dto.CreateUserDTO;
 import com.sdehunt.repository.SolutionRepository;
 import com.sdehunt.repository.UserRepository;
@@ -29,7 +28,7 @@ public class UserController {
 
     @RequestMapping(path = "", method = RequestMethod.POST)
     public User create(@RequestBody CreateUserDTO createUserRequest) {
-        User user = new UserImpl()
+        User user = new User()
                 .setEmail(createUserRequest.getEmail())
                 .setGithub(createUserRequest.getGithub())
                 .setLinkedIn(createUserRequest.getLinkedIn());
@@ -39,12 +38,12 @@ public class UserController {
 
     @RequestMapping(path = "/{userId}", method = RequestMethod.GET)
     public User get(@PathVariable("userId") String userId) { // TODO just return User, no need in that constructor
-        return users.get(userId).map(UserImpl::new).orElse(null);
+        return users.get(userId).orElse(null);
     }
 
     @RequestMapping(path = "/{userId}", method = RequestMethod.PUT)
     public User update(@PathVariable("userId") String userId, @RequestBody CreateUserDTO updateUserRequest) {
-        User user = new UserImpl()
+        User user = new User()
                 .setId(userId)
                 .setEmail(updateUserRequest.getEmail())
                 .setGithub(updateUserRequest.getGithub())

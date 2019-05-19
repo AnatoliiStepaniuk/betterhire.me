@@ -19,11 +19,10 @@ public class SolutionApiIT extends AbstractApiTest {
         String repo = "AnatoliiStepaniuk/google_hash_code_2019";
         String commit = "61f487523ad641cc6fffc44ded7537d94cf0d1eb";
 
-        SaveSolutionDTO solutionDTO = SaveSolutionDTO.builder()
-                .userId(userId)
-                .repo(repo)
-                .commit(commit)
-                .build();
+        SaveSolutionDTO solutionDTO = new SaveSolutionDTO()
+                .setUserId(userId)
+                .setRepo(repo)
+                .setCommit(commit);
 
         // Saving solution
         SolutionScoreDTO response = host().contentType(APP_JSON)

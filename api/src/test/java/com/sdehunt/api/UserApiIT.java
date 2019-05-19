@@ -1,7 +1,6 @@
 package com.sdehunt.api;
 
 import com.sdehunt.commons.model.User;
-import com.sdehunt.commons.model.impl.UserImpl;
 import com.sdehunt.dto.CreateUserDTO;
 import io.restassured.response.Response;
 import org.junit.Assert;
@@ -39,7 +38,7 @@ public class UserApiIT extends AbstractApiTest {
                 .body("github", is(github))
                 .body("linkedIn", is(linkedIn));
 
-        User user = response.as(UserImpl.class);
+        User user = response.as(User.class);
 
         host().get("/users/{userId}", user.getId())
                 .then().log().ifValidationFails()

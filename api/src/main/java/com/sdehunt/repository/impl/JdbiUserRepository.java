@@ -1,7 +1,6 @@
 package com.sdehunt.repository.impl;
 
 import com.sdehunt.commons.model.User;
-import com.sdehunt.commons.model.impl.UserImpl;
 import com.sdehunt.repository.UserRepository;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.RowMapper;
@@ -73,13 +72,13 @@ public class JdbiUserRepository implements UserRepository {
     private class UserRowMapper implements RowMapper<User> {
         @Override
         public User map(ResultSet rs, StatementContext ctx) throws SQLException {
-            return new UserImpl(
-                    rs.getString("id"),
-                    rs.getString("email"),
-                    rs.getString("github"),
-                    rs.getString("linkedin"),
-                    Instant.ofEpochSecond(rs.getLong("created")),
-                    Instant.ofEpochSecond(rs.getLong("updated"))
+            return new User()
+                    .setId(rs.getString("id"))
+                    .setEmail(rs.getString("email"))
+                    .setGithub(rs.getString("github"))
+                    .setLinkedIn(rs.getString("linkedin"))
+                    .setCreated(Instant.ofEpochSecond(rs.getLong("created")))
+                    .setUpdated(Instant.ofEpochSecond(rs.getLong("updated"))
             );
         }
     }

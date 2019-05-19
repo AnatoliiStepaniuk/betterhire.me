@@ -2,7 +2,6 @@ package com.sdehunt.api;
 
 import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.Task;
-import com.sdehunt.commons.model.impl.TaskImpl;
 import com.sdehunt.dto.UpdateTaskDTO;
 import org.junit.Assert;
 import org.junit.Test;
@@ -51,8 +50,8 @@ public class TaskApiIT extends AbstractApiTest {
                 .body("description", is(description));
 
         // Getting all tasks
-        TaskImpl[] tasks = host().get(TASKS_PATH)
-                .as(TaskImpl[].class);
+        Task[] tasks = host().get(TASKS_PATH)
+                .as(Task[].class);
 
         Task foundTask = Arrays.stream(tasks)
                 .filter(t -> t.getId() == taskId)

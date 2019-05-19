@@ -2,7 +2,6 @@ package com.sdehunt.controller;
 
 import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.Solution;
-import com.sdehunt.commons.model.impl.SolutionImpl;
 import com.sdehunt.dto.SaveSolutionDTO;
 import com.sdehunt.dto.SolutionScoreDTO;
 import com.sdehunt.repository.SolutionRepository;
@@ -30,7 +29,7 @@ public class SolutionController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public SolutionScoreDTO save(@PathVariable String taskId, @RequestBody SaveSolutionDTO solutionRequest) {
-        Solution solution = new SolutionImpl()
+        Solution solution = new Solution()
                 .setUserId(solutionRequest.getUserId())
                 .setRepo(solutionRequest.getRepo())
                 .setCommit(solutionRequest.getCommit())

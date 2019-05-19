@@ -35,9 +35,8 @@ public class SolutionService {
 
         String solutionId = solutionRepository.save(solution.setScore(score)); // TODO resolve commit (if master)
 
-        return SolutionScoreDTO.builder()
-                .solutionId(solutionId)
-                .score(score)
-                .build();
+        return new SolutionScoreDTO()
+                .setSolutionId(solutionId)
+                .setScore(score);
     }
 }
