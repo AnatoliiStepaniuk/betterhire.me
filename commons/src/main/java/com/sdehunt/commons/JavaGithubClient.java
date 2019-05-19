@@ -1,9 +1,11 @@
 package com.sdehunt.commons;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdehunt.commons.params.HardCachedParameterService;
 import com.sdehunt.commons.params.ParameterService;
 import com.sdehunt.commons.params.SsmParameterService;
+import lombok.Data;
 import lombok.SneakyThrows;
 
 import java.io.IOException;
@@ -14,6 +16,9 @@ import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * Client for Github repositories
@@ -24,23 +29,27 @@ public class JavaGithubClient implements GithubClient {
     private final static String API_DOMAIN = "https://api.github.com";
     private final static String REPOS = "repos";
     private final static String COMMITS = "commits";
-    private static final String ACCESS_TOKEN = "GITHUB_ACCESS_TOKEN"; //  TODO autowired?
-    private static final ParameterService params = new HardCachedParameterService(new SsmParameterService());
-    private final HttpClient client = HttpClient.newHttpClient(); // TODO autowired?
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final static String BRANCHES = "branches";
+    private static final String ACCESS_TOKEN = "GITHUB_ACCESS_TOKEN";
+    private final ParameterService params;
+    private final HttpClient client;
+    private final ObjectMapper objectMapper;
+
+    public JavaGithubClient() {
+        this.client = HttpClient.newHttpClient(); // TODO autowired?
+        this.objectMapper = new ObjectMapper()
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        this.params = new HardCachedParameterService(new SsmParameterService());
+    }
 
     @SneakyThrows
     public void download(String repo, String commit, String file) {
         URI uri = new URI(RAW_DOMAIN + "/" + repo + "/" + commit + "/" + file);
-        HttpRequest request = HttpRequest.newBuilder()
-                .header("Authorization", "token " + params.get(ACCESS_TOKEN))
-                .uri(uri)
-                .build();
 
-        HttpResponse<Path> response = client.send(request, HttpResponse.BodyHandlers.ofFile(createFile(file)));
+        HttpResponse<Path> response = client.send(buildRequest(uri), HttpResponse.BodyHandlers.ofFile(createFile(file)));
 
         if (response.statusCode() == 503) { // Rarely reproduced issue of returning 503 status code
-            response = client.send(request, HttpResponse.BodyHandlers.ofFile(createFile(file)));
+            response = client.send(buildRequest(uri), HttpResponse.BodyHandlers.ofFile(createFile(file)));
         }
 
         if (response.statusCode() != 200) {
@@ -52,11 +61,7 @@ public class JavaGithubClient implements GithubClient {
     public String getCommit(String repo, String branch) {
         try {
             URI uri = new URI(API_DOMAIN + "/" + REPOS + "/" + repo + "/" + COMMITS + "/" + branch);
-            HttpRequest request = HttpRequest.newBuilder()
-                    .header("Authorization", "token " + params.get(ACCESS_TOKEN)) // TODo caching
-                    .uri(uri)
-                    .build();
-            HttpResponse<byte[]> response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+            HttpResponse<byte[]> response = client.send(buildRequest(uri), HttpResponse.BodyHandlers.ofByteArray());
 
             if (response.statusCode() != 200) {
                 throw new RuntimeException("Status code " + response.statusCode() + " for URI " + uri);
@@ -67,10 +72,47 @@ public class JavaGithubClient implements GithubClient {
         }
     }
 
+    @Override
+    public Collection<String> getBranches(String repo) {
+        try {
+            URI uri = new URI(API_DOMAIN + "/" + REPOS + "/" + repo + "/" + BRANCHES);
+
+            HttpResponse<byte[]> response = client.send(buildRequest(uri), HttpResponse.BodyHandlers.ofByteArray());
+
+            if (response.statusCode() != 200) {
+                throw new RuntimeException("Status code " + response.statusCode() + " for URI " + uri);
+            }
+            return Arrays.stream(objectMapper.readValue(response.body(), BranchResponse[].class))
+                    .map(BranchResponse::getName)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private HttpRequest buildRequest(URI uri) {
+        return HttpRequest.newBuilder()
+                .header("Authorization", "token " + params.get(ACCESS_TOKEN))
+                .uri(uri)
+                .build();
+    }
+
     private Path createFile(String file) throws IOException {
         if (Files.exists(Paths.get(FileUtils.fileName(file)))) {
             Files.delete(Paths.get(FileUtils.fileName(file)));
         }
         return Files.createFile(Paths.get(FileUtils.fileName(file)));
+    }
+
+    @Data
+    private static class BranchResponse {
+        private String name;
+        private CommitResponse commit;
+    }
+
+    @Data
+    private static class CommitResponse {
+        private String sha;
+        private String url;
     }
 }

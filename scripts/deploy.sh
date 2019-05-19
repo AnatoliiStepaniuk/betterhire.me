@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 mvn clean install
 cd api
 mvn clean package

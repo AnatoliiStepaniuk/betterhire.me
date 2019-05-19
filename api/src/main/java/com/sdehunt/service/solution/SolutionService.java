@@ -26,14 +26,14 @@ public class SolutionService {
 
     public SolutionScoreDTO calculateScoreAndSave(Solution solution) {
 
-        if (solution.getCommit().equalsIgnoreCase("master")) { // TODO better create method isBranch
+        if (githubClient.isBranch(solution.getRepo(), solution.getCommit())) {
             String commit = githubClient.getCommit(solution.getRepo(), solution.getCommit());
             solution.setCommit(commit);
         }
 
         long score = scoreCounter.count(solution);
 
-        String solutionId = solutionRepository.save(solution.setScore(score)); // TODO resolve commit (if master)
+        String solutionId = solutionRepository.save(solution.setScore(score));
 
         return new SolutionScoreDTO()
                 .setSolutionId(solutionId)
