@@ -89,7 +89,6 @@ public class UserApiIT extends AbstractApiTest {
 
         host().get("/users/{userId}", user.getId())
                 .then().log().ifValidationFails()
-                .statusCode(SUCCESS)
-                .body(isEmptyString());
+                .statusCode(NOT_FOUND);
     }
 }

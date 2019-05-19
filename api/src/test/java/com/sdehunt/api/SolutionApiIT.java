@@ -7,7 +7,8 @@ import org.junit.Test;
 
 import java.util.UUID;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.core.Is.is;
 
 public class SolutionApiIT extends AbstractApiTest {
@@ -69,8 +70,7 @@ public class SolutionApiIT extends AbstractApiTest {
         // Verify delete
         host().get("/solutions/" + id)
                 .then().log().ifValidationFails()
-                .statusCode(SUCCESS)
-                .body(isEmptyString());
+                .statusCode(NOT_FOUND);
 
         // Verify delete (query)
         host().get("/tasks/{taskId}/solutions?userId=" + userId, taskId.name().toLowerCase())

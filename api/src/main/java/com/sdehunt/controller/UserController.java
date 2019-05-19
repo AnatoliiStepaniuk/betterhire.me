@@ -3,6 +3,7 @@ package com.sdehunt.controller;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.User;
 import com.sdehunt.dto.CreateUserDTO;
+import com.sdehunt.exception.UserNotFoundException;
 import com.sdehunt.repository.SolutionRepository;
 import com.sdehunt.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +38,8 @@ public class UserController {
     }
 
     @RequestMapping(path = "/{userId}", method = RequestMethod.GET)
-    public User get(@PathVariable("userId") String userId) { // TODO just return User, no need in that constructor
-        return users.get(userId).orElse(null);
+    public User get(@PathVariable("userId") String userId) {
+        return users.get(userId).orElseThrow(UserNotFoundException::new);
     }
 
     @RequestMapping(path = "/{userId}", method = RequestMethod.PUT)

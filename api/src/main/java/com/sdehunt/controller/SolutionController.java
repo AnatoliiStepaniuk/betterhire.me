@@ -4,6 +4,7 @@ import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.dto.SaveSolutionDTO;
 import com.sdehunt.dto.SolutionScoreDTO;
+import com.sdehunt.exception.SolutionNotFoundException;
 import com.sdehunt.repository.SolutionRepository;
 import com.sdehunt.repository.impl.SolutionQueryImpl;
 import com.sdehunt.service.solution.SolutionService;
@@ -40,7 +41,7 @@ public class SolutionController {
 
     @RequestMapping(method = RequestMethod.GET, path = "/solutions/{solutionId}")
     public Solution get(@PathVariable String solutionId) {
-        return solutions.get(solutionId).orElse(null);
+        return solutions.get(solutionId).orElseThrow(SolutionNotFoundException::new);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, path = "/solutions/{solutionId}")

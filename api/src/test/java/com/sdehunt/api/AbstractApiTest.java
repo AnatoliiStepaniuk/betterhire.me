@@ -9,6 +9,7 @@ public abstract class AbstractApiTest {
     protected final static int PORT = 8080;// TODO would be nice to set it to 80 on verify.sh script
     protected final static String APP_JSON = "application/json";
     protected final static int SUCCESS = 200;
+    protected final static int NOT_FOUND = 404;
 
     protected RequestSpecification host() {
         return given().baseUri(BASE_URI).port(PORT).log().ifValidationFails();

@@ -3,6 +3,7 @@ package com.sdehunt.controller;
 import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.Task;
 import com.sdehunt.dto.UpdateTaskDTO;
+import com.sdehunt.exception.TaskNotFoundException;
 import com.sdehunt.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,7 +30,7 @@ public class TaskController {
 
     @RequestMapping(method = GET, path = "/{taskId}", produces = APPLICATION_JSON_VALUE)
     public Task get(@PathVariable("taskId") String taskId) {
-        return tasks.get(taskId).orElse(null);
+        return tasks.get(taskId).orElseThrow(TaskNotFoundException::new);
     }
 
     @RequestMapping(method = PUT, path = "/{taskId}")
