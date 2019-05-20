@@ -35,6 +35,7 @@ public class JavaGithubClient implements GithubClient {
     private final HttpClient client;
     private final ObjectMapper objectMapper;
 
+
     public JavaGithubClient() {
         this.client = HttpClient.newHttpClient(); // TODO autowired?
         this.objectMapper = new ObjectMapper()
@@ -46,10 +47,15 @@ public class JavaGithubClient implements GithubClient {
     public void download(String repo, String commit, String file) {
         URI uri = new URI(RAW_DOMAIN + "/" + repo + "/" + commit + "/" + file);
 
+        // TODO replace with logger
+        System.out.println(String.format("Downloading file %s of repo %s for commit %s", file, repo, commit));
         HttpResponse<Path> response = client.send(buildRequest(uri), HttpResponse.BodyHandlers.ofFile(createFile(file)));
+        System.out.println(String.format("Downloaded file %s of repo %s for commit %s", file, repo, commit));
 
         if (response.statusCode() == 503) { // Rarely reproduced issue of returning 503 status code
+            System.out.println(String.format("Second attempt to download file %s of repo %s for commit %s", file, repo, commit));
             response = client.send(buildRequest(uri), HttpResponse.BodyHandlers.ofFile(createFile(file)));
+            System.out.println(String.format("Download file %s of repo %s for commit %s from second attempt", file, repo, commit));
         }
 
         if (response.statusCode() != 200) {
