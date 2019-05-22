@@ -6,7 +6,7 @@ import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;
 
-import java.sql.Connection;
+import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
@@ -20,8 +20,8 @@ public class JdbiUserRepository implements UserRepository {
     private final static String TABLE = "`sdehunt_db`.`user`";
     private Jdbi jdbi;
 
-    public JdbiUserRepository(Connection connection) {
-        this.jdbi = Jdbi.create(connection);
+    public JdbiUserRepository(DataSource dataSource) {
+        this.jdbi = Jdbi.create(dataSource);
     }
 
     @Override
@@ -41,7 +41,8 @@ public class JdbiUserRepository implements UserRepository {
     public Optional<User> get(String userId) {
         return jdbi.withHandle(
                 db -> db.select(format("SELECT * FROM %s WHERE id = ?", TABLE), userId)
-        ).map(new UserRowMapper()).findFirst();
+                        .map(new UserRowMapper()).findFirst()
+        );
     }
 
     @Override
@@ -66,7 +67,8 @@ public class JdbiUserRepository implements UserRepository {
     public Collection<User> getAll() {
         return jdbi.withHandle(
                 db -> db.select(format("SELECT * FROM %s", TABLE))
-        ).map(new UserRowMapper()).list();
+                        .map(new UserRowMapper()).list()
+        );
     }
 
     private class UserRowMapper implements RowMapper<User> {
@@ -79,7 +81,7 @@ public class JdbiUserRepository implements UserRepository {
                     .setLinkedIn(rs.getString("linkedin"))
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")))
                     .setUpdated(Instant.ofEpochSecond(rs.getLong("updated"))
-            );
+                    );
         }
     }
 }

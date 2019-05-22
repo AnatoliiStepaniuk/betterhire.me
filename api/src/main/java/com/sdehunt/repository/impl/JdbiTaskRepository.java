@@ -7,7 +7,7 @@ import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;
 
-import java.sql.Connection;
+import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
@@ -21,22 +21,23 @@ public class JdbiTaskRepository implements TaskRepository {
     private final static String TABLE = "`sdehunt_db`.`task`";
     private Jdbi jdbi;
 
-    public JdbiTaskRepository(Connection connection) {
-        this.jdbi = Jdbi.create(connection);
+    public JdbiTaskRepository(DataSource dataSource) {
+        this.jdbi = Jdbi.create(dataSource);
     }
 
     @Override
     public List<Task> getAll() {
-        return jdbi.withHandle(db -> db.select(format("SELECT * FROM %s", TABLE)))
-                .map(new TaskRowMapper())
-                .list();
+        return jdbi.withHandle(
+                db -> db.select(format("SELECT * FROM %s", TABLE)).map(new TaskRowMapper()).list()
+        );
     }
 
     @Override
     public Optional<Task> get(String id) {
-        return jdbi.withHandle(db -> db.select(format("SELECT * FROM %s WHERE id = ?", TABLE), id))
-                .map(new TaskRowMapper())
-                .findFirst();
+        return jdbi.withHandle(
+                db -> db.select(format("SELECT * FROM %s WHERE id = ?", TABLE), id)
+                        .map(new TaskRowMapper()).findFirst()
+        );
     }
 
     @Override

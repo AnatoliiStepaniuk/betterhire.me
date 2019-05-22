@@ -13,7 +13,7 @@ import com.sdehunt.repository.impl.JdbiTaskRepository;
 import com.sdehunt.repository.impl.JdbiUserRepository;
 import com.sdehunt.score.GeneralScoreCounter;
 import com.sdehunt.service.solution.SolutionService;
-import com.sdehunt.util.ConnectionHelper;
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -23,7 +23,7 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import java.sql.Connection;
+import javax.sql.DataSource;
 
 @EnableSwagger2
 @SpringBootApplication
@@ -48,25 +48,19 @@ public class Application {
     }
 
     @Bean
-    public Connection connection() {
-        return ConnectionHelper.getDBConnection();
+    public TaskRepository taskRepository(DataSource dataSource) {
+        return new JdbiTaskRepository(dataSource);
     }
 
     @Bean
-    public TaskRepository taskRepository(Connection connection) {
-        return new JdbiTaskRepository(connection);
+    public SolutionRepository solutionRepository(DataSource dataSource) {
+        return new JdbiSolutionRepository(dataSource);
     }
 
     @Bean
-    public SolutionRepository solutionRepository(Connection connection) {
-        return new JdbiSolutionRepository(connection);
+    public UserRepository userRepository(DataSource dataSource) {
+        return new JdbiUserRepository(dataSource);
     }
-
-    @Bean
-    public UserRepository userRepository(Connection connection) {
-        return new JdbiUserRepository(connection);
-    }
-
 
     @Bean
     public GithubClient githubClient() {
@@ -86,4 +80,19 @@ public class Application {
     ) {
         return new SolutionService(scoreCounter, solutionRepository, githubClient);
     }
+
+    @Bean
+    public ParameterService params() {
+        return new HardCachedParameterService(new SsmParameterService());
+    }
+
+    @Bean
+    public DataSource dataSource(ParameterService params) {
+        HikariDataSource dataSource = new HikariDataSource();
+        dataSource.setJdbcUrl("jdbc:mysql://" + params.get("RDS_HOST") + ":" + params.get("RDS_PORT") + "?useSSL=true&verifyServerCertificate=true");
+        dataSource.setUsername(params.get("RDS_USER"));
+        dataSource.setPassword(params.get("RDS_PASSWORD"));
+        return dataSource;
+    }
+
 }

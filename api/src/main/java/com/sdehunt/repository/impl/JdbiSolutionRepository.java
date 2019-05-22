@@ -8,7 +8,7 @@ import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;
 
-import java.sql.Connection;
+import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
@@ -25,8 +25,8 @@ public class JdbiSolutionRepository implements SolutionRepository {
 
     private Jdbi jdbi;
 
-    public JdbiSolutionRepository(Connection connection) {
-        this.jdbi = Jdbi.create(connection);
+    public JdbiSolutionRepository(DataSource dataSource) {
+        this.jdbi = Jdbi.create(dataSource);
     }
 
     @Override
@@ -48,7 +48,8 @@ public class JdbiSolutionRepository implements SolutionRepository {
     public Optional<Solution> get(String id) {
         return jdbi.withHandle(
                 db -> db.select(format("SELECT * FROM %s WHERE id = ?", TABLE), id)
-        ).map(new SolutionRowMapper()).findFirst();
+                        .map(new SolutionRowMapper()).findFirst()
+        );
     }
 
     @Override
@@ -76,8 +77,8 @@ public class JdbiSolutionRepository implements SolutionRepository {
 
         String finalSql = sql;
         return jdbi.withHandle(
-                handle -> handle.select(finalSql, params.toArray())
-        ).map(new SolutionRowMapper()).list();
+                handle -> handle.select(finalSql, params.toArray()).map(new SolutionRowMapper()).list()
+        );
     }
 
     private class SolutionRowMapper implements RowMapper<Solution> {
