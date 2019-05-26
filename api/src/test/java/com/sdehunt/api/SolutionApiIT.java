@@ -79,4 +79,42 @@ public class SolutionApiIT extends AbstractApiTest {
                 .body("size()", is(0));
     }
 
+
+    @Test
+    public void invalidInputTest() {
+        TaskID taskId = TaskID.SLIDES_TEST;
+        String userId = UUID.randomUUID().toString();
+        String repo = "AnatoliiStepaniuk/google_hash_code_2019";
+        String commit = "61f487523ad641cc6fffc44ded7537d94cf0d1eb";
+        String invalidRepo = "invalid_repo";
+        String invalidCommit = "invalid_commit";
+
+        // Verify invalid Repo response
+
+        SaveSolutionDTO invalidRepoDTO = new SaveSolutionDTO()
+                .setUserId(userId)
+                .setRepo(invalidRepo)
+                .setCommit(commit);
+
+        host().contentType(APP_JSON)
+                .body(invalidRepoDTO)
+                .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
+                .then()
+                .statusCode(NOT_FOUND);
+
+        // Verify invalid Commit response
+
+        SaveSolutionDTO invalidCommitDTO = new SaveSolutionDTO()
+                .setUserId(userId)
+                .setRepo(repo)
+                .setCommit(invalidCommit);
+
+        host().contentType(APP_JSON)
+                .body(invalidCommitDTO)
+                .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
+                .then()
+                .statusCode(NOT_FOUND);
+
+    }
+
 }

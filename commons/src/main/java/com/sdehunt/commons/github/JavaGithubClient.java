@@ -74,35 +74,36 @@ public class JavaGithubClient implements GithubClient {
     }
 
     @Override
+    @SneakyThrows({IOException.class, URISyntaxException.class, InterruptedException.class})
     public String getCommit(String repo, String branch) {
-        try {
-            URI uri = new URI(API_DOMAIN + "/" + REPOS + "/" + repo + "/" + COMMITS + "/" + branch);
-            HttpResponse<byte[]> response = client.send(buildRequest(uri), HttpResponse.BodyHandlers.ofByteArray());
+        URI uri = new URI(API_DOMAIN + "/" + REPOS + "/" + repo + "/" + COMMITS + "/" + branch);
+        logger.debug(String.format("Fetching commits for repo %s and branch %s", repo, branch));
+        HttpResponse<byte[]> response = client.send(buildRequest(uri), HttpResponse.BodyHandlers.ofByteArray());
+        logger.debug(String.format("Received response %d for commits request for repo %s and branch %s", response.statusCode(), repo, branch));
 
-            if (response.statusCode() != 200) {
-                throw new RuntimeException("Status code " + response.statusCode() + " for URI " + uri);
-            }
-            return objectMapper.readValue(response.body(), SimpleCommit.class).getSha();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        if (response.statusCode() != 200) {
+            throw new RuntimeException("Status code " + response.statusCode() + " for URI " + uri);
         }
+        return objectMapper.readValue(response.body(), SimpleCommit.class).getSha();
     }
 
     @Override
     @SneakyThrows({IOException.class, URISyntaxException.class, InterruptedException.class})
     public Collection<String> getBranches(String repo) throws RepositoryNotFoundException {
-            URI uri = new URI(API_DOMAIN + "/" + REPOS + "/" + repo + "/" + BRANCHES);
+        URI uri = new URI(API_DOMAIN + "/" + REPOS + "/" + repo + "/" + BRANCHES);
 
-            HttpResponse<byte[]> response = client.send(buildRequest(uri), HttpResponse.BodyHandlers.ofByteArray());
+        logger.debug(String.format("Fetching branches for repo %s", repo));
+        HttpResponse<byte[]> response = client.send(buildRequest(uri), HttpResponse.BodyHandlers.ofByteArray());
+        logger.debug(String.format("Received response %d for branches request for repo %s", response.statusCode(), repo));
         if (response.statusCode() == 404) {
             throw new RepositoryNotFoundException(repo);
         }
-            if (response.statusCode() != 200) {
-                throw new RuntimeException("Status code " + response.statusCode() + " for URI " + uri);
-            }
-            return Arrays.stream(objectMapper.readValue(response.body(), BranchResponse[].class))
-                    .map(BranchResponse::getName)
-                    .collect(Collectors.toList());
+        if (response.statusCode() != 200) {
+            throw new RuntimeException("Status code " + response.statusCode() + " for URI " + uri);
+        }
+        return Arrays.stream(objectMapper.readValue(response.body(), BranchResponse[].class))
+                .map(BranchResponse::getName)
+                .collect(Collectors.toList());
 
     }
 
