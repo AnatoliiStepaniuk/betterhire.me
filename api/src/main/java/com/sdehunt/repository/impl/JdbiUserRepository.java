@@ -53,7 +53,7 @@ public class JdbiUserRepository implements UserRepository {
                         user.getEmail(), user.getGithub(), user.getLinkedIn(), Instant.now().getEpochSecond(), user.getId())
         );
 
-        return get(user.getId()).orElse(null); // TODO throw exception if not found
+        return get(user.getId()).orElse(null); // TODO  throw exception if not found
     }
 
     @Override

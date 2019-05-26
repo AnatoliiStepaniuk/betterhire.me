@@ -23,7 +23,6 @@ public class SolutionController {
     @Autowired
     private SolutionService solutionService;
 
-    // TODO return 400 for invalid request (wrong repo or solutions folder).
     @RequestMapping(
             method = RequestMethod.POST, path = "/tasks/{taskId}/solutions",
             consumes = MediaType.APPLICATION_JSON_VALUE,

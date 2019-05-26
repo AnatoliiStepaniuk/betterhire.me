@@ -75,10 +75,10 @@ public class SlidesScoreCounter implements TaskScoreCounter {
     } // TODO add unit tests
 
     private Set<String> getTags(Map<Integer, Picture> pictures, String line) {
-        if (line.split(" ").length == 2) {
+        if (line.split(" ").length == 2) { // TODO separate method
             Integer firstIndex = Integer.valueOf(line.split(" ")[0]);
             Integer secondIndex = Integer.valueOf(line.split(" ")[1]);
-            //verifyBothVertical(pictures.get(firstIndex), pictures.get(secondIndex)); // TODO uncomment
+            verifyBothVertical(pictures.get(firstIndex), pictures.get(secondIndex));
             Set<String> allTags = new HashSet<>();
             allTags.addAll(pictures.get(firstIndex).getTags());
             allTags.addAll(pictures.get(secondIndex).getTags());
