@@ -17,6 +17,8 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.spi.DocumentationType;
@@ -27,7 +29,7 @@ import javax.sql.DataSource;
 
 @EnableSwagger2
 @SpringBootApplication
-public class Application {
+public class Application implements WebMvcConfigurer {
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
@@ -95,4 +97,13 @@ public class Application {
         return dataSource;
     }
 
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("*")
+                .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(true)
+                .maxAge(3600);
+    }
 }
