@@ -1,0 +1,21 @@
+version: '3'
+services:
+  backend:
+    image: sdehuntdeveloper/sdehunt:latest
+    networks:
+      - mt-network
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - ~/.aws:/.aws
+  frontend:
+    image: sdehuntdeveloper/sdehunt_client:latest
+    networks:
+      - mt-network
+    restart: always
+    ports:
+      - "3001:3000"
+networks:
+  mt-network:
+    driver: bridge
