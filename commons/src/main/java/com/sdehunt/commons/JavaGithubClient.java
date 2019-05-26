@@ -37,7 +37,7 @@ public class JavaGithubClient implements GithubClient {
 
 
     public JavaGithubClient() {
-        this.client = HttpClient.newHttpClient(); // TODO autowired?
+        this.client = HttpClient.newHttpClient();
         this.objectMapper = new ObjectMapper()
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         this.params = new HardCachedParameterService(new SsmParameterService());

@@ -10,7 +10,7 @@ public class SsmParameterService implements ParameterService {
     private final AWSSimpleSystemsManagement ssm = AWSSimpleSystemsManagementClientBuilder
             .standard()
             .withCredentials(new ProfileCredentialsProvider(".aws/credentials", null))
-            .withRegion("eu-central-1") // TODO take from config
+            .withRegion("eu-central-1")
             .build();
 
     @Override
