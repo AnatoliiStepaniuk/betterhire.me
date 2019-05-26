@@ -1,7 +1,11 @@
-package com.sdehunt.commons;
+package com.sdehunt.commons.github;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sdehunt.commons.FileUtils;
+import com.sdehunt.commons.SimpleCommit;
+import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
+import com.sdehunt.commons.github.exceptions.RepositoryNotFoundException;
 import com.sdehunt.commons.params.HardCachedParameterService;
 import com.sdehunt.commons.params.ParameterService;
 import com.sdehunt.commons.params.SsmParameterService;
@@ -12,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -46,23 +51,26 @@ public class JavaGithubClient implements GithubClient {
         this.logger = LoggerFactory.getLogger(JavaGithubClient.class);
     }
 
-    @SneakyThrows
-    public void download(String repo, String commit, String file) {
+    @SneakyThrows({IOException.class, URISyntaxException.class, InterruptedException.class})
+    public void download(String repo, String commit, String file) throws CommitOrFileNotFoundException {
         URI uri = new URI(RAW_DOMAIN + "/" + repo + "/" + commit + "/" + file);
 
         logger.debug(String.format("Downloading file %s of repo %s for commit %s", file, repo, commit));
         HttpResponse<Path> response = client.send(buildRequest(uri), HttpResponse.BodyHandlers.ofFile(createFile(file)));
-        logger.debug(String.format("Downloaded file %s of repo %s for commit %s", file, repo, commit));
 
         if (response.statusCode() == 503) { // Rarely reproduced issue of returning 503 status code
             logger.warn(String.format("Second attempt to download file %s of repo %s for commit %s", file, repo, commit));
             response = client.send(buildRequest(uri), HttpResponse.BodyHandlers.ofFile(createFile(file)));
-            logger.warn(String.format("Download file %s of repo %s for commit %s from second attempt", file, repo, commit));
+        }
+
+        if (response.statusCode() == 404) {
+            throw new CommitOrFileNotFoundException();
         }
 
         if (response.statusCode() != 200) {
             throw new RuntimeException("Status code " + response.statusCode() + " for URI " + uri);
         }
+        logger.debug(String.format("Downloaded file %s of repo %s for commit %s", file, repo, commit));
     }
 
     @Override
@@ -81,21 +89,21 @@ public class JavaGithubClient implements GithubClient {
     }
 
     @Override
-    public Collection<String> getBranches(String repo) {
-        try {
+    @SneakyThrows({IOException.class, URISyntaxException.class, InterruptedException.class})
+    public Collection<String> getBranches(String repo) throws RepositoryNotFoundException {
             URI uri = new URI(API_DOMAIN + "/" + REPOS + "/" + repo + "/" + BRANCHES);
 
             HttpResponse<byte[]> response = client.send(buildRequest(uri), HttpResponse.BodyHandlers.ofByteArray());
-
+        if (response.statusCode() == 404) {
+            throw new RepositoryNotFoundException(repo);
+        }
             if (response.statusCode() != 200) {
                 throw new RuntimeException("Status code " + response.statusCode() + " for URI " + uri);
             }
             return Arrays.stream(objectMapper.readValue(response.body(), BranchResponse[].class))
                     .map(BranchResponse::getName)
                     .collect(Collectors.toList());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+
     }
 
     private HttpRequest buildRequest(URI uri) {

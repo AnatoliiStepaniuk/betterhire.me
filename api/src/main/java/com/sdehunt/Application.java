@@ -1,7 +1,7 @@
 package com.sdehunt;
 
-import com.sdehunt.commons.GithubClient;
-import com.sdehunt.commons.JavaGithubClient;
+import com.sdehunt.commons.github.GithubClient;
+import com.sdehunt.commons.github.JavaGithubClient;
 import com.sdehunt.commons.params.HardCachedParameterService;
 import com.sdehunt.commons.params.ParameterService;
 import com.sdehunt.commons.params.SsmParameterService;

@@ -1,7 +1,8 @@
 package com.sdehunt.score.slides;
 
 import com.sdehunt.commons.FileUtils;
-import com.sdehunt.commons.GithubClient;
+import com.sdehunt.commons.github.GithubClient;
+import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
 import com.sdehunt.score.TaskScoreCounter;
 
 import java.io.IOException;
@@ -26,7 +27,7 @@ public class SlidesScoreCounter implements TaskScoreCounter {
     public SlidesScoreCounter(GithubClient githubClient) {
         this(
                 githubClient,
-                Arrays.asList("solutions/a_input.txt", "solutions/b_input.txt", "solutions/c_input.txt", "solutions/d_input.txt", "solutions/e_input.txt"),
+                Arrays.asList("input/a_input.txt", "input/b_input.txt", "input/c_input.txt", "input/d_input.txt", "input/e_input.txt"),
                 Arrays.asList("solutions/a_result.txt", "solutions/b_result.txt", "solutions/c_result.txt", "solutions/d_result.txt", "solutions/e_result.txt")
         );
     }
@@ -40,15 +41,15 @@ public class SlidesScoreCounter implements TaskScoreCounter {
     public static SlidesScoreCounter test(GithubClient githubClient) {
         return new SlidesScoreCounter(
                 githubClient,
-                Collections.singletonList("solutions/a_input.txt"),
+                Collections.singletonList("input/a_input.txt"),
                 Collections.singletonList("solutions/a_result.txt")
         );
     }
 
     @Override
-    public long count(String repo, String commit) {
+    public long count(String repo, String commit) throws CommitOrFileNotFoundException {
 
-        for (String f : inputFiles) { // TODO it once
+        for (String f : inputFiles) { // TODO it once CACHE IT SOMEHOW
             githubClient.download(INPUT_REPO, INPUT_BRANCH, f);// TODO name files so that it does not clunch with files for other tasks
         }
         for (String f : solutionFiles) {

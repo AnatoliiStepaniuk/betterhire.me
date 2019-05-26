@@ -1,7 +1,8 @@
 package com.sdehunt.score;
 
-import com.sdehunt.commons.GithubClient;
 import com.sdehunt.commons.TaskID;
+import com.sdehunt.commons.github.GithubClient;
+import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.score.slides.SlidesScoreCounter;
 
@@ -20,7 +21,7 @@ public class GeneralScoreCounter {
         taskCounters.put(TaskID.SLIDES_TEST, SlidesScoreCounter.test(githubClient));
     }
 
-    public long count(Solution solution) {
+    public long count(Solution solution) throws CommitOrFileNotFoundException {
         return taskCounters.get(solution.getTaskId()).count(solution.getRepo(), solution.getCommit());
     }
 }
