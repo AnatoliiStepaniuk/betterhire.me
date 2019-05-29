@@ -11,6 +11,7 @@ services:
       - ~/.aws:/.aws
   frontend:
     image: sdehuntdeveloper/sdehunt_client:latest
+    env_file: environment.properties
     networks:
       - mt-network
     restart: always

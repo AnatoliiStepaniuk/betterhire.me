@@ -8,8 +8,8 @@ import java.time.Instant;
 @Data
 public class Task {
 
-    private TaskID id;
-    private String description;
+    private TaskID id;// TODO add name
+    private String description; // TODO add short description
     private Instant created;
     private Instant updated;
 
