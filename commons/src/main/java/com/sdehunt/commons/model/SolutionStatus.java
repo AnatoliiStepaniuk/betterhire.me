@@ -4,5 +4,6 @@ public enum SolutionStatus {
     ACCEPTED,
     IN_PROGRESS,
     INVALID_FILES,
-    TIMEOUT
+    TIMEOUT,
+    ERROR
 }

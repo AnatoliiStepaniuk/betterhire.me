@@ -78,9 +78,10 @@ public class Application implements WebMvcConfigurer {
     public SolutionService solutionService(
             GeneralScoreCounter scoreCounter,
             SolutionRepository solutionRepository,
-            GithubClient githubClient
+            GithubClient githubClient,
+            ParameterService params
     ) {
-        return new SolutionService(scoreCounter, solutionRepository, githubClient);
+        return new SolutionService(scoreCounter, solutionRepository, githubClient, params);
     }
 
     @Bean

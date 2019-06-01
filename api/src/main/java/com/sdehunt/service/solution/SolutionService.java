@@ -1,15 +1,18 @@
 package com.sdehunt.service.solution;
 
 import com.sdehunt.commons.github.GithubClient;
+import com.sdehunt.commons.github.JavaGithubClient;
 import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
 import com.sdehunt.commons.github.exceptions.RepositoryNotFoundException;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.SolutionStatus;
+import com.sdehunt.commons.params.ParameterService;
 import com.sdehunt.repository.SolutionRepository;
 import com.sdehunt.score.GeneralScoreCounter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 public class SolutionService {
 
@@ -19,17 +22,22 @@ public class SolutionService {
 
     private GithubClient githubClient;
 
-    private Executor executor;
+    private final Logger logger;
+    private ExecutorService executor;
+    private ParameterService params;
 
     public SolutionService(
             GeneralScoreCounter scoreCounter,
             SolutionRepository solutionRepository,
-            GithubClient githubClient
+            GithubClient githubClient,
+            ParameterService params
     ) {
         this.scoreCounter = scoreCounter;
         this.solutionRepository = solutionRepository;
         this.githubClient = githubClient;
-        this.executor = Executors.newCachedThreadPool(); // TODO choose best implementation + better init.
+        this.executor = Executors.newCachedThreadPool();
+        this.params = params;
+        this.logger = LoggerFactory.getLogger(JavaGithubClient.class);
     }
 
     /**
@@ -38,21 +46,42 @@ public class SolutionService {
     public String process(Solution solution) {
 
         String solutionId = solutionRepository.save(solution.setStatus(SolutionStatus.IN_PROGRESS));
+        solution.setId(solutionId);
 
         executor.execute(() -> {
+            Future<Long> future = executor.submit(getCountScoreTask(solution));
+            try {
+                future.get(Long.valueOf(params.get("SOLUTION_COUNTER_TIMEOUT_SECONDS")), TimeUnit.SECONDS);
+            } catch (InterruptedException | TimeoutException e) {
+                future.cancel(true);
+                logger.error("Solution " + solutionId + " finished with exception", e);
+                solutionRepository.update(solution.setStatus(SolutionStatus.TIMEOUT));
+            } catch (ExecutionException e) {
+                if (e.getCause() instanceof com.sdehunt.exception.CommitOrFileNotFoundException) {
+                    solutionRepository.update(solution.setStatus(SolutionStatus.INVALID_FILES));
+                } else {
+                    solutionRepository.update(solution.setStatus(SolutionStatus.ERROR));
+                }
+            }
+        });
+
+        return solutionId;
+    }
+
+    private Callable<Long> getCountScoreTask(final Solution solution) {
+        return () -> {
             if (isBranch(solution.getRepo(), solution.getCommit())) {
                 String commit = githubClient.getCommit(solution.getRepo(), solution.getCommit());
                 solution.setCommit(commit);
             }
 
             long score = count(solution);
-            // TODO try catch to set correct status. set timeout!!!
-            Solution toUpdate = solution.setId(solutionId).setScore(score).setStatus(SolutionStatus.ACCEPTED);
+            Solution toUpdate = solution.setScore(score).setStatus(SolutionStatus.ACCEPTED);
             solutionRepository.update(toUpdate);
-        });
-
-        return solutionId;
+            return score;
+        };
     }
+
 
     private boolean isBranch(String repo, String input) {
         try {

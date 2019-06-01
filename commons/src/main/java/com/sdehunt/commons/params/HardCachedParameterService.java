@@ -3,6 +3,7 @@ package com.sdehunt.commons.params;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO create implementation with TTL
 public class HardCachedParameterService implements ParameterService{
     private final Map<String, String> cache = new HashMap<>();
     private final ParameterService inner;

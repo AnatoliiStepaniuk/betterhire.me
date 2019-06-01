@@ -46,7 +46,7 @@ public class JdbiSolutionRepository implements SolutionRepository {
     }
 
     @Override
-    public void update(Solution s) { // TODO test
+    public void update(Solution s) {
         jdbi.withHandle(
                 db -> db.execute(
                         format("UPDATE %s SET `task` = ?, `user` = ?, `repo` = ?, `commit` = ?, `score` = ?, `status` = ? WHERE `id` = ?", TABLE),
