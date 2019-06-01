@@ -22,6 +22,8 @@ public class TaskApiIT extends AbstractApiTest {
 
         TaskID taskId = TaskID.SLIDES_TEST;
         String description = UUID.randomUUID().toString();
+        String shortDescription = UUID.randomUUID().toString();
+        String name = UUID.randomUUID().toString();
 
         // Verify task is present
         host().contentType(APP_JSON)
@@ -31,9 +33,14 @@ public class TaskApiIT extends AbstractApiTest {
                 .statusCode(SUCCESS)
                 .body(not(isEmptyOrNullString()));
 
+        UpdateTaskDTO taskForUpdate = new UpdateTaskDTO()
+                .setDescription(description)
+                .setShortDescription(shortDescription)
+                .setName(name);
+
         // Updating task
         host()
-                .body(new UpdateTaskDTO().setDescription(description))
+                .body(taskForUpdate)
                 .contentType(APP_JSON)
                 .put(TASKS_PATH + taskId.name().toLowerCase())
                 .then()
@@ -47,7 +54,10 @@ public class TaskApiIT extends AbstractApiTest {
                 .log().ifValidationFails()
                 .statusCode(SUCCESS)
                 .body("id", equalToIgnoringCase(taskId.name()))
-                .body("description", is(description));
+                .body("description", is(description))
+                .body("shortDescription", is(shortDescription))
+                .body("name", is(name));
+
 
         // Getting all tasks
         Task[] tasks = host().get(TASKS_PATH)

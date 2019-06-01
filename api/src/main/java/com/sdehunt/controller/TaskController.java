@@ -39,6 +39,8 @@ public class TaskController {
                 new Task()
                         .setId(TaskID.of(taskId))
                         .setDescription(updateTaskRequest.getDescription())
+                        .setName(updateTaskRequest.getName())
+                        .setShortDescription(updateTaskRequest.getShortDescription())
         );
     }
 

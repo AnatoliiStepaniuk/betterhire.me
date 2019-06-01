@@ -52,8 +52,8 @@ public class JdbiTaskRepository implements TaskRepository {
         long now = Instant.now().getEpochSecond();
         jdbi.withHandle(
                 db -> db.execute(
-                        format("UPDATE %s SET description = ?, updated = ? WHERE id = ?", TABLE),
-                        task.getDescription(), now, task.getId()
+                        format("UPDATE %s SET name = ?, short_description = ?, description = ?, updated = ? WHERE id = ?", TABLE),
+                        task.getName(), task.getShortDescription(), task.getDescription(), now, task.getId()
                 )
         );
     }
@@ -63,6 +63,8 @@ public class JdbiTaskRepository implements TaskRepository {
         public Task map(ResultSet rs, StatementContext ctx) throws SQLException {
             return new Task()
                     .setId(TaskID.of(rs.getString("id")))
+                    .setName(rs.getString("name"))
+                    .setShortDescription(rs.getString("short_description"))
                     .setDescription(rs.getString("description"))
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")))
                     .setUpdated(Instant.ofEpochSecond(rs.getLong("updated")));
