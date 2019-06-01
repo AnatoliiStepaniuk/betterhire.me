@@ -57,7 +57,8 @@ public class SolutionService {
                 logger.error("Solution " + solutionId + " finished with exception", e);
                 solutionRepository.update(solution.setStatus(SolutionStatus.TIMEOUT));
             } catch (ExecutionException e) {
-                if (e.getCause() instanceof com.sdehunt.exception.CommitOrFileNotFoundException) {
+                if (e.getCause() instanceof com.sdehunt.exception.CommitOrFileNotFoundException
+                        || e.getCause() instanceof com.sdehunt.exception.RepositoryNotFoundException) {
                     solutionRepository.update(solution.setStatus(SolutionStatus.INVALID_FILES));
                 } else {
                     solutionRepository.update(solution.setStatus(SolutionStatus.ERROR));

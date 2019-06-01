@@ -92,7 +92,7 @@ public class JavaGithubClient implements GithubClient {
     public Collection<String> getBranches(String repo) throws RepositoryNotFoundException {
         URI uri = new URI(API_DOMAIN + "/" + REPOS + "/" + repo + "/" + BRANCHES);
 
-        logger.debug(String.format("Fetching branches for repo %s", repo));
+        logger.debug(String.format("Fetching branches for repo %s", repo)); // TODO timeouts happen here...
         HttpResponse<byte[]> response = client.send(buildRequest(uri), HttpResponse.BodyHandlers.ofByteArray());
         logger.debug(String.format("Received response %d for branches request for repo %s", response.statusCode(), repo));
         if (response.statusCode() == 404) {

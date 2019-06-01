@@ -1,8 +1,11 @@
 package com.sdehunt.api;
 
 import com.sdehunt.commons.TaskID;
+import com.sdehunt.commons.model.Solution;
+import com.sdehunt.commons.model.SolutionStatus;
 import com.sdehunt.dto.SaveSolutionDTO;
-import com.sdehunt.dto.SolutionScoreDTO;
+import lombok.SneakyThrows;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.UUID;
@@ -26,23 +29,20 @@ public class SolutionApiIT extends AbstractApiTest {
                 .setCommit(commit);
 
         // Saving solution
-        SolutionScoreDTO response = host().contentType(APP_JSON)
+        String id = host().contentType(APP_JSON)
                 .body(solutionDTO)
                 .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
-                .as(SolutionScoreDTO.class);
+                .body().asString();
 
-        String id = response.getSolutionId();
-
-        // Query
+        // Verify save (query by userId)
         host().get("/tasks/{taskId}/solutions?userId=" + userId, taskId).then()
                 .body("size()", equalTo(1))
                 .body("[0].taskId", equalTo(taskId.name()))
-                .body("[0].score", equalTo((int) response.getScore()))
                 .body("[0].userId", equalTo(userId))
                 .body("[0].repo", equalTo(repo))
                 .body("[0].commit", equalTo(commit));
 
-        // Verify save
+        // Verify save (by id)
         host().get("/solutions/" + id)
                 .then().log().ifValidationFails()
                 .statusCode(SUCCESS)
@@ -52,6 +52,7 @@ public class SolutionApiIT extends AbstractApiTest {
                 .body("repo", equalTo(repo))
                 .body("commit", equalTo(commit));
 
+        // Verify save (by userId)
         host().get("/users/{userId}/solutions", userId)
                 .then().log().ifValidationFails()
                 .statusCode(SUCCESS)
@@ -85,7 +86,7 @@ public class SolutionApiIT extends AbstractApiTest {
         TaskID taskId = TaskID.SLIDES_TEST;
         String userId = UUID.randomUUID().toString();
         String repo = "AnatoliiStepaniuk/google_hash_code_2019";
-        String commit = "61f487523ad641cc6fffc44ded7537d94cf0d1eb";
+        String commit = "master";
         String invalidRepo = "invalid_repo";
         String invalidCommit = "invalid_commit";
 
@@ -96,11 +97,13 @@ public class SolutionApiIT extends AbstractApiTest {
                 .setRepo(invalidRepo)
                 .setCommit(commit);
 
-        host().contentType(APP_JSON)
+        String invalidRepoSolutionId = host().contentType(APP_JSON)
                 .body(invalidRepoDTO)
                 .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
-                .then()
-                .statusCode(NOT_FOUND);
+                .body().asString();
+
+        verifySolutionStatus(invalidRepoSolutionId, SolutionStatus.INVALID_FILES);
+
 
         // Verify invalid Commit response
 
@@ -109,12 +112,26 @@ public class SolutionApiIT extends AbstractApiTest {
                 .setRepo(repo)
                 .setCommit(invalidCommit);
 
-        host().contentType(APP_JSON)
+        String invalidCommitSolutionId = host().contentType(APP_JSON)
                 .body(invalidCommitDTO)
                 .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
-                .then()
-                .statusCode(NOT_FOUND);
+                .body().asString();
 
+        verifySolutionStatus(invalidCommitSolutionId, SolutionStatus.INVALID_FILES);
+
+    }
+
+    @SneakyThrows(InterruptedException.class)
+    private void verifySolutionStatus(String solutionId, SolutionStatus status) {
+
+        // Waiting for the status to change from initial
+        SolutionStatus solutionStatus = SolutionStatus.IN_PROGRESS;
+        while (solutionStatus == SolutionStatus.IN_PROGRESS) {
+            solutionStatus = host().get("/solutions/{solutionId}", solutionId).as(Solution.class).getStatus();
+            Thread.sleep(400);
+        }
+
+        Assert.assertEquals(status, solutionStatus);
     }
 
 }
