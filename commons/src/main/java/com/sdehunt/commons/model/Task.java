@@ -1,18 +1,10 @@
 package com.sdehunt.commons.model;
 
-import com.sdehunt.commons.TaskID;
 import lombok.Data;
 
-import java.time.Instant;
-
 @Data
-public class Task {
+public class Task extends ShortTask {
 
-    private TaskID id;
-    private String name;
     private String description;
-    private String shortDescription;
-    private Instant created;
-    private Instant updated;
 
 }

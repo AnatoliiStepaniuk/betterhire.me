@@ -1,6 +1,7 @@
 package com.sdehunt.repository.impl;
 
 import com.sdehunt.commons.TaskID;
+import com.sdehunt.commons.model.ShortTask;
 import com.sdehunt.commons.model.Task;
 import com.sdehunt.repository.TaskRepository;
 import org.jdbi.v3.core.Jdbi;
@@ -33,10 +34,25 @@ public class JdbiTaskRepository implements TaskRepository {
     }
 
     @Override
+    public List<ShortTask> getAllShort() {
+        return jdbi.withHandle(
+                db -> db.select(format("SELECT * FROM %s", TABLE)).map(new ShortTaskRowMapper()).list() // TODO specific fields
+        );
+    }
+
+    @Override
     public Optional<Task> get(String id) {
         return jdbi.withHandle(
                 db -> db.select(format("SELECT * FROM %s WHERE id = ?", TABLE), id)
                         .map(new TaskRowMapper()).findFirst()
+        );
+    }
+
+    @Override
+    public Optional<ShortTask> getShort(String id) {
+        return jdbi.withHandle(
+                db -> db.select(format("SELECT * FROM %s WHERE id = ?", TABLE), id)
+                        .map(new ShortTaskRowMapper()).findFirst()
         );
     }
 
@@ -58,14 +74,33 @@ public class JdbiTaskRepository implements TaskRepository {
         );
     }
 
-    private class TaskRowMapper implements RowMapper<Task> {
+    private class TaskRowMapper implements RowMapper<Task> { // TODO tests
         @Override
         public Task map(ResultSet rs, StatementContext ctx) throws SQLException {
-            return new Task()
+            Task task = new Task();
+            task.setDescription(rs.getString("description"))
                     .setId(TaskID.of(rs.getString("id")))
                     .setName(rs.getString("name"))
                     .setShortDescription(rs.getString("short_description"))
-                    .setDescription(rs.getString("description"))
+                    .setImageUrl(rs.getString("image_url"))
+                    .setSubmittable(rs.getBoolean("submittable"))
+                    .setEnabled(rs.getBoolean("enabled"))
+                    .setCreated(Instant.ofEpochSecond(rs.getLong("created")))
+                    .setUpdated(Instant.ofEpochSecond(rs.getLong("updated")));
+            return task;
+        }
+    }
+
+    private class ShortTaskRowMapper implements RowMapper<ShortTask> { // TODO tests
+        @Override
+        public ShortTask map(ResultSet rs, StatementContext ctx) throws SQLException {
+            return new ShortTask()
+                    .setId(TaskID.of(rs.getString("id")))
+                    .setName(rs.getString("name"))
+                    .setShortDescription(rs.getString("short_description"))
+                    .setImageUrl(rs.getString("image_url"))
+                    .setSubmittable(rs.getBoolean("submittable"))
+                    .setEnabled(rs.getBoolean("enabled"))
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")))
                     .setUpdated(Instant.ofEpochSecond(rs.getLong("updated")));
         }

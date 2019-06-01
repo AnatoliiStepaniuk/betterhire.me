@@ -1,6 +1,7 @@
 package com.sdehunt.controller;
 
 import com.sdehunt.commons.TaskID;
+import com.sdehunt.commons.model.ShortTask;
 import com.sdehunt.commons.model.Task;
 import com.sdehunt.dto.UpdateTaskDTO;
 import com.sdehunt.exception.TaskNotFoundException;
@@ -28,20 +29,33 @@ public class TaskController {
         return tasks.getAll();
     }
 
+    @RequestMapping(method = GET, path = "/short", produces = APPLICATION_JSON_VALUE) // TODO use field `enabled`
+    public List<ShortTask> getAllShort() {
+        return tasks.getAllShort();
+    }
+
     @RequestMapping(method = GET, path = "/{taskId}", produces = APPLICATION_JSON_VALUE)
     public Task get(@PathVariable("taskId") String taskId) {
         return tasks.get(taskId).orElseThrow(TaskNotFoundException::new);
     }
 
-    @RequestMapping(method = PUT, path = "/{taskId}")
+    @RequestMapping(method = GET, path = "/{taskId}/short", produces = APPLICATION_JSON_VALUE)
+    public ShortTask getShortTask(@PathVariable("taskId") String taskId) {
+        return tasks.getShort(taskId).orElseThrow(TaskNotFoundException::new);
+    }
+
+    @RequestMapping(method = PUT, path = "/{taskId}") // TODO all methods are updatable
     public void update(@PathVariable("taskId") String taskId, @RequestBody UpdateTaskDTO updateTaskRequest) {
-        tasks.update(
-                new Task()
-                        .setId(TaskID.of(taskId))
-                        .setDescription(updateTaskRequest.getDescription())
-                        .setName(updateTaskRequest.getName())
-                        .setShortDescription(updateTaskRequest.getShortDescription())
-        );
+        Task taskToUpdate = new Task();
+        taskToUpdate.setId(TaskID.of(taskId));
+        taskToUpdate.setDescription(updateTaskRequest.getDescription());
+        taskToUpdate.setName(updateTaskRequest.getName());
+        taskToUpdate.setImageUrl(updateTaskRequest.getImageUrl());
+        taskToUpdate.setEnabled(updateTaskRequest.isEnabled());
+        taskToUpdate.setSubmittable(updateTaskRequest.isSubmittable());
+        taskToUpdate.setShortDescription(updateTaskRequest.getShortDescription());
+
+        tasks.update(taskToUpdate);
     }
 
     @RequestMapping(method = DELETE, path = "/{taskId}") // TODO add field enabled
