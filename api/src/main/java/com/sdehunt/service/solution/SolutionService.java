@@ -4,9 +4,12 @@ import com.sdehunt.commons.github.GithubClient;
 import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
 import com.sdehunt.commons.github.exceptions.RepositoryNotFoundException;
 import com.sdehunt.commons.model.Solution;
-import com.sdehunt.dto.SolutionScoreDTO;
+import com.sdehunt.commons.model.SolutionStatus;
 import com.sdehunt.repository.SolutionRepository;
 import com.sdehunt.score.GeneralScoreCounter;
+
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class SolutionService {
 
@@ -16,6 +19,8 @@ public class SolutionService {
 
     private GithubClient githubClient;
 
+    private Executor executor;
+
     public SolutionService(
             GeneralScoreCounter scoreCounter,
             SolutionRepository solutionRepository,
@@ -24,22 +29,29 @@ public class SolutionService {
         this.scoreCounter = scoreCounter;
         this.solutionRepository = solutionRepository;
         this.githubClient = githubClient;
+        this.executor = Executors.newCachedThreadPool(); // TODO choose best implementation + better init.
     }
 
-    public SolutionScoreDTO calculateScoreAndSave(Solution solution) {
+    /**
+     * Returns assigned solutionId and performs solution counting/status update in separate thread.
+     */
+    public String process(Solution solution) {
 
-        if (isBranch(solution.getRepo(), solution.getCommit())) {
-            String commit = githubClient.getCommit(solution.getRepo(), solution.getCommit());
-            solution.setCommit(commit);
-        }
+        String solutionId = solutionRepository.save(solution.setStatus(SolutionStatus.IN_PROGRESS));
 
-        long score = count(solution);
+        executor.execute(() -> {
+            if (isBranch(solution.getRepo(), solution.getCommit())) {
+                String commit = githubClient.getCommit(solution.getRepo(), solution.getCommit());
+                solution.setCommit(commit);
+            }
 
-        String solutionId = solutionRepository.save(solution.setScore(score));
+            long score = count(solution);
+            // TODO try catch to set correct status. set timeout!!!
+            Solution toUpdate = solution.setId(solutionId).setScore(score).setStatus(SolutionStatus.ACCEPTED);
+            solutionRepository.update(toUpdate);
+        });
 
-        return new SolutionScoreDTO()
-                .setSolutionId(solutionId)
-                .setScore(score);
+        return solutionId;
     }
 
     private boolean isBranch(String repo, String input) {

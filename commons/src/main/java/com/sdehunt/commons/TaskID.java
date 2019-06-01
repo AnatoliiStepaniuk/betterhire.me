@@ -6,6 +6,10 @@ package com.sdehunt.commons;
 public enum TaskID {
 
     SLIDES,
+    CARS,
+    BALLOONS,
+    DATACENTER,
+    PIZZA,
     SLIDES_TEST;
 
     public static TaskID of(String taskId) {

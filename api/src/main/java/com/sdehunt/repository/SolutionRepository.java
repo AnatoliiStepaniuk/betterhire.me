@@ -17,6 +17,11 @@ public interface SolutionRepository {
     String save(Solution solution);
 
     /**
+     * Updates Solution.
+     */
+    void update(Solution solution);
+
+    /**
      * Gets Solution by provided id if found.
      */
     Optional<Solution> get(String id);

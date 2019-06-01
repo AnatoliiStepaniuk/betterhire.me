@@ -2,6 +2,7 @@ package com.sdehunt.repository.impl;
 
 import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.Solution;
+import com.sdehunt.commons.model.SolutionStatus;
 import com.sdehunt.repository.SolutionQuery;
 import com.sdehunt.repository.SolutionRepository;
 import org.jdbi.v3.core.Jdbi;
@@ -42,6 +43,16 @@ public class JdbiSolutionRepository implements SolutionRepository {
         );
 
         return id;
+    }
+
+    @Override
+    public void update(Solution s) { // TODO test
+        jdbi.withHandle(
+                db -> db.execute(
+                        format("UPDATE %s SET `task` = ?, `user` = ?, `repo` = ?, `commit` = ?, `score` = ?, `status` = ? WHERE `id` = ?", TABLE),
+                        s.getTaskId(), s.getUserId(), s.getRepo(), s.getCommit(), s.getScore(), s.getStatus(), s.getId()
+                )
+        );
     }
 
     @Override
@@ -91,6 +102,7 @@ public class JdbiSolutionRepository implements SolutionRepository {
                     .setRepo(rs.getString("repo"))
                     .setCommit(rs.getString("commit"))
                     .setScore(Long.valueOf(rs.getString("score")))
+                    .setStatus(SolutionStatus.valueOf(rs.getString("status").toUpperCase()))
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")));
         }
     }

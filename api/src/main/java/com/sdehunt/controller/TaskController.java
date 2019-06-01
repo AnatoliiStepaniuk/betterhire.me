@@ -30,17 +30,17 @@ public class TaskController {
     }
 
     @RequestMapping(method = GET, path = "/short", produces = APPLICATION_JSON_VALUE) // TODO use field `enabled`
-    public List<ShortTask> getAllShort() {
+    public List<ShortTask> getAllShort() { // TODO test
         return tasks.getAllShort();
     }
 
     @RequestMapping(method = GET, path = "/{taskId}", produces = APPLICATION_JSON_VALUE)
-    public Task get(@PathVariable("taskId") String taskId) {
+    public Task get(@PathVariable("taskId") String taskId) { // TODO test new fields
         return tasks.get(taskId).orElseThrow(TaskNotFoundException::new);
     }
 
     @RequestMapping(method = GET, path = "/{taskId}/short", produces = APPLICATION_JSON_VALUE)
-    public ShortTask getShortTask(@PathVariable("taskId") String taskId) {
+    public ShortTask getShortTask(@PathVariable("taskId") String taskId) { // TODO test
         return tasks.getShort(taskId).orElseThrow(TaskNotFoundException::new);
     }
 

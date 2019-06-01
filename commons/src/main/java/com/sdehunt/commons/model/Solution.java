@@ -14,6 +14,7 @@ public class Solution {
     private String repo;
     private String commit;
     private long score;
+    private SolutionStatus status;
     private Instant created;
 
 }

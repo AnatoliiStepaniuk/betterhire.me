@@ -3,7 +3,6 @@ package com.sdehunt.controller;
 import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.dto.SaveSolutionDTO;
-import com.sdehunt.dto.SolutionScoreDTO;
 import com.sdehunt.exception.SolutionNotFoundException;
 import com.sdehunt.repository.SolutionRepository;
 import com.sdehunt.repository.impl.SolutionQueryImpl;
@@ -28,14 +27,14 @@ public class SolutionController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public SolutionScoreDTO save(@PathVariable String taskId, @RequestBody SaveSolutionDTO solutionRequest) {
+    public String submit(@PathVariable String taskId, @RequestBody SaveSolutionDTO solutionRequest) {
         Solution solution = new Solution()
                 .setUserId(solutionRequest.getUserId())
                 .setRepo(solutionRequest.getRepo())
                 .setCommit(solutionRequest.getCommit())
                 .setTaskId(TaskID.of(taskId));
 
-        return solutionService.calculateScoreAndSave(solution);
+        return solutionService.process(solution);
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/solutions/{solutionId}")
