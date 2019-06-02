@@ -6,9 +6,7 @@ import com.sdehunt.commons.FileUtils;
 import com.sdehunt.commons.SimpleCommit;
 import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
 import com.sdehunt.commons.github.exceptions.RepositoryNotFoundException;
-import com.sdehunt.commons.params.HardCachedParameterService;
 import com.sdehunt.commons.params.ParameterService;
-import com.sdehunt.commons.params.SsmParameterService;
 import lombok.Data;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
@@ -43,11 +41,11 @@ public class JavaGithubClient implements GithubClient {
     private final ObjectMapper objectMapper;
     private final Logger logger;
 
-    public JavaGithubClient() {
+    public JavaGithubClient(ParameterService params) {
         this.client = HttpClient.newHttpClient();
         this.objectMapper = new ObjectMapper()
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        this.params = new HardCachedParameterService(new SsmParameterService());
+        this.params = params;
         this.logger = LoggerFactory.getLogger(JavaGithubClient.class);
     }
 

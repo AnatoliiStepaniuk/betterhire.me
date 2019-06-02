@@ -2,7 +2,7 @@ package com.sdehunt;
 
 import com.sdehunt.commons.github.GithubClient;
 import com.sdehunt.commons.github.JavaGithubClient;
-import com.sdehunt.commons.params.HardCachedParameterService;
+import com.sdehunt.commons.params.EhcacheParameterService;
 import com.sdehunt.commons.params.ParameterService;
 import com.sdehunt.commons.params.SsmParameterService;
 import com.sdehunt.repository.SolutionRepository;
@@ -46,7 +46,7 @@ public class Application implements WebMvcConfigurer {
 
     @Bean
     public ParameterService parameterService() {
-        return new HardCachedParameterService(new SsmParameterService());
+        return new EhcacheParameterService(new SsmParameterService());
     }
 
     @Bean
@@ -65,8 +65,8 @@ public class Application implements WebMvcConfigurer {
     }
 
     @Bean
-    public GithubClient githubClient() {
-        return new JavaGithubClient();
+    public GithubClient githubClient(ParameterService params) {
+        return new JavaGithubClient(params);
     }
 
     @Bean
@@ -82,11 +82,6 @@ public class Application implements WebMvcConfigurer {
             ParameterService params
     ) {
         return new SolutionService(scoreCounter, solutionRepository, githubClient, params);
-    }
-
-    @Bean
-    public ParameterService params() {
-        return new HardCachedParameterService(new SsmParameterService());
     }
 
     @Bean
