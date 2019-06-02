@@ -3,6 +3,8 @@ package com.sdehunt.api;
 import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.SolutionStatus;
+import com.sdehunt.commons.model.User;
+import com.sdehunt.dto.CreateUserDTO;
 import com.sdehunt.dto.SaveSolutionDTO;
 import com.sdehunt.dto.SolutionIdDTO;
 import lombok.SneakyThrows;
@@ -20,7 +22,8 @@ public class SolutionApiIT extends AbstractApiTest {
     @Test
     public void crudTest() {
         TaskID taskId = TaskID.SLIDES_TEST;
-        String userId = UUID.randomUUID().toString();
+        CreateUserDTO createUserDTO = new CreateUserDTO().setEmail(UUID.randomUUID().toString() + "@gmail.com");
+        String userId = host().contentType(APP_JSON).body(createUserDTO).post("/users").as(User.class).getId();
         String repo = "AnatoliiStepaniuk/google_hash_code_2019";
         String commit = "61f487523ad641cc6fffc44ded7537d94cf0d1eb";
 
@@ -81,48 +84,66 @@ public class SolutionApiIT extends AbstractApiTest {
                 .body("size()", is(0));
     }
 
-
     @Test
     public void invalidInputTest() {
         TaskID taskId = TaskID.SLIDES_TEST;
-        String userId = UUID.randomUUID().toString();
+        CreateUserDTO createUserDTO = new CreateUserDTO().setEmail(UUID.randomUUID().toString() + "@gmail.com");
+        String userId = host().contentType(APP_JSON).body(createUserDTO).post("/users").as(User.class).getId();
+
         String repo = "AnatoliiStepaniuk/google_hash_code_2019";
-        String invalidSolutionRepo = "AnatoliiStepaniuk/google_hash_code_2019_invalid";
         String commit = "master";
+        String invalidUserId = UUID.randomUUID().toString();
         String invalidRepo = "invalid_repo";
         String invalidCommit = "invalid_commit";
 
-        // Verify invalid Repo response
+        // First verify successful response for valid request
+        SaveSolutionDTO validDTO = new SaveSolutionDTO()
+                .setUserId(userId)
+                .setRepo(repo)
+                .setCommit(commit);
+        host().contentType(APP_JSON)
+                .body(validDTO)
+                .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
+                .then().statusCode(is(SUCCESS));
 
+        // Verify invalid Repo response
         SaveSolutionDTO invalidRepoDTO = new SaveSolutionDTO()
                 .setUserId(userId)
                 .setRepo(invalidRepo)
                 .setCommit(commit);
-
-        String invalidRepoSolutionId = host().contentType(APP_JSON)
+        host().contentType(APP_JSON)
                 .body(invalidRepoDTO)
                 .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
-                .as(SolutionIdDTO.class).getId();
-
-        verifySolutionStatus(invalidRepoSolutionId, SolutionStatus.INVALID_FILES);
-
+                .then().statusCode(is(NOT_FOUND));
 
         // Verify invalid Commit response
-
         SaveSolutionDTO invalidCommitDTO = new SaveSolutionDTO()
                 .setUserId(userId)
                 .setRepo(repo)
                 .setCommit(invalidCommit);
-
-        String invalidCommitSolutionId = host().contentType(APP_JSON)
+        host().contentType(APP_JSON)
                 .body(invalidCommitDTO)
                 .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
-                .as(SolutionIdDTO.class).getId();
+                .then().statusCode(is(NOT_FOUND));
 
-        verifySolutionStatus(invalidCommitSolutionId, SolutionStatus.INVALID_FILES);
+        // Verify invalid User response
+        SaveSolutionDTO invalidSolutionDTO = new SaveSolutionDTO()
+                .setUserId(invalidUserId)
+                .setRepo(repo)
+                .setCommit(commit);
+        host().contentType(APP_JSON)
+                .body(invalidSolutionDTO)
+                .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
+                .then().statusCode(is(NOT_FOUND));
+    }
 
-
-        // Verify invalid Solution response
+    @Test
+    public void invalidSolutionTest() {
+        TaskID taskId = TaskID.SLIDES_TEST;
+        CreateUserDTO createUserDTO = new CreateUserDTO().setEmail(UUID.randomUUID().toString() + "@gmail.com");
+        String userId = host().contentType(APP_JSON).body(createUserDTO).post("/users").as(User.class).getId();
+        String invalidSolutionRepo = "AnatoliiStepaniuk/google_hash_code_2019_invalid";
+        String commit = "master";
 
         SaveSolutionDTO invalidSolutionDTO = new SaveSolutionDTO()
                 .setUserId(userId)
@@ -135,7 +156,6 @@ public class SolutionApiIT extends AbstractApiTest {
                 .as(SolutionIdDTO.class).getId();
 
         verifySolutionStatus(invalidSolutionId, SolutionStatus.INVALID_SOLUTION);
-
     }
 
     @SneakyThrows(InterruptedException.class)

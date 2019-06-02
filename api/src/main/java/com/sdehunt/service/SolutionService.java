@@ -9,7 +9,9 @@ import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.SolutionStatus;
 import com.sdehunt.commons.params.ParameterService;
 import com.sdehunt.exception.CommitNotFoundException;
+import com.sdehunt.exception.UserNotFoundException;
 import com.sdehunt.repository.SolutionRepository;
+import com.sdehunt.repository.UserRepository;
 import com.sdehunt.score.GeneralScoreCounter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,8 @@ public class SolutionService {
 
     private SolutionRepository solutionRepository;
 
+    private UserRepository userRepository;
+
     private GithubClient githubClient;
 
     private final Logger logger;
@@ -31,11 +35,13 @@ public class SolutionService {
     public SolutionService(
             GeneralScoreCounter scoreCounter,
             SolutionRepository solutionRepository,
+            UserRepository userRepository,
             GithubClient githubClient,
             ParameterService params
     ) {
         this.scoreCounter = scoreCounter;
         this.solutionRepository = solutionRepository;
+        this.userRepository = userRepository;
         this.githubClient = githubClient;
         this.executor = Executors.newCachedThreadPool();
         this.params = params;
@@ -47,8 +53,8 @@ public class SolutionService {
      */
     public String process(Solution solution) {
 
-        String solutionId = solutionRepository.save(solution.setStatus(SolutionStatus.IN_PROGRESS));
-        solution.setId(solutionId);
+        userRepository.get(solution.getUserId()).orElseThrow(UserNotFoundException::new);
+
         if (isBranch(solution.getRepo(), solution.getCommit())) {
             String commit = githubClient.getCommit(solution.getRepo(), solution.getCommit());
             solution.setCommit(commit);
@@ -57,6 +63,9 @@ public class SolutionService {
                 throw new CommitNotFoundException();
             }
         }
+
+        String solutionId = solutionRepository.save(solution.setStatus(SolutionStatus.IN_PROGRESS));
+        solution.setId(solutionId);
 
         executor.execute(() -> {
             Future<Long> future = executor.submit(getCountScoreTask(solution));
@@ -71,7 +80,7 @@ public class SolutionService {
                         || e.getCause() instanceof com.sdehunt.exception.RepositoryNotFoundException) {
                     solutionRepository.update(solution.setStatus(SolutionStatus.INVALID_FILES));
                 } else if (e.getCause() instanceof InvalidSolutionException) {
-                    solutionRepository.update(solution.setStatus(SolutionStatus.INVALID_SOLUTION)); // TODO add test
+                    solutionRepository.update(solution.setStatus(SolutionStatus.INVALID_SOLUTION));
                 } else {
                     solutionRepository.update(solution.setStatus(SolutionStatus.ERROR));
                 }
