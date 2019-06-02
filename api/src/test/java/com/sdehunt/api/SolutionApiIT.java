@@ -86,6 +86,7 @@ public class SolutionApiIT extends AbstractApiTest {
         TaskID taskId = TaskID.SLIDES_TEST;
         String userId = UUID.randomUUID().toString();
         String repo = "AnatoliiStepaniuk/google_hash_code_2019";
+        String invalidSolutionRepo = "AnatoliiStepaniuk/google_hash_code_2019_invalid";
         String commit = "master";
         String invalidRepo = "invalid_repo";
         String invalidCommit = "invalid_commit";
@@ -118,6 +119,21 @@ public class SolutionApiIT extends AbstractApiTest {
                 .body().asString();
 
         verifySolutionStatus(invalidCommitSolutionId, SolutionStatus.INVALID_FILES);
+
+
+        // Verify invalid Solution response
+
+        SaveSolutionDTO invalidSolutionDTO = new SaveSolutionDTO()
+                .setUserId(userId)
+                .setRepo(invalidSolutionRepo)
+                .setCommit(commit);
+
+        String invalidSolutionId = host().contentType(APP_JSON)
+                .body(invalidSolutionDTO)
+                .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
+                .body().asString();
+
+        verifySolutionStatus(invalidSolutionId, SolutionStatus.INVALID_SOLUTION);
 
     }
 

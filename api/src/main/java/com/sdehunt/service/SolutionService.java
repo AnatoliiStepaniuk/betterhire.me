@@ -1,5 +1,6 @@
 package com.sdehunt.service;
 
+import com.sdehunt.commons.exception.InvalidSolutionException;
 import com.sdehunt.commons.github.GithubClient;
 import com.sdehunt.commons.github.JavaGithubClient;
 import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
@@ -60,6 +61,8 @@ public class SolutionService {
                 if (e.getCause() instanceof CommitOrFileNotFoundException
                         || e.getCause() instanceof com.sdehunt.exception.RepositoryNotFoundException) {
                     solutionRepository.update(solution.setStatus(SolutionStatus.INVALID_FILES));
+                } else if (e.getCause() instanceof InvalidSolutionException) {
+                    solutionRepository.update(solution.setStatus(SolutionStatus.INVALID_SOLUTION)); // TODO add test
                 } else {
                     solutionRepository.update(solution.setStatus(SolutionStatus.ERROR));
                 }

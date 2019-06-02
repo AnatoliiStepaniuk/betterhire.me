@@ -1,6 +1,7 @@
 package com.sdehunt.score.slides;
 
 import com.sdehunt.commons.FileUtils;
+import com.sdehunt.commons.exception.InvalidSolutionException;
 import com.sdehunt.commons.github.GithubClient;
 import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
 import com.sdehunt.score.TaskScoreCounter;
@@ -61,6 +62,9 @@ public class SlidesScoreCounter implements TaskScoreCounter {
             Map<Integer, Picture> pictures = picturesReader.readPictures(FileUtils.fileName(inputFiles.get(i)));
             try {
                 List<String> lines = Files.readAllLines(Paths.get(FileUtils.fileName(solutionFiles.get(i))));
+                if (lines.isEmpty()) {
+                    throw new InvalidSolutionException();
+                }
 
                 for (int l = 1; l < lines.size() - 1; l++) {
                     score += countScore(getTags(pictures, lines.get(l)), getTags(pictures, lines.get(l + 1)));
