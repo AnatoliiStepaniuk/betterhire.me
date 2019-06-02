@@ -32,6 +32,7 @@ public class JavaGithubClient implements GithubClient {
 
     private final static String RAW_DOMAIN = "https://raw.githubusercontent.com";
     private final static String API_DOMAIN = "https://api.github.com";
+    private final static String GIT = "git";
     private final static String REPOS = "repos";
     private final static String COMMITS = "commits";
     private final static String BRANCHES = "branches";
@@ -83,6 +84,24 @@ public class JavaGithubClient implements GithubClient {
             throw new RuntimeException("Status code " + response.statusCode() + " for URI " + uri);
         }
         return objectMapper.readValue(response.body(), SimpleCommit.class).getSha();
+    }
+
+    @Override
+    @SneakyThrows({IOException.class, URISyntaxException.class, InterruptedException.class})
+    public boolean commitPresent(String repo, String commit) {
+        URI uri = new URI(API_DOMAIN + "/" + REPOS + "/" + repo + "/" + GIT + "/" + COMMITS + "/" + commit);
+
+        logger.debug(String.format("Checking commit %s for repo %s", commit, repo));
+        HttpResponse<byte[]> response = client.send(buildRequest(uri), HttpResponse.BodyHandlers.ofByteArray());
+        logger.debug(String.format("Checked commit %s for repo %s", commit, repo));
+
+        if (response.statusCode() == 200) {
+            return true;
+        } else if (response.statusCode() == 404) {
+            return false;
+        } else {
+            throw new RuntimeException("Status code " + response.statusCode() + " for URI " + uri);
+        }
     }
 
     @Override

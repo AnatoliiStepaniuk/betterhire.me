@@ -22,6 +22,11 @@ public interface GithubClient {
     String getCommit(String repo, String branch);
 
     /**
+     * Returns true if commit with specified hash is present
+     */
+    boolean commitPresent(String repo, String commit);
+
+    /**
      * Returns collection of repository branches
      */
     Collection<String> getBranches(String repo) throws RepositoryNotFoundException;

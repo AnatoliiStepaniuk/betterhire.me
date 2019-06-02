@@ -8,6 +8,7 @@ import com.sdehunt.commons.github.exceptions.RepositoryNotFoundException;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.SolutionStatus;
 import com.sdehunt.commons.params.ParameterService;
+import com.sdehunt.exception.CommitNotFoundException;
 import com.sdehunt.repository.SolutionRepository;
 import com.sdehunt.score.GeneralScoreCounter;
 import org.slf4j.Logger;
@@ -48,6 +49,14 @@ public class SolutionService {
 
         String solutionId = solutionRepository.save(solution.setStatus(SolutionStatus.IN_PROGRESS));
         solution.setId(solutionId);
+        if (isBranch(solution.getRepo(), solution.getCommit())) {
+            String commit = githubClient.getCommit(solution.getRepo(), solution.getCommit());
+            solution.setCommit(commit);
+        } else {
+            if (!githubClient.commitPresent(solution.getRepo(), solution.getCommit())) {
+                throw new CommitNotFoundException();
+            }
+        }
 
         executor.execute(() -> {
             Future<Long> future = executor.submit(getCountScoreTask(solution));
@@ -74,11 +83,6 @@ public class SolutionService {
 
     private Callable<Long> getCountScoreTask(final Solution solution) {
         return () -> {
-            if (isBranch(solution.getRepo(), solution.getCommit())) {
-                String commit = githubClient.getCommit(solution.getRepo(), solution.getCommit());
-                solution.setCommit(commit);
-            }
-
             long score = count(solution);
             Solution toUpdate = solution.setScore(score).setStatus(SolutionStatus.ACCEPTED);
             solutionRepository.update(toUpdate);
