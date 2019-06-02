@@ -21,7 +21,7 @@
 
         <dependency>
             <groupId>com.sdehunt</groupId>
-            <artifactId>scoreworker</artifactId> <!--TODO rename to score-->
+            <artifactId>score</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 

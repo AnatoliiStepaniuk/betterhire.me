@@ -73,7 +73,7 @@ public class SolutionService {
                 future.get(Long.valueOf(params.get("SOLUTION_COUNTER_TIMEOUT_SECONDS")), TimeUnit.SECONDS);
             } catch (InterruptedException | TimeoutException e) {
                 future.cancel(true);
-                logger.error("Solution " + solutionId + " finished with exception", e);
+                logger.error("Solution " + solutionId + " finished with timeout exception", e);
                 solutionRepository.update(solution.setStatus(SolutionStatus.TIMEOUT));
             } catch (ExecutionException e) {
                 if (e.getCause() instanceof CommitOrFileNotFoundException
@@ -82,6 +82,7 @@ public class SolutionService {
                 } else if (e.getCause() instanceof InvalidSolutionException) {
                     solutionRepository.update(solution.setStatus(SolutionStatus.INVALID_SOLUTION));
                 } else {
+                    logger.error("Solution " + solutionId + " finished with error: ", e);
                     solutionRepository.update(solution.setStatus(SolutionStatus.ERROR));
                 }
             }
