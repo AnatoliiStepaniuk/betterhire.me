@@ -4,6 +4,7 @@ import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.SolutionStatus;
 import com.sdehunt.dto.SaveSolutionDTO;
+import com.sdehunt.dto.SolutionIdDTO;
 import lombok.SneakyThrows;
 import org.junit.Assert;
 import org.junit.Test;
@@ -32,7 +33,7 @@ public class SolutionApiIT extends AbstractApiTest {
         String id = host().contentType(APP_JSON)
                 .body(solutionDTO)
                 .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
-                .body().asString();
+                .as(SolutionIdDTO.class).getId();
 
         // Verify save (query by userId)
         host().get("/tasks/{taskId}/solutions?userId=" + userId, taskId).then()
@@ -101,7 +102,7 @@ public class SolutionApiIT extends AbstractApiTest {
         String invalidRepoSolutionId = host().contentType(APP_JSON)
                 .body(invalidRepoDTO)
                 .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
-                .body().asString();
+                .as(SolutionIdDTO.class).getId();
 
         verifySolutionStatus(invalidRepoSolutionId, SolutionStatus.INVALID_FILES);
 
@@ -116,7 +117,7 @@ public class SolutionApiIT extends AbstractApiTest {
         String invalidCommitSolutionId = host().contentType(APP_JSON)
                 .body(invalidCommitDTO)
                 .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
-                .body().asString();
+                .as(SolutionIdDTO.class).getId();
 
         verifySolutionStatus(invalidCommitSolutionId, SolutionStatus.INVALID_FILES);
 
@@ -131,7 +132,7 @@ public class SolutionApiIT extends AbstractApiTest {
         String invalidSolutionId = host().contentType(APP_JSON)
                 .body(invalidSolutionDTO)
                 .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
-                .body().asString();
+                .as(SolutionIdDTO.class).getId();
 
         verifySolutionStatus(invalidSolutionId, SolutionStatus.INVALID_SOLUTION);
 
