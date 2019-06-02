@@ -6,7 +6,7 @@ import com.sdehunt.dto.SaveSolutionDTO;
 import com.sdehunt.exception.SolutionNotFoundException;
 import com.sdehunt.repository.SolutionRepository;
 import com.sdehunt.repository.impl.SolutionQueryImpl;
-import com.sdehunt.service.solution.SolutionService;
+import com.sdehunt.service.SolutionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;

@@ -12,7 +12,7 @@ import com.sdehunt.repository.impl.JdbiSolutionRepository;
 import com.sdehunt.repository.impl.JdbiTaskRepository;
 import com.sdehunt.repository.impl.JdbiUserRepository;
 import com.sdehunt.score.GeneralScoreCounter;
-import com.sdehunt.service.solution.SolutionService;
+import com.sdehunt.service.SolutionService;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

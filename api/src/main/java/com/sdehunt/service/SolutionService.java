@@ -1,4 +1,4 @@
-package com.sdehunt.service.solution;
+package com.sdehunt.service;
 
 import com.sdehunt.commons.github.GithubClient;
 import com.sdehunt.commons.github.JavaGithubClient;
@@ -57,7 +57,7 @@ public class SolutionService {
                 logger.error("Solution " + solutionId + " finished with exception", e);
                 solutionRepository.update(solution.setStatus(SolutionStatus.TIMEOUT));
             } catch (ExecutionException e) {
-                if (e.getCause() instanceof com.sdehunt.exception.CommitOrFileNotFoundException
+                if (e.getCause() instanceof CommitOrFileNotFoundException
                         || e.getCause() instanceof com.sdehunt.exception.RepositoryNotFoundException) {
                     solutionRepository.update(solution.setStatus(SolutionStatus.INVALID_FILES));
                 } else {
@@ -92,11 +92,7 @@ public class SolutionService {
         }
     }
 
-    private long count(Solution solution) {
-        try {
-            return scoreCounter.count(solution);
-        } catch (CommitOrFileNotFoundException e) {
-            throw new com.sdehunt.exception.CommitOrFileNotFoundException();
-        }
+    private long count(Solution solution) throws CommitOrFileNotFoundException {
+        return scoreCounter.count(solution);
     }
 }
