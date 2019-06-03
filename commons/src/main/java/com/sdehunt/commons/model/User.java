@@ -8,6 +8,7 @@ import java.time.Instant;
 public class User {
 
     private String id;
+    private String nickname; // TODO add to tests
     private String email;
     private String github;
     private String linkedIn;

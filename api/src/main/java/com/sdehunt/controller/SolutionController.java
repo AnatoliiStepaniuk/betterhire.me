@@ -1,6 +1,7 @@
 package com.sdehunt.controller;
 
 import com.sdehunt.commons.TaskID;
+import com.sdehunt.commons.model.BestResult;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.SolutionStatus;
 import com.sdehunt.dto.SaveSolutionDTO;
@@ -61,9 +62,7 @@ public class SolutionController {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/tasks/{taskId}/solutions/best", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Solution> getBestSolutionsForTask(@PathVariable String taskId) { // TODO test
-        return solutions.query(
-                new SolutionQueryImpl().withTask(taskId)// TODO
-        );
+    public List<BestResult> getBestSolutionsForTask(@PathVariable String taskId) { // TODO test
+        return solutions.best(taskId);
     }
 }

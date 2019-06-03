@@ -1,6 +1,7 @@
 package com.sdehunt.repository.impl;
 
 import com.sdehunt.commons.TaskID;
+import com.sdehunt.commons.model.BestResult;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.SolutionStatus;
 import com.sdehunt.repository.SolutionQuery;
@@ -23,6 +24,7 @@ import static java.lang.String.format;
 public class JdbiSolutionRepository implements SolutionRepository {
 
     private static final String TABLE = "`sdehunt_db`.`solution`";
+    private static final String USER_TABLE = "`sdehunt_db`.`user`";
 
     private Jdbi jdbi;
 
@@ -96,6 +98,17 @@ public class JdbiSolutionRepository implements SolutionRepository {
         );
     }
 
+    @Override
+    public List<BestResult> best(String taskId) {
+        return jdbi.withHandle(
+                db -> db.select(format("SELECT best.final_score as score, %s.nickname FROM (SELECT max(score) final_score, user FROM %s\n" +
+                        "WHERE status = 'accepted' AND task = ?\n" +
+                        "GROUP BY %s.user) as best\n" +
+                        "INNER JOIN %s ON best.user = user.id ORDER BY score DESC", USER_TABLE, TABLE, TABLE, USER_TABLE), taskId)
+                        .map(new BestResultRowMapper()).list()
+        );
+    }
+
     private class SolutionRowMapper implements RowMapper<Solution> {
         @Override
         public Solution map(ResultSet rs, StatementContext ctx) throws SQLException {
@@ -108,6 +121,15 @@ public class JdbiSolutionRepository implements SolutionRepository {
                     .setScore(Long.valueOf(rs.getString("score")))
                     .setStatus(SolutionStatus.valueOf(rs.getString("status").toUpperCase()))
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")));
+        }
+    }
+
+    private class BestResultRowMapper implements RowMapper<BestResult> {
+        @Override
+        public BestResult map(ResultSet rs, StatementContext ctx) throws SQLException {
+            return new BestResult()
+                    .setScore(rs.getLong("score"))
+                    .setNickname(rs.getString("nickname"));
         }
     }
 }
