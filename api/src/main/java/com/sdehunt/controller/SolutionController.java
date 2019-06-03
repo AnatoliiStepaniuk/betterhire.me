@@ -2,6 +2,7 @@ package com.sdehunt.controller;
 
 import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.Solution;
+import com.sdehunt.commons.model.SolutionStatus;
 import com.sdehunt.dto.SaveSolutionDTO;
 import com.sdehunt.dto.SolutionIdDTO;
 import com.sdehunt.exception.SolutionNotFoundException;
@@ -51,10 +52,18 @@ public class SolutionController {
     @RequestMapping(method = RequestMethod.GET, path = "/tasks/{taskId}/solutions", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Solution> getSolutionsForTask(
             @PathVariable String taskId,
-            @RequestParam(value = "userId", required = false) String userId
+            @RequestParam(value = "userId", required = false) String userId,
+            @RequestParam(value = "status", required = false) SolutionStatus status // TODO multiple?
     ) {
         return solutions.query(
-                new SolutionQueryImpl().withTask(taskId).withUser(userId)
+                new SolutionQueryImpl().withTask(taskId).withUser(userId).withStatus(status)
+        );
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/tasks/{taskId}/solutions/best", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Solution> getBestSolutionsForTask(@PathVariable String taskId) { // TODO test
+        return solutions.query(
+                new SolutionQueryImpl().withTask(taskId)// TODO
         );
     }
 }

@@ -1,5 +1,7 @@
 package com.sdehunt.repository;
 
+import com.sdehunt.commons.model.SolutionStatus;
+
 import java.util.Optional;
 
 /**
@@ -11,4 +13,5 @@ public interface SolutionQuery {
 
     Optional<String> getTask();
 
+    Optional<SolutionStatus> getStatus();
 }

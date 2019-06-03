@@ -81,6 +81,10 @@ public class JdbiSolutionRepository implements SolutionRepository {
             conditions.add("`user` = ?");
             params.add(userId);
         });
+        request.getStatus().ifPresent(status -> {
+            conditions.add("`status` = ?");
+            params.add(status);
+        });
 
         if (!conditions.isEmpty()) {
             sql += " WHERE " + String.join(" AND ", conditions);

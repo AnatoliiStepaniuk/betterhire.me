@@ -1,5 +1,6 @@
 package com.sdehunt.repository.impl;
 
+import com.sdehunt.commons.model.SolutionStatus;
 import com.sdehunt.repository.SolutionQuery;
 
 import java.util.Optional;
@@ -10,6 +11,8 @@ public class SolutionQueryImpl implements SolutionQuery {
 
     private String task;
 
+    private SolutionStatus status;
+
     public SolutionQueryImpl withUser(String user) {
         this.user = user;
         return this;
@@ -17,6 +20,11 @@ public class SolutionQueryImpl implements SolutionQuery {
 
     public SolutionQueryImpl withTask(String task) {
         this.task = task;
+        return this;
+    }
+
+    public SolutionQueryImpl withStatus(SolutionStatus status) {
+        this.status = status;
         return this;
     }
 
@@ -29,4 +37,10 @@ public class SolutionQueryImpl implements SolutionQuery {
     public Optional<String> getTask() {
         return Optional.ofNullable(task);
     }
+
+    @Override
+    public Optional<SolutionStatus> getStatus() {
+        return Optional.ofNullable(status);
+    }
+
 }
