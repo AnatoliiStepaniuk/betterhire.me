@@ -32,7 +32,8 @@ public class UserController {
         User user = new User()
                 .setEmail(createUserRequest.getEmail())
                 .setGithub(createUserRequest.getGithub())
-                .setLinkedIn(createUserRequest.getLinkedIn());
+                .setLinkedIn(createUserRequest.getLinkedIn())
+                .setNickname(createUserRequest.getNickname());
 
         return users.create(user);
     }
@@ -48,7 +49,8 @@ public class UserController {
                 .setId(userId)
                 .setEmail(updateUserRequest.getEmail())
                 .setGithub(updateUserRequest.getGithub())
-                .setLinkedIn(updateUserRequest.getLinkedIn());
+                .setLinkedIn(updateUserRequest.getLinkedIn())
+                .setNickname(updateUserRequest.getNickname());
 
         return users.update(user);
     }

@@ -54,7 +54,7 @@ public class SolutionController {
     public List<Solution> getSolutionsForTask(
             @PathVariable String taskId,
             @RequestParam(value = "userId", required = false) String userId,
-            @RequestParam(value = "status", required = false) SolutionStatus status // TODO multiple?
+            @RequestParam(value = "status", required = false) SolutionStatus status
     ) {
         return solutions.query(
                 new SolutionQueryImpl().withTask(taskId).withUser(userId).withStatus(status)

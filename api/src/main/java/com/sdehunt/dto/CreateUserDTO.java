@@ -7,4 +7,5 @@ public class CreateUserDTO {
     private String email;
     private String github;
     private String linkedIn;
+    private String nickname;
 }

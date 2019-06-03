@@ -19,13 +19,15 @@ public class UserApiIT extends AbstractApiTest {
         String email = UUID.randomUUID().toString() + "@gmail.com";
         String github = "GH" + UUID.randomUUID().toString();
         String linkedIn = "LI" + UUID.randomUUID().toString();
+        String nickname = "NN" + UUID.randomUUID().toString();
 
         int usersCountBefore = host().get("/users").as(Collection.class).size();
 
         CreateUserDTO createRequest = new CreateUserDTO()
                 .setEmail(email)
                 .setGithub(github)
-                .setLinkedIn(linkedIn);
+                .setLinkedIn(linkedIn)
+                .setNickname(nickname);
 
         Response response = host()
                 .contentType(APP_JSON)
@@ -36,7 +38,8 @@ public class UserApiIT extends AbstractApiTest {
                 .statusCode(SUCCESS)
                 .body("email", is(email))
                 .body("github", is(github))
-                .body("linkedIn", is(linkedIn));
+                .body("linkedIn", is(linkedIn))
+                .body("nickname", is(nickname));
 
         User user = response.as(User.class);
 
@@ -46,6 +49,7 @@ public class UserApiIT extends AbstractApiTest {
                 .body("email", is(user.getEmail()))
                 .body("github", is(user.getGithub()))
                 .body("linkedIn", is(user.getLinkedIn()))
+                .body("nickname", is(user.getNickname()))
                 .body("created", notNullValue())
                 .body("updated", notNullValue());
 
@@ -55,7 +59,8 @@ public class UserApiIT extends AbstractApiTest {
         CreateUserDTO updateRequest = new CreateUserDTO()
                 .setEmail(user.getEmail() + "2")
                 .setGithub(user.getGithub() + "2")
-                .setLinkedIn(user.getLinkedIn() + "2");
+                .setLinkedIn(user.getLinkedIn() + "2")
+                .setNickname(user.getNickname() + "2");
 
         host().contentType(APP_JSON)
                 .body(updateRequest)
@@ -66,6 +71,7 @@ public class UserApiIT extends AbstractApiTest {
                 .body("email", is(updateRequest.getEmail()))
                 .body("github", is(updateRequest.getGithub()))
                 .body("linkedIn", is(updateRequest.getLinkedIn()))
+                .body("nickname", is(updateRequest.getNickname()))
                 .body("updated", notNullValue())
                 .body("updated", not(equalTo(user.getCreated())));
 
@@ -76,6 +82,7 @@ public class UserApiIT extends AbstractApiTest {
                 .body("email", is(updateRequest.getEmail()))
                 .body("github", is(updateRequest.getGithub()))
                 .body("linkedIn", is(updateRequest.getLinkedIn()))
+                .body("nickname", is(updateRequest.getNickname()))
                 .body("updated", notNullValue())
                 .body("updated", not(equalTo(user.getCreated())));
 

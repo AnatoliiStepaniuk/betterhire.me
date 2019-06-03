@@ -30,8 +30,8 @@ public class JdbiUserRepository implements UserRepository {
         long now = Instant.now().getEpochSecond();
         jdbi.withHandle(
                 db -> db.execute(
-                        format("INSERT INTO %s (`id`, `email`, `github`, `linkedin`, `created`, `updated`) VALUES(?, ?, ?, ?, ?, ?)", TABLE),
-                        user.getId(), user.getEmail(), user.getGithub(), user.getLinkedIn(), now, now
+                        format("INSERT INTO %s (`id`, `nickname`, `email`, `github`, `linkedin`, `created`, `updated`) VALUES(?, ?, ?, ?, ?, ?, ?)", TABLE),
+                        user.getId(), user.getNickname(), user.getEmail(), user.getGithub(), user.getLinkedIn(), now, now
                 ));
 
         return get(user.getId()).orElse(null);
@@ -49,8 +49,8 @@ public class JdbiUserRepository implements UserRepository {
     public User update(User user) {
         jdbi.withHandle(
                 db -> db.execute(
-                        format("UPDATE %s SET email = ?, github = ?, linkedin = ?, updated = ? WHERE id = ?", TABLE),
-                        user.getEmail(), user.getGithub(), user.getLinkedIn(), Instant.now().getEpochSecond(), user.getId())
+                        format("UPDATE %s SET nickname = ?, email = ?, github = ?, linkedin = ?, updated = ? WHERE id = ?", TABLE),
+                        user.getNickname(), user.getEmail(), user.getGithub(), user.getLinkedIn(), Instant.now().getEpochSecond(), user.getId())
         );
 
         return get(user.getId()).orElse(null); // TODO  throw exception if not found
@@ -76,6 +76,7 @@ public class JdbiUserRepository implements UserRepository {
         public User map(ResultSet rs, StatementContext ctx) throws SQLException {
             return new User()
                     .setId(rs.getString("id"))
+                    .setNickname(rs.getString("nickname"))
                     .setEmail(rs.getString("email"))
                     .setGithub(rs.getString("github"))
                     .setLinkedIn(rs.getString("linkedin"))
