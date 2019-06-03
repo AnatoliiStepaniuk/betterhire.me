@@ -22,7 +22,9 @@ public class SolutionApiIT extends AbstractApiTest {
     @Test
     public void crudTest() {
         TaskID taskId = TaskID.SLIDES_TEST;
-        CreateUserDTO createUserDTO = new CreateUserDTO().setEmail(UUID.randomUUID().toString() + "@gmail.com");
+        CreateUserDTO createUserDTO = new CreateUserDTO()
+                .setEmail(UUID.randomUUID().toString() + "@gmail.com")
+                .setNickname("NN" + UUID.randomUUID().toString());
         String userId = host().contentType(APP_JSON).body(createUserDTO).post("/users").as(User.class).getId();
         String repo = "AnatoliiStepaniuk/google_hash_code_2019";
         String commit = "61f487523ad641cc6fffc44ded7537d94cf0d1eb";
@@ -38,13 +40,16 @@ public class SolutionApiIT extends AbstractApiTest {
                 .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
                 .as(SolutionIdDTO.class).getId();
 
+        verifySolutionStatus(id, SolutionStatus.ACCEPTED);
+
         // Verify save (query by userId)
-        host().get("/tasks/{taskId}/solutions?userId=" + userId, taskId).then()
+        host().get("/tasks/{taskId}/solutions?userId=" + userId + "&status=ACCEPTED", taskId).then()
                 .body("size()", equalTo(1))
                 .body("[0].taskId", equalTo(taskId.name()))
                 .body("[0].userId", equalTo(userId))
                 .body("[0].repo", equalTo(repo))
-                .body("[0].commit", equalTo(commit));
+                .body("[0].commit", equalTo(commit))
+                .body("[0].status", equalTo(SolutionStatus.ACCEPTED.name()));
 
         // Verify save (by id)
         host().get("/solutions/" + id)
@@ -54,7 +59,8 @@ public class SolutionApiIT extends AbstractApiTest {
                 .body("taskId", equalToIgnoringCase(taskId.name()))
                 .body("userId", equalTo(userId))
                 .body("repo", equalTo(repo))
-                .body("commit", equalTo(commit));
+                .body("commit", equalTo(commit))
+                .body("status", equalTo(SolutionStatus.ACCEPTED.name()));
 
         // Verify save (by userId)
         host().get("/users/{userId}/solutions", userId)
@@ -65,7 +71,8 @@ public class SolutionApiIT extends AbstractApiTest {
                 .body("[0].taskId", equalToIgnoringCase(taskId.name()))
                 .body("[0].userId", equalTo(userId))
                 .body("[0].repo", equalTo(repo))
-                .body("[0].commit", equalTo(commit));
+                .body("[0].commit", equalTo(commit))
+                .body("[0].status", equalTo(SolutionStatus.ACCEPTED.name()));
 
         // Delete
         host().delete("/solutions/{id}", id)
@@ -87,7 +94,9 @@ public class SolutionApiIT extends AbstractApiTest {
     @Test
     public void invalidInputTest() {
         TaskID taskId = TaskID.SLIDES_TEST;
-        CreateUserDTO createUserDTO = new CreateUserDTO().setEmail(UUID.randomUUID().toString() + "@gmail.com");
+        CreateUserDTO createUserDTO = new CreateUserDTO()
+                .setEmail(UUID.randomUUID().toString() + "@gmail.com")
+                .setNickname("NN" + UUID.randomUUID().toString());
         String userId = host().contentType(APP_JSON).body(createUserDTO).post("/users").as(User.class).getId();
 
         String repo = "AnatoliiStepaniuk/google_hash_code_2019";
@@ -140,7 +149,9 @@ public class SolutionApiIT extends AbstractApiTest {
     @Test
     public void invalidSolutionTest() {
         TaskID taskId = TaskID.SLIDES_TEST;
-        CreateUserDTO createUserDTO = new CreateUserDTO().setEmail(UUID.randomUUID().toString() + "@gmail.com");
+        CreateUserDTO createUserDTO = new CreateUserDTO()
+                .setEmail(UUID.randomUUID().toString() + "@gmail.com")
+                .setNickname("NN" + UUID.randomUUID().toString());
         String userId = host().contentType(APP_JSON).body(createUserDTO).post("/users").as(User.class).getId();
         String invalidSolutionRepo = "AnatoliiStepaniuk/google_hash_code_2019_invalid";
         String commit = "master";
