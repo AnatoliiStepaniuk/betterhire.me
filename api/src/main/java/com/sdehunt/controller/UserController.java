@@ -6,7 +6,10 @@ import com.sdehunt.dto.CreateUserDTO;
 import com.sdehunt.exception.UserNotFoundException;
 import com.sdehunt.repository.SolutionRepository;
 import com.sdehunt.repository.UserRepository;
+import com.sdehunt.security.CurrentUser;
+import com.sdehunt.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -21,6 +24,13 @@ public class UserController {
 
     @Autowired
     private UserRepository users;
+
+    @GetMapping("/me")
+    @PreAuthorize("hasRole('USER')")
+    public User getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
+        return users.get(userPrincipal.getId())
+                .orElseThrow(() -> new RuntimeException("User id " + userPrincipal.getId() + " is not found"));
+    }
 
     @RequestMapping(method = RequestMethod.GET)
     public Collection<User> getAll() {

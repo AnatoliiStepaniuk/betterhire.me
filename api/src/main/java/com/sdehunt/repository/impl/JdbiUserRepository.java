@@ -30,8 +30,8 @@ public class JdbiUserRepository implements UserRepository {
         long now = Instant.now().getEpochSecond();
         jdbi.withHandle(
                 db -> db.execute(
-                        format("INSERT INTO %s (`id`, `nickname`, `email`, `github`, `linkedin`, `created`, `updated`) VALUES(?, ?, ?, ?, ?, ?, ?)", TABLE),
-                        user.getId(), user.getNickname(), user.getEmail(), user.getGithub(), user.getLinkedIn(), now, now
+                        format("INSERT INTO %s (`id`, `name`, `nickname`, `email`, `github`, `linkedin`, `created`, `updated`) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", TABLE),
+                        user.getId(), user.getName(), user.getNickname(), user.getEmail(), user.getGithub(), user.getLinkedIn(), now, now
                 ));
 
         return get(user.getId()).orElse(null);
@@ -46,11 +46,19 @@ public class JdbiUserRepository implements UserRepository {
     }
 
     @Override
+    public Optional<User> byEmail(String email) {
+        return jdbi.withHandle(
+                db -> db.select(format("SELECT * FROM %s WHERE email = ?", TABLE), email) // TODO make unique column?
+                        .map(new UserRowMapper()).findFirst()
+        );
+    }
+
+    @Override
     public User update(User user) {
         jdbi.withHandle(
                 db -> db.execute(
-                        format("UPDATE %s SET nickname = ?, email = ?, github = ?, linkedin = ?, updated = ? WHERE id = ?", TABLE),
-                        user.getNickname(), user.getEmail(), user.getGithub(), user.getLinkedIn(), Instant.now().getEpochSecond(), user.getId())
+                        format("UPDATE %s SET name = ?, nickname = ?, email = ?, github = ?, linkedin = ?, updated = ? WHERE id = ?", TABLE),
+                        user.getName(), user.getNickname(), user.getEmail(), user.getGithub(), user.getLinkedIn(), Instant.now().getEpochSecond(), user.getId())
         );
 
         return get(user.getId()).orElse(null); // TODO  throw exception if not found
@@ -76,6 +84,7 @@ public class JdbiUserRepository implements UserRepository {
         public User map(ResultSet rs, StatementContext ctx) throws SQLException {
             return new User()
                     .setId(rs.getString("id"))
+                    .setName(rs.getString("name"))
                     .setNickname(rs.getString("nickname"))
                     .setEmail(rs.getString("email"))
                     .setGithub(rs.getString("github"))

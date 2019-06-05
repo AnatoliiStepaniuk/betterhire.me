@@ -14,6 +14,8 @@ public interface UserRepository {
 
     Optional<User> get(String userId);
 
+    Optional<User> byEmail(String email);
+
     User update(User user);
 
     void delete(String userId);

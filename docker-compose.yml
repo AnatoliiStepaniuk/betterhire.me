@@ -2,6 +2,7 @@ version: '3'
 services:
   backend:
     image: sdehuntdeveloper/sdehunt:latest
+    env_file: backend.env
     networks:
       - mt-network
     restart: always
@@ -11,7 +12,7 @@ services:
       - ~/.aws:/.aws
   frontend:
     image: sdehuntdeveloper/sdehunt_client:latest
-    env_file: environment.properties
+    env_file: frontend.env
     networks:
       - mt-network
     restart: always

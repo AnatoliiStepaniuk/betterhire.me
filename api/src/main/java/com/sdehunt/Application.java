@@ -12,10 +12,12 @@ import com.sdehunt.repository.impl.JdbiSolutionRepository;
 import com.sdehunt.repository.impl.JdbiTaskRepository;
 import com.sdehunt.repository.impl.JdbiUserRepository;
 import com.sdehunt.score.GeneralScoreCounter;
+import com.sdehunt.security.AppProperties;
 import com.sdehunt.service.SolutionService;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -29,6 +31,7 @@ import javax.sql.DataSource;
 
 @EnableSwagger2
 @SpringBootApplication
+@EnableConfigurationProperties(AppProperties.class)
 public class Application implements WebMvcConfigurer {
 
     public static void main(String[] args) {
