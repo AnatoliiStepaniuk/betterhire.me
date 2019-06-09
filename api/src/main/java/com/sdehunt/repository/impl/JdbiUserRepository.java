@@ -30,8 +30,8 @@ public class JdbiUserRepository implements UserRepository {
         long now = Instant.now().getEpochSecond();
         jdbi.withHandle(
                 db -> db.execute(
-                        format("INSERT INTO %s (`id`, `name`, `nickname`, `email`, `github`, `linkedin`, `created`, `updated`) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", TABLE),
-                        user.getId(), user.getName(), user.getNickname(), user.getEmail(), user.getGithub(), user.getLinkedIn(), now, now
+                        format("INSERT INTO %s (`id`, `name`, `nickname`, `email`, `github_login`, `linkedin_id`, `created`, `updated`) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", TABLE),
+                        user.getId(), user.getName(), user.getNickname(), user.getEmail(), user.getGithubLogin(), user.getLinkedinId(), now, now
                 ));
 
         return get(user.getId()).orElse(null);
@@ -54,11 +54,21 @@ public class JdbiUserRepository implements UserRepository {
     }
 
     @Override
+    public Optional<User> byGithubLogin(String github) {
+        return Optional.empty(); // TODO
+    }
+
+    @Override
+    public Optional<User> byLinkedinId(String linkedin) {
+        return Optional.empty(); // TODO
+    }
+
+    @Override
     public User update(User user) {
         jdbi.withHandle(
                 db -> db.execute(
-                        format("UPDATE %s SET name = ?, nickname = ?, email = ?, github = ?, linkedin = ?, updated = ? WHERE id = ?", TABLE),
-                        user.getName(), user.getNickname(), user.getEmail(), user.getGithub(), user.getLinkedIn(), Instant.now().getEpochSecond(), user.getId())
+                        format("UPDATE %s SET name = ?, nickname = ?, email = ?, github_login = ?, linkedin_id = ?, updated = ? WHERE id = ?", TABLE),
+                        user.getName(), user.getNickname(), user.getEmail(), user.getGithubLogin(), user.getLinkedinId(), Instant.now().getEpochSecond(), user.getId())
         );
 
         return get(user.getId()).orElse(null); // TODO  throw exception if not found
@@ -87,8 +97,8 @@ public class JdbiUserRepository implements UserRepository {
                     .setName(rs.getString("name"))
                     .setNickname(rs.getString("nickname"))
                     .setEmail(rs.getString("email"))
-                    .setGithub(rs.getString("github"))
-                    .setLinkedIn(rs.getString("linkedin"))
+                    .setGithubLogin(rs.getString("github_login"))
+                    .setLinkedinId(rs.getString("linkedin_id"))
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")))
                     .setUpdated(Instant.ofEpochSecond(rs.getLong("updated"))
                     );

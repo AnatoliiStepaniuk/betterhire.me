@@ -41,8 +41,8 @@ public class UserController {
     public User create(@RequestBody CreateUserDTO createUserRequest) {
         User user = new User()
                 .setEmail(createUserRequest.getEmail())
-                .setGithub(createUserRequest.getGithub())
-                .setLinkedIn(createUserRequest.getLinkedIn())
+                .setGithubLogin(createUserRequest.getGithubLogin())
+                .setLinkedinId(createUserRequest.getLinkedinId())
                 .setNickname(createUserRequest.getNickname());
 
         return users.create(user);
@@ -58,8 +58,8 @@ public class UserController {
         User user = new User()
                 .setId(userId)
                 .setEmail(updateUserRequest.getEmail())
-                .setGithub(updateUserRequest.getGithub())
-                .setLinkedIn(updateUserRequest.getLinkedIn())
+                .setGithubLogin(updateUserRequest.getGithubLogin())
+                .setLinkedinId(updateUserRequest.getLinkedinId())
                 .setNickname(updateUserRequest.getNickname());
 
         return users.update(user);

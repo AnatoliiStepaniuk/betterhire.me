@@ -12,8 +12,8 @@ public class User {
     private String nickname; // TODO? add to db + tests
     private String imageUrl; // TODO? add to db + tests
     private String email;
-    private String github;
-    private String linkedIn;
+    private String githubLogin;
+    private String linkedinId;
     private Instant created;
     private Instant updated;
 

@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class CreateUserDTO {
     private String email;
-    private String github;
-    private String linkedIn;
+    private String githubLogin;
+    private String linkedinId;
     private String nickname;
 }

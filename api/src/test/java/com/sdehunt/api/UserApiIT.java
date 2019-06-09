@@ -17,16 +17,16 @@ public class UserApiIT extends AbstractApiTest {
     @Test
     public void crudTest() {
         String email = UUID.randomUUID().toString() + "@gmail.com";
-        String github = "GH" + UUID.randomUUID().toString();
-        String linkedIn = "LI" + UUID.randomUUID().toString();
+        String githubLogin = "GH" + UUID.randomUUID().toString();
+        String linkedInId = "LI" + UUID.randomUUID().toString();
         String nickname = "NN" + UUID.randomUUID().toString();
 
         int usersCountBefore = host().get("/users").as(Collection.class).size();
 
         CreateUserDTO createRequest = new CreateUserDTO()
                 .setEmail(email)
-                .setGithub(github)
-                .setLinkedIn(linkedIn)
+                .setGithubLogin(githubLogin)
+                .setLinkedinId(linkedInId)
                 .setNickname(nickname);
 
         Response response = host()
@@ -37,8 +37,8 @@ public class UserApiIT extends AbstractApiTest {
         response.then().log().ifValidationFails()
                 .statusCode(SUCCESS)
                 .body("email", is(email))
-                .body("github", is(github))
-                .body("linkedIn", is(linkedIn))
+                .body("githubLogin", is(githubLogin))
+                .body("linkedinId", is(linkedInId))
                 .body("nickname", is(nickname));
 
         User user = response.as(User.class);
@@ -47,8 +47,8 @@ public class UserApiIT extends AbstractApiTest {
                 .then().log().ifValidationFails()
                 .body("id", is(user.getId()))
                 .body("email", is(user.getEmail()))
-                .body("github", is(user.getGithub()))
-                .body("linkedIn", is(user.getLinkedIn()))
+                .body("githubLogin", is(user.getGithubLogin()))
+                .body("linkedinId", is(user.getLinkedinId()))
                 .body("nickname", is(user.getNickname()))
                 .body("created", notNullValue())
                 .body("updated", notNullValue());
@@ -58,8 +58,8 @@ public class UserApiIT extends AbstractApiTest {
 
         CreateUserDTO updateRequest = new CreateUserDTO()
                 .setEmail(user.getEmail() + "2")
-                .setGithub(user.getGithub() + "2")
-                .setLinkedIn(user.getLinkedIn() + "2")
+                .setGithubLogin(user.getGithubLogin() + "2")
+                .setLinkedinId(user.getLinkedinId() + "2")
                 .setNickname(user.getNickname() + "2");
 
         host().contentType(APP_JSON)
@@ -69,8 +69,8 @@ public class UserApiIT extends AbstractApiTest {
                 .statusCode(SUCCESS)
                 .body("id", is(user.getId()))
                 .body("email", is(updateRequest.getEmail()))
-                .body("github", is(updateRequest.getGithub()))
-                .body("linkedIn", is(updateRequest.getLinkedIn()))
+                .body("githubLogin", is(updateRequest.getGithubLogin()))
+                .body("linkedinId", is(updateRequest.getLinkedinId()))
                 .body("nickname", is(updateRequest.getNickname()))
                 .body("updated", notNullValue())
                 .body("updated", not(equalTo(user.getCreated())));
@@ -80,8 +80,8 @@ public class UserApiIT extends AbstractApiTest {
                 .statusCode(SUCCESS)
                 .body("id", is(user.getId()))
                 .body("email", is(updateRequest.getEmail()))
-                .body("github", is(updateRequest.getGithub()))
-                .body("linkedIn", is(updateRequest.getLinkedIn()))
+                .body("githubLogin", is(updateRequest.getGithubLogin()))
+                .body("linkedinId", is(updateRequest.getLinkedinId()))
                 .body("nickname", is(updateRequest.getNickname()))
                 .body("updated", notNullValue())
                 .body("updated", not(equalTo(user.getCreated())));
