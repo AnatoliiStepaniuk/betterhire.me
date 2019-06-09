@@ -9,6 +9,8 @@ import com.sdehunt.dto.SolutionIdDTO;
 import com.sdehunt.exception.SolutionNotFoundException;
 import com.sdehunt.repository.SolutionRepository;
 import com.sdehunt.repository.impl.SolutionQueryImpl;
+import com.sdehunt.security.CurrentUser;
+import com.sdehunt.security.UserPrincipal;
 import com.sdehunt.service.SolutionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -30,7 +32,7 @@ public class SolutionController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public SolutionIdDTO submit(@PathVariable String taskId, @RequestBody SaveSolutionDTO solutionRequest) {
+    public SolutionIdDTO submit(@PathVariable String taskId, @RequestBody SaveSolutionDTO solutionRequest, @CurrentUser UserPrincipal userPrincipal) {
         Solution solution = new Solution()
                 .setUserId(solutionRequest.getUserId())
                 .setRepo(solutionRequest.getRepo())

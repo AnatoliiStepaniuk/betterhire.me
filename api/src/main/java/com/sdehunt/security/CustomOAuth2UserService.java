@@ -64,6 +64,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         Optional<User> found = userRepository.find(oAuthUser);
         User user;
         if (found.isPresent()) {
+            oAuthUser.setId(found.get().getId());
             user = userRepository.update(oAuthUser);
         } else {
             user = userRepository.create(oAuthUser);
