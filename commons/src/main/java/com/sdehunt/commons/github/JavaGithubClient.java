@@ -133,6 +133,7 @@ public class JavaGithubClient implements GithubClient {
     private HttpRequest buildRequest(URI uri, String userId) {
         String token = accessTokens.find(userId, OAuthProvider.GITHUB).map(AccessToken::getToken)
                 .orElseGet(() -> params.get(ACCESS_TOKEN));
+        logger.debug("Using access token: " + token);
         return HttpRequest.newBuilder()
                 .header("Authorization", "token " + token)
                 .uri(uri)

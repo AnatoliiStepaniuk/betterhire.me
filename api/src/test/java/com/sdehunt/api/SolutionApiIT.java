@@ -7,10 +7,14 @@ import com.sdehunt.commons.model.User;
 import com.sdehunt.dto.CreateUserDTO;
 import com.sdehunt.dto.SaveSolutionDTO;
 import com.sdehunt.dto.SolutionIdDTO;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.restassured.http.Header;
 import lombok.SneakyThrows;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Date;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -29,13 +33,19 @@ public class SolutionApiIT extends AbstractApiTest {
         String repo = "AnatoliiStepaniuk/google_hash_code_2019";
         String commit = "61f487523ad641cc6fffc44ded7537d94cf0d1eb";
 
+        String jwt = Jwts.builder()
+                .setSubject(userId)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(new Date().getTime() + 864000000))
+                .signWith(SignatureAlgorithm.HS512, "926D96C90030DD58429D2751AC1BDBBC")
+                .compact();
         SaveSolutionDTO solutionDTO = new SaveSolutionDTO()
-// TODO               .setUserId(userId)
                 .setRepo(repo)
                 .setCommit(commit);
 
         // Saving solution
         String id = host().contentType(APP_JSON)
+                .header(new Header("Authorization", "Bearer " + jwt))
                 .body(solutionDTO)
                 .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
                 .as(SolutionIdDTO.class).getId();
@@ -46,7 +56,7 @@ public class SolutionApiIT extends AbstractApiTest {
         host().get("/tasks/{taskId}/solutions?userId=" + userId + "&status=ACCEPTED", taskId).then()
                 .body("size()", equalTo(1))
                 .body("[0].taskId", equalTo(taskId.name()))
-                // TODO      .body("[0].userId", equalTo(userId))
+                .body("[0].userId", equalTo(userId))
                 .body("[0].repo", equalTo(repo))
                 .body("[0].commit", equalTo(commit))
                 .body("[0].status", equalTo(SolutionStatus.ACCEPTED.name()));
@@ -101,46 +111,60 @@ public class SolutionApiIT extends AbstractApiTest {
 
         String repo = "AnatoliiStepaniuk/google_hash_code_2019";
         String commit = "master";
-        String invalidUserId = UUID.randomUUID().toString();
         String invalidRepo = "invalid_repo";
         String invalidCommit = "invalid_commit";
 
+        String jwt = Jwts.builder()
+                .setSubject(userId)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(new Date().getTime() + 864000000))
+                .signWith(SignatureAlgorithm.HS512, "926D96C90030DD58429D2751AC1BDBBC")
+                .compact();
+
         // First verify successful response for valid request
         SaveSolutionDTO validDTO = new SaveSolutionDTO()
-                // TODO     .setUserId(userId)
                 .setRepo(repo)
                 .setCommit(commit);
         host().contentType(APP_JSON)
+                .header(new Header("Authorization", "Bearer " + jwt))
                 .body(validDTO)
                 .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
                 .then().statusCode(is(SUCCESS));
 
         // Verify invalid Repo response
         SaveSolutionDTO invalidRepoDTO = new SaveSolutionDTO()
-                // TODO     .setUserId(userId)
                 .setRepo(invalidRepo)
                 .setCommit(commit);
         host().contentType(APP_JSON)
+                .header(new Header("Authorization", "Bearer " + jwt))
                 .body(invalidRepoDTO)
                 .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
                 .then().statusCode(is(NOT_FOUND));
 
         // Verify invalid Commit response
         SaveSolutionDTO invalidCommitDTO = new SaveSolutionDTO()
-                // TODO    .setUserId(userId)
                 .setRepo(repo)
                 .setCommit(invalidCommit);
         host().contentType(APP_JSON)
+                .header(new Header("Authorization", "Bearer " + jwt))
                 .body(invalidCommitDTO)
                 .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
                 .then().statusCode(is(NOT_FOUND));
 
         // Verify invalid User response
+
+        String invalidUserJwt = Jwts.builder()
+                .setSubject(UUID.randomUUID().toString())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(new Date().getTime() + 864000000))
+                .signWith(SignatureAlgorithm.HS512, "926D96C90030DD58429D2751AC1BDBBC")
+                .compact();
+
         SaveSolutionDTO invalidSolutionDTO = new SaveSolutionDTO()
-                // TODO    .setUserId(invalidUserId)
                 .setRepo(repo)
                 .setCommit(commit);
         host().contentType(APP_JSON)
+                .header(new Header("Authorization", "Bearer " + invalidUserJwt))
                 .body(invalidSolutionDTO)
                 .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
                 .then().statusCode(is(NOT_FOUND));
@@ -156,12 +180,19 @@ public class SolutionApiIT extends AbstractApiTest {
         String invalidSolutionRepo = "AnatoliiStepaniuk/google_hash_code_2019_invalid";
         String commit = "master";
 
+        String jwt = Jwts.builder()
+                .setSubject(userId)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(new Date().getTime() + 864000000))
+                .signWith(SignatureAlgorithm.HS512, "926D96C90030DD58429D2751AC1BDBBC")
+                .compact();
+
         SaveSolutionDTO invalidSolutionDTO = new SaveSolutionDTO()
-                // TODO     .setUserId(userId)
                 .setRepo(invalidSolutionRepo)
                 .setCommit(commit);
 
         String invalidSolutionId = host().contentType(APP_JSON)
+                .header(new Header("Authorization", "Bearer " + jwt))
                 .body(invalidSolutionDTO)
                 .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
                 .as(SolutionIdDTO.class).getId();

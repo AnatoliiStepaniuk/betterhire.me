@@ -7,6 +7,7 @@ import com.sdehunt.commons.model.SolutionStatus;
 import com.sdehunt.dto.SaveSolutionDTO;
 import com.sdehunt.dto.SolutionIdDTO;
 import com.sdehunt.exception.SolutionNotFoundException;
+import com.sdehunt.exception.UserNotFoundException;
 import com.sdehunt.repository.SolutionRepository;
 import com.sdehunt.repository.impl.SolutionQueryImpl;
 import com.sdehunt.security.CurrentUser;
@@ -17,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class SolutionController {
@@ -34,7 +36,7 @@ public class SolutionController {
     )
     public SolutionIdDTO submit(@PathVariable String taskId, @RequestBody SaveSolutionDTO solutionRequest, @CurrentUser UserPrincipal user) {
         Solution solution = new Solution()
-                .setUserId(user.getId())
+                .setUserId(Optional.ofNullable(user).map(UserPrincipal::getId).orElseThrow(UserNotFoundException::new))
                 .setRepo(solutionRequest.getRepo())
                 .setCommit(solutionRequest.getCommit())
                 .setTaskId(TaskID.of(taskId));
