@@ -14,12 +14,20 @@ public interface TaskRepository {
     /**
      * Returns all present tasks
      */
-    List<Task> getAll();
+    default List<Task> getAll() {
+        return getAll(false);
+    }
+
+    List<Task> getAll(boolean test);
 
     /**
      * Returns all present tasks (short versions)
      */
-    List<ShortTask> getAllShort();
+    default List<ShortTask> getAllShort() {
+        return getAllShort(false);
+    }
+
+    List<ShortTask> getAllShort(boolean test);
 
     /**
      * Returns task for provided id if found

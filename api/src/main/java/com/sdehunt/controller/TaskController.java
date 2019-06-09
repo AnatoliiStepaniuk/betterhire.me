@@ -7,10 +7,7 @@ import com.sdehunt.dto.UpdateTaskDTO;
 import com.sdehunt.exception.TaskNotFoundException;
 import com.sdehunt.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,17 +22,17 @@ public class TaskController {
     private TaskRepository tasks;
 
     @RequestMapping(method = GET, path = "", produces = APPLICATION_JSON_VALUE) // TODO use field `enabled`
-    public List<Task> getAll() {
-        return tasks.getAll();
+    public List<Task> getAll(@RequestParam(required = false) boolean test) {
+        return tasks.getAll(test);
     }
 
     @RequestMapping(method = GET, path = "/short", produces = APPLICATION_JSON_VALUE) // TODO use field `enabled`
-    public List<ShortTask> getAllShort() { // TODO test
-        return tasks.getAllShort();
+    public List<ShortTask> getAllShort(@RequestParam(required = false) boolean test) { // TODO test
+        return tasks.getAllShort(test);
     }
 
     @RequestMapping(method = GET, path = "/{taskId}", produces = APPLICATION_JSON_VALUE)
-    public Task get(@PathVariable("taskId") String taskId) { // TODO test new fields
+    public Task get(@PathVariable("taskId") String taskId) {
         return tasks.get(taskId).orElseThrow(TaskNotFoundException::new);
     }
 
@@ -44,7 +41,7 @@ public class TaskController {
         return tasks.getShort(taskId).orElseThrow(TaskNotFoundException::new);
     }
 
-    @RequestMapping(method = PUT, path = "/{taskId}") // TODO all methods are updatable
+    @RequestMapping(method = PUT, path = "/{taskId}", produces = APPLICATION_JSON_VALUE)
     public void update(@PathVariable("taskId") String taskId, @RequestBody UpdateTaskDTO updateTaskRequest) {
         Task taskToUpdate = new Task();
         taskToUpdate.setId(TaskID.of(taskId));
@@ -58,7 +55,7 @@ public class TaskController {
         tasks.update(taskToUpdate);
     }
 
-    @RequestMapping(method = DELETE, path = "/{taskId}") // TODO add field enabled
+    @RequestMapping(method = DELETE, path = "/{taskId}")
     public void delete(@PathVariable("taskId") String taskId) {
         tasks.delete(taskId);
     }

@@ -30,7 +30,7 @@ public class SolutionApiIT extends AbstractApiTest {
                 .setEmail(UUID.randomUUID().toString() + "@gmail.com")
                 .setNickname("NN" + UUID.randomUUID().toString());
         String userId = host().contentType(APP_JSON).body(createUserDTO).post("/users").as(User.class).getId();
-        String repo = "AnatoliiStepaniuk/google_hash_code_2019";
+        String repo = "sdehuntdeveloper/google_hash_code_2019_public";
         String commit = "61f487523ad641cc6fffc44ded7537d94cf0d1eb";
 
         String jwt = Jwts.builder()
@@ -60,7 +60,8 @@ public class SolutionApiIT extends AbstractApiTest {
                 .body("[0].userId", equalTo(userId))
                 .body("[0].repo", equalTo(repo))
                 .body("[0].commit", equalTo(commit))
-                .body("[0].status", equalTo(SolutionStatus.ACCEPTED.name()));
+                .body("[0].status", equalTo(SolutionStatus.ACCEPTED.name()))
+                .body("[0].test", equalTo(true));
 
         // Verify save (by id)
         host().get("/solutions/" + id)
@@ -110,7 +111,7 @@ public class SolutionApiIT extends AbstractApiTest {
                 .setNickname("NN" + UUID.randomUUID().toString());
         String userId = host().contentType(APP_JSON).body(createUserDTO).post("/users").as(User.class).getId();
 
-        String repo = "AnatoliiStepaniuk/google_hash_code_2019";
+        String repo = "sdehuntdeveloper/google_hash_code_2019_public";
         String commit = "master";
         String invalidRepo = "invalid_repo";
         String invalidCommit = "invalid_commit";
@@ -182,7 +183,7 @@ public class SolutionApiIT extends AbstractApiTest {
                 .setEmail(UUID.randomUUID().toString() + "@gmail.com")
                 .setNickname("NN" + UUID.randomUUID().toString());
         String userId = host().contentType(APP_JSON).body(createUserDTO).post("/users").as(User.class).getId();
-        String invalidSolutionRepo = "AnatoliiStepaniuk/google_hash_code_2019_invalid";
+        String invalidSolutionRepo = "sdehuntdeveloper/google_hash_code_2019_invalid";
         String commit = "master";
 
         String jwt = Jwts.builder()

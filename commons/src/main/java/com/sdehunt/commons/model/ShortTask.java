@@ -16,4 +16,5 @@ public class ShortTask {
     private Instant updated;
     private boolean enabled;
     private boolean submittable;
+    private boolean test;
 }

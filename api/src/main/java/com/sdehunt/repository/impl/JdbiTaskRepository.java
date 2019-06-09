@@ -27,17 +27,23 @@ public class JdbiTaskRepository implements TaskRepository {
     }
 
     @Override
-    public List<Task> getAll() {
+    public List<Task> getAll(boolean test) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s", TABLE)).map(new TaskRowMapper()).list()
+                db -> db.select(getAllQuery(test)).map(new TaskRowMapper()).list()
         );
     }
 
     @Override
-    public List<ShortTask> getAllShort() {
+    public List<ShortTask> getAllShort(boolean test) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s", TABLE)).map(new ShortTaskRowMapper()).list() // TODO specific fields
+                db -> db.select(getAllQuery(test)).map(new ShortTaskRowMapper()).list()
         );
+    }
+
+    private String getAllQuery(boolean test) {
+        final String query = format("SELECT * FROM %s", TABLE);
+        final String testClause = " WHERE test = false";
+        return test ? query : query + testClause;
     }
 
     @Override
@@ -74,7 +80,7 @@ public class JdbiTaskRepository implements TaskRepository {
         );
     }
 
-    private class TaskRowMapper implements RowMapper<Task> { // TODO tests
+    private class TaskRowMapper implements RowMapper<Task> {
         @Override
         public Task map(ResultSet rs, StatementContext ctx) throws SQLException {
             Task task = new Task();
@@ -86,12 +92,14 @@ public class JdbiTaskRepository implements TaskRepository {
                     .setSubmittable(rs.getBoolean("submittable"))
                     .setEnabled(rs.getBoolean("enabled"))
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")))
-                    .setUpdated(Instant.ofEpochSecond(rs.getLong("updated")));
+                    .setUpdated(Instant.ofEpochSecond(rs.getLong("updated")))
+                    .setTest(rs.getBoolean("test"));
+
             return task;
         }
     }
 
-    private class ShortTaskRowMapper implements RowMapper<ShortTask> { // TODO tests
+    private class ShortTaskRowMapper implements RowMapper<ShortTask> {
         @Override
         public ShortTask map(ResultSet rs, StatementContext ctx) throws SQLException {
             return new ShortTask()
@@ -102,7 +110,8 @@ public class JdbiTaskRepository implements TaskRepository {
                     .setSubmittable(rs.getBoolean("submittable"))
                     .setEnabled(rs.getBoolean("enabled"))
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")))
-                    .setUpdated(Instant.ofEpochSecond(rs.getLong("updated")));
+                    .setUpdated(Instant.ofEpochSecond(rs.getLong("updated")))
+                    .setTest(rs.getBoolean("test"));
         }
     }
 }

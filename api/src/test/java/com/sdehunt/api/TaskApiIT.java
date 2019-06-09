@@ -18,7 +18,7 @@ public class TaskApiIT extends AbstractApiTest {
     private final static String TASKS_PATH = "/tasks/";
 
     @Test
-    public void updateTaskTest() {
+    public void updateTaskTest() { // TODO add tests for short tasks
 
         TaskID taskId = TaskID.SLIDES_TEST;
         String description = UUID.randomUUID().toString();
@@ -31,7 +31,8 @@ public class TaskApiIT extends AbstractApiTest {
                 .then()
                 .log().ifValidationFails()
                 .statusCode(SUCCESS)
-                .body(not(isEmptyOrNullString()));
+                .body(not(isEmptyOrNullString()))
+                .body("test", is(true));
 
         UpdateTaskDTO taskForUpdate = new UpdateTaskDTO()
                 .setDescription(description)
@@ -56,11 +57,12 @@ public class TaskApiIT extends AbstractApiTest {
                 .body("id", equalToIgnoringCase(taskId.name()))
                 .body("description", is(description))
                 .body("shortDescription", is(shortDescription))
-                .body("name", is(name));
+                .body("name", is(name))
+                .body("test", is(true));
 
 
         // Getting all tasks
-        Task[] tasks = host().get(TASKS_PATH)
+        Task[] tasks = host().get(TASKS_PATH + "?test=true")
                 .as(Task[].class);
 
         Task foundTask = Arrays.stream(tasks)

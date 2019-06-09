@@ -47,8 +47,8 @@ public class JavaGithubClient implements GithubClient {
     private final AccessTokenRepository accessTokens;
     private final ObjectMapper objectMapper;
     private final Logger logger;
-    private final static int TIMEOUT_ATTEMPTS = 50;
-    private final static int TIMEOUT_MILLIS = 1000;
+    private final static int TIMEOUT_ATTEMPTS = 3;
+    private final static int TIMEOUT_MILLIS = 3000;
     private final ExecutorService executor;
 
     public JavaGithubClient(ParameterService params, AccessTokenRepository accessTokens) {
