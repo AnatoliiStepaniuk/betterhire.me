@@ -13,13 +13,11 @@ import java.util.Map;
 
 public class UserPrincipal implements OAuth2User, UserDetails {
     private String id;
-    private String email;
     private Collection<? extends GrantedAuthority> authorities;
     private Map<String, Object> attributes;
 
-    public UserPrincipal(String id, String email, Collection<? extends GrantedAuthority> authorities) {
+    public UserPrincipal(String id, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
-        this.email = email;
         this.authorities = authorities;
     }
 
@@ -27,11 +25,7 @@ public class UserPrincipal implements OAuth2User, UserDetails {
         List<GrantedAuthority> authorities = Collections.
                 singletonList(new SimpleGrantedAuthority("ROLE_USER"));
 
-        return new UserPrincipal(
-                user.getId(),
-                user.getEmail(),
-                authorities
-        );
+        return new UserPrincipal(user.getId(), authorities);
     }
 
     public static UserPrincipal create(User user, Map<String, Object> attributes) {
@@ -44,18 +38,14 @@ public class UserPrincipal implements OAuth2User, UserDetails {
         return id;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
     @Override
     public String getPassword() {
-        return "no_password"; // TODO works without password?
+        return "no_password";
     }
 
     @Override
     public String getUsername() {
-        return email;
+        return id;
     }
 
     @Override
