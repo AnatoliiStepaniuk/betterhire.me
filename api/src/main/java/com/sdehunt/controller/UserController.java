@@ -43,7 +43,8 @@ public class UserController {
                 .setEmail(createUserRequest.getEmail())
                 .setGithubLogin(createUserRequest.getGithubLogin())
                 .setLinkedinId(createUserRequest.getLinkedinId())
-                .setNickname(createUserRequest.getNickname());
+                .setNickname(createUserRequest.getNickname())
+                .setImageUrl(createUserRequest.getImageUrl());
 
         return users.create(user);
     }
@@ -60,7 +61,8 @@ public class UserController {
                 .setEmail(updateUserRequest.getEmail())
                 .setGithubLogin(updateUserRequest.getGithubLogin())
                 .setLinkedinId(updateUserRequest.getLinkedinId())
-                .setNickname(updateUserRequest.getNickname());
+                .setNickname(updateUserRequest.getNickname())
+                .setImageUrl(updateUserRequest.getImageUrl());
 
         return users.update(user);
     }

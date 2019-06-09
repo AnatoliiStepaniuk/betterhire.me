@@ -25,16 +25,16 @@ public class JdbiUserRepository implements UserRepository {
     }
 
     @Override
-    public User create(User user) {
-        user.setId(UUID.randomUUID().toString());
+    public User create(User u) {
+        u.setId(UUID.randomUUID().toString());
         long now = Instant.now().getEpochSecond();
         jdbi.withHandle(
                 db -> db.execute(
-                        format("INSERT INTO %s (`id`, `name`, `nickname`, `email`, `github_login`, `linkedin_id`, `created`, `updated`) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", TABLE),
-                        user.getId(), user.getName(), user.getNickname(), user.getEmail(), user.getGithubLogin(), user.getLinkedinId(), now, now
+                        format("INSERT INTO %s (`id`, `name`, `nickname`, `email`, `github_login`, `linkedin_id`, `image_url`, `created`, `updated`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", TABLE),
+                        u.getId(), u.getName(), u.getNickname(), u.getEmail(), u.getGithubLogin(), u.getLinkedinId(), u.getImageUrl(), now, now
                 ));
 
-        return get(user.getId()).orElse(null);
+        return get(u.getId()).orElse(null);
     }
 
     @Override
@@ -55,23 +55,23 @@ public class JdbiUserRepository implements UserRepository {
 
     @Override
     public Optional<User> byGithubLogin(String github) {
-        return Optional.empty(); // TODO
+        return Optional.empty(); //  TODO
     }
 
     @Override
     public Optional<User> byLinkedinId(String linkedin) {
-        return Optional.empty(); // TODO
+        return Optional.empty(); //  TODO
     }
 
     @Override
-    public User update(User user) {
+    public User update(User u) {
         jdbi.withHandle(
                 db -> db.execute(
-                        format("UPDATE %s SET name = ?, nickname = ?, email = ?, github_login = ?, linkedin_id = ?, updated = ? WHERE id = ?", TABLE),
-                        user.getName(), user.getNickname(), user.getEmail(), user.getGithubLogin(), user.getLinkedinId(), Instant.now().getEpochSecond(), user.getId())
+                        format("UPDATE %s SET name = ?, nickname = ?, email = ?, github_login = ?, linkedin_id = ?, image_url = ?, updated = ? WHERE id = ?", TABLE),
+                        u.getName(), u.getNickname(), u.getEmail(), u.getGithubLogin(), u.getLinkedinId(), u.getImageUrl(), Instant.now().getEpochSecond(), u.getId())
         );
 
-        return get(user.getId()).orElse(null); // TODO  throw exception if not found
+        return get(u.getId()).orElse(null); // TODO  throw exception if not found
     }
 
     @Override
@@ -99,6 +99,7 @@ public class JdbiUserRepository implements UserRepository {
                     .setEmail(rs.getString("email"))
                     .setGithubLogin(rs.getString("github_login"))
                     .setLinkedinId(rs.getString("linkedin_id"))
+                    .setImageUrl(rs.getString("image_url"))
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")))
                     .setUpdated(Instant.ofEpochSecond(rs.getLong("updated"))
                     );

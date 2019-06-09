@@ -8,8 +8,8 @@ import java.time.Instant;
 public class User {
 
     private String id;
-    private String name; // TODO? add to db + tests
-    private String nickname; // TODO? add to db + tests
+    private String name; // TODO? add tests
+    private String nickname; // TODO? add tests
     private String imageUrl; // TODO? add to db + tests
     private String email;
     private String githubLogin;

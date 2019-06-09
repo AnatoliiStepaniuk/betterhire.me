@@ -8,4 +8,5 @@ public class CreateUserDTO {
     private String githubLogin;
     private String linkedinId;
     private String nickname;
+    private String imageUrl;
 }

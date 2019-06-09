@@ -20,6 +20,7 @@ public class UserApiIT extends AbstractApiTest {
         String githubLogin = "GH" + UUID.randomUUID().toString();
         String linkedInId = "LI" + UUID.randomUUID().toString();
         String nickname = "NN" + UUID.randomUUID().toString();
+        String imageUrl = "IMG" + UUID.randomUUID().toString();
 
         int usersCountBefore = host().get("/users").as(Collection.class).size();
 
@@ -27,7 +28,8 @@ public class UserApiIT extends AbstractApiTest {
                 .setEmail(email)
                 .setGithubLogin(githubLogin)
                 .setLinkedinId(linkedInId)
-                .setNickname(nickname);
+                .setNickname(nickname)
+                .setImageUrl(imageUrl);
 
         Response response = host()
                 .contentType(APP_JSON)
@@ -39,7 +41,8 @@ public class UserApiIT extends AbstractApiTest {
                 .body("email", is(email))
                 .body("githubLogin", is(githubLogin))
                 .body("linkedinId", is(linkedInId))
-                .body("nickname", is(nickname));
+                .body("nickname", is(nickname))
+                .body("imageUrl", is(imageUrl));
 
         User user = response.as(User.class);
 
@@ -50,6 +53,7 @@ public class UserApiIT extends AbstractApiTest {
                 .body("githubLogin", is(user.getGithubLogin()))
                 .body("linkedinId", is(user.getLinkedinId()))
                 .body("nickname", is(user.getNickname()))
+                .body("imageUrl", is(user.getImageUrl()))
                 .body("created", notNullValue())
                 .body("updated", notNullValue());
 
@@ -60,7 +64,8 @@ public class UserApiIT extends AbstractApiTest {
                 .setEmail(user.getEmail() + "2")
                 .setGithubLogin(user.getGithubLogin() + "2")
                 .setLinkedinId(user.getLinkedinId() + "2")
-                .setNickname(user.getNickname() + "2");
+                .setNickname(user.getNickname() + "2")
+                .setImageUrl(user.getImageUrl() + "2");
 
         host().contentType(APP_JSON)
                 .body(updateRequest)
@@ -72,6 +77,7 @@ public class UserApiIT extends AbstractApiTest {
                 .body("githubLogin", is(updateRequest.getGithubLogin()))
                 .body("linkedinId", is(updateRequest.getLinkedinId()))
                 .body("nickname", is(updateRequest.getNickname()))
+                .body("imageUrl", is(updateRequest.getImageUrl()))
                 .body("updated", notNullValue())
                 .body("updated", not(equalTo(user.getCreated())));
 
@@ -83,6 +89,7 @@ public class UserApiIT extends AbstractApiTest {
                 .body("githubLogin", is(updateRequest.getGithubLogin()))
                 .body("linkedinId", is(updateRequest.getLinkedinId()))
                 .body("nickname", is(updateRequest.getNickname()))
+                .body("imageUrl", is(updateRequest.getImageUrl()))
                 .body("updated", notNullValue())
                 .body("updated", not(equalTo(user.getCreated())));
 
