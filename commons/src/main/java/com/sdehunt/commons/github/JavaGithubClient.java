@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdehunt.commons.FileUtils;
 import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
+import com.sdehunt.commons.github.exceptions.GithubTimeoutException;
 import com.sdehunt.commons.github.exceptions.RepositoryNotFoundException;
 import com.sdehunt.commons.model.SimpleCommit;
 import com.sdehunt.commons.params.ParameterService;
@@ -26,6 +27,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 /**
@@ -45,6 +47,9 @@ public class JavaGithubClient implements GithubClient {
     private final AccessTokenRepository accessTokens;
     private final ObjectMapper objectMapper;
     private final Logger logger;
+    private final static int TIMEOUT_ATTEMPTS = 50;
+    private final static int TIMEOUT_MILLIS = 1000;
+    private final ExecutorService executor;
 
     public JavaGithubClient(ParameterService params, AccessTokenRepository accessTokens) {
         this.client = HttpClient.newHttpClient();
@@ -53,6 +58,8 @@ public class JavaGithubClient implements GithubClient {
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         this.params = params;
         this.logger = LoggerFactory.getLogger(JavaGithubClient.class);
+        this.executor = Executors.newSingleThreadExecutor();
+
     }
 
     @Override
@@ -111,8 +118,26 @@ public class JavaGithubClient implements GithubClient {
     }
 
     @Override
-    @SneakyThrows({IOException.class, URISyntaxException.class, InterruptedException.class})
+    @SneakyThrows({InterruptedException.class})
     public Collection<String> getBranches(String userId, String repo) throws RepositoryNotFoundException {
+        for (int i = 0; i < TIMEOUT_ATTEMPTS; i++) {
+            try {
+                return executor.submit(() -> getBranchesOnce(userId, repo))
+                        .get(TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
+            } catch (TimeoutException ignored) {
+                logger.warn(String.format("Received timeout for branches request for repo %s", repo));
+            } catch (ExecutionException e) {
+                if (e.getCause() instanceof RepositoryNotFoundException) {
+                    throw (RepositoryNotFoundException) e.getCause();
+                }
+                throw new RuntimeException(e.getCause());
+            }
+        }
+        throw new GithubTimeoutException();
+    }
+
+    @SneakyThrows({IOException.class, URISyntaxException.class, InterruptedException.class})
+    private Collection<String> getBranchesOnce(String userId, String repo) throws RepositoryNotFoundException {
         URI uri = new URI(API_DOMAIN + "/" + REPOS + "/" + repo + "/" + BRANCHES);
 
         logger.debug(String.format("Fetching branches for repo %s", repo)); // TODO timeouts happen here...
