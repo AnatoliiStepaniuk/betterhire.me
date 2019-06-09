@@ -54,13 +54,19 @@ public class JdbiUserRepository implements UserRepository {
     }
 
     @Override
-    public Optional<User> byGithubLogin(String github) {
-        return Optional.empty(); //  TODO
+    public Optional<User> byGithubLogin(String githubLogin) {
+        return jdbi.withHandle(
+                db -> db.select(format("SELECT * FROM %s WHERE github_login = ?", TABLE), githubLogin)
+                        .map(new UserRowMapper()).findFirst()
+        );
     }
 
     @Override
-    public Optional<User> byLinkedinId(String linkedin) {
-        return Optional.empty(); //  TODO
+    public Optional<User> byLinkedinId(String linkedinId) {
+        return jdbi.withHandle(
+                db -> db.select(format("SELECT * FROM %s WHERE linkedin_id = ?", TABLE), linkedinId)
+                        .map(new UserRowMapper()).findFirst()
+        );
     }
 
     @Override
