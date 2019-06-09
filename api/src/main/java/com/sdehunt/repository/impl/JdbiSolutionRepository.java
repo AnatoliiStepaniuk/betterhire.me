@@ -39,8 +39,8 @@ public class JdbiSolutionRepository implements SolutionRepository {
 
         jdbi.withHandle(
                 db -> db.execute(
-                        format("INSERT INTO %s (`id`, `task`, `user`, `repo`, `commit`, `score`, `created`) values (?, ?, ?, ?, ?, ?, ?)", TABLE),
-                        id, s.getTaskId(), s.getUserId(), s.getRepo(), s.getCommit(), s.getScore(), Instant.now().getEpochSecond()
+                        format("INSERT INTO %s (`id`, `task`, `user`, `repo`, `commit`, `score`, `test`, `created`) values (?, ?, ?, ?, ?, ?, ?, ?)", TABLE),
+                        id, s.getTaskId(), s.getUserId(), s.getRepo(), s.getCommit(), s.getScore(), s.isTest(), Instant.now().getEpochSecond()
                 )
         );
 
@@ -88,6 +88,10 @@ public class JdbiSolutionRepository implements SolutionRepository {
             params.add(status);
         });
 
+        if (!request.isTest()) {
+            conditions.add("`test` = false");
+        }
+
         if (!conditions.isEmpty()) {
             sql += " WHERE " + String.join(" AND ", conditions);
         }
@@ -102,7 +106,7 @@ public class JdbiSolutionRepository implements SolutionRepository {
     public List<BestResult> best(String taskId) {
         return jdbi.withHandle(
                 db -> db.select(format("SELECT best.final_score as score, %s.nickname FROM (SELECT max(score) final_score, user FROM %s\n" +
-                        "WHERE status = 'accepted' AND task = ?\n" +
+                        "WHERE status = 'accepted' AND test = false AND task = ?\n" +
                         "GROUP BY %s.user) as best\n" +
                         "INNER JOIN %s ON best.user = user.id ORDER BY score DESC", USER_TABLE, TABLE, TABLE, USER_TABLE), taskId)
                         .map(new BestResultRowMapper()).list()
@@ -120,6 +124,7 @@ public class JdbiSolutionRepository implements SolutionRepository {
                     .setCommit(rs.getString("commit"))
                     .setScore(Long.valueOf(rs.getString("score")))
                     .setStatus(SolutionStatus.valueOf(rs.getString("status").toUpperCase()))
+                    .setTest(rs.getBoolean("test"))
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")));
         }
     }

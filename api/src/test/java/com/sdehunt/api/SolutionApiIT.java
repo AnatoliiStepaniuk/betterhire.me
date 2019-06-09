@@ -41,7 +41,8 @@ public class SolutionApiIT extends AbstractApiTest {
                 .compact();
         SaveSolutionDTO solutionDTO = new SaveSolutionDTO()
                 .setRepo(repo)
-                .setCommit(commit);
+                .setCommit(commit)
+                .setTest(true);
 
         // Saving solution
         String id = host().contentType(APP_JSON)
@@ -53,7 +54,7 @@ public class SolutionApiIT extends AbstractApiTest {
         verifySolutionStatus(id, SolutionStatus.ACCEPTED);
 
         // Verify save (query by userId)
-        host().get("/tasks/{taskId}/solutions?userId=" + userId + "&status=ACCEPTED", taskId).then()
+        host().get("/tasks/{taskId}/solutions?userId=" + userId + "&status=ACCEPTED&test=true", taskId).then()
                 .body("size()", equalTo(1))
                 .body("[0].taskId", equalTo(taskId.name()))
                 .body("[0].userId", equalTo(userId))
@@ -73,7 +74,7 @@ public class SolutionApiIT extends AbstractApiTest {
                 .body("status", equalTo(SolutionStatus.ACCEPTED.name()));
 
         // Verify save (by userId)
-        host().get("/users/{userId}/solutions", userId)
+        host().get("/users/{userId}/solutions?test=true", userId)
                 .then().log().ifValidationFails()
                 .statusCode(SUCCESS)
                 .body("size()", equalTo(1))
@@ -124,7 +125,8 @@ public class SolutionApiIT extends AbstractApiTest {
         // First verify successful response for valid request
         SaveSolutionDTO validDTO = new SaveSolutionDTO()
                 .setRepo(repo)
-                .setCommit(commit);
+                .setCommit(commit)
+                .setTest(true);
         host().contentType(APP_JSON)
                 .header(new Header("Authorization", "Bearer " + jwt))
                 .body(validDTO)
@@ -134,7 +136,8 @@ public class SolutionApiIT extends AbstractApiTest {
         // Verify invalid Repo response
         SaveSolutionDTO invalidRepoDTO = new SaveSolutionDTO()
                 .setRepo(invalidRepo)
-                .setCommit(commit);
+                .setCommit(commit)
+                .setTest(true);
         host().contentType(APP_JSON)
                 .header(new Header("Authorization", "Bearer " + jwt))
                 .body(invalidRepoDTO)
@@ -144,7 +147,8 @@ public class SolutionApiIT extends AbstractApiTest {
         // Verify invalid Commit response
         SaveSolutionDTO invalidCommitDTO = new SaveSolutionDTO()
                 .setRepo(repo)
-                .setCommit(invalidCommit);
+                .setCommit(invalidCommit)
+                .setTest(true);
         host().contentType(APP_JSON)
                 .header(new Header("Authorization", "Bearer " + jwt))
                 .body(invalidCommitDTO)
@@ -162,7 +166,8 @@ public class SolutionApiIT extends AbstractApiTest {
 
         SaveSolutionDTO invalidSolutionDTO = new SaveSolutionDTO()
                 .setRepo(repo)
-                .setCommit(commit);
+                .setCommit(commit)
+                .setTest(true);
         host().contentType(APP_JSON)
                 .header(new Header("Authorization", "Bearer " + invalidUserJwt))
                 .body(invalidSolutionDTO)
@@ -189,7 +194,8 @@ public class SolutionApiIT extends AbstractApiTest {
 
         SaveSolutionDTO invalidSolutionDTO = new SaveSolutionDTO()
                 .setRepo(invalidSolutionRepo)
-                .setCommit(commit);
+                .setCommit(commit)
+                .setTest(true);
 
         String invalidSolutionId = host().contentType(APP_JSON)
                 .header(new Header("Authorization", "Bearer " + jwt))

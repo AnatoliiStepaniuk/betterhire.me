@@ -16,5 +16,6 @@ public class Solution {
     private long score;
     private SolutionStatus status;
     private Instant created;
+    private boolean test;
 
 }

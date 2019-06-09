@@ -2,6 +2,7 @@ package com.sdehunt.repository.impl;
 
 import com.sdehunt.commons.model.SolutionStatus;
 import com.sdehunt.repository.SolutionQuery;
+import lombok.Getter;
 
 import java.util.Optional;
 
@@ -13,18 +14,26 @@ public class SolutionQueryImpl implements SolutionQuery {
 
     private SolutionStatus status;
 
-    public SolutionQueryImpl withUser(String user) {
+    @Getter
+    private boolean test;
+
+    public SolutionQueryImpl user(String user) {
         this.user = user;
         return this;
     }
 
-    public SolutionQueryImpl withTask(String task) {
+    public SolutionQueryImpl task(String task) {
         this.task = task;
         return this;
     }
 
-    public SolutionQueryImpl withStatus(SolutionStatus status) {
+    public SolutionQueryImpl status(SolutionStatus status) {
         this.status = status;
+        return this;
+    }
+
+    public SolutionQueryImpl test(boolean test) {
+        this.test = test;
         return this;
     }
 

@@ -34,12 +34,13 @@ public class SolutionController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public SolutionIdDTO submit(@PathVariable String taskId, @RequestBody SaveSolutionDTO solutionRequest, @CurrentUser UserPrincipal user) {
+    public SolutionIdDTO submit(@PathVariable String taskId, @RequestBody SaveSolutionDTO req, @CurrentUser UserPrincipal user) {
         Solution solution = new Solution()
                 .setUserId(Optional.ofNullable(user).map(UserPrincipal::getId).orElseThrow(UserNotFoundException::new))
-                .setRepo(solutionRequest.getRepo())
-                .setCommit(solutionRequest.getCommit())
-                .setTaskId(TaskID.of(taskId));
+                .setRepo(req.getRepo())
+                .setCommit(req.getCommit())
+                .setTaskId(TaskID.of(taskId))
+                .setTest(req.isTest());
 
         return new SolutionIdDTO().setId(solutionService.process(solution));
     }
@@ -58,10 +59,11 @@ public class SolutionController {
     public List<Solution> getSolutionsForTask(
             @PathVariable String taskId,
             @RequestParam(value = "userId", required = false) String userId,
-            @RequestParam(value = "status", required = false) SolutionStatus status
+            @RequestParam(value = "status", required = false) SolutionStatus status,
+            @RequestParam(value = "test", required = false) boolean test
     ) {
         return solutions.query(
-                new SolutionQueryImpl().withTask(taskId).withUser(userId).withStatus(status)
+                new SolutionQueryImpl().task(taskId).user(userId).status(status).test(test)
         );
     }
 

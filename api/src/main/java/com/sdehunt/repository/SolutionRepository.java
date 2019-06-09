@@ -46,6 +46,11 @@ public interface SolutionRepository {
      * Returns Solutions of specified user
      */
     default List<Solution> forUser(String userId) {
-        return query(new SolutionQueryImpl().withUser(userId));
+        return forUser(userId, false);
     }
+
+    default List<Solution> forUser(String userId, boolean test) {
+        return query(new SolutionQueryImpl().user(userId).test(test));
+    }
+
 }

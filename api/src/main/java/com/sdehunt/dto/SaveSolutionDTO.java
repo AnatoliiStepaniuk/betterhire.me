@@ -7,5 +7,6 @@ public class SaveSolutionDTO {
 
     private String repo;
     private String commit;
+    private boolean test;
 
 }

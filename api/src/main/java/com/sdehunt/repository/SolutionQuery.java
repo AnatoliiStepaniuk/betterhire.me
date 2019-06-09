@@ -14,4 +14,6 @@ public interface SolutionQuery {
     Optional<String> getTask();
 
     Optional<SolutionStatus> getStatus();
+
+    boolean isTest();
 }

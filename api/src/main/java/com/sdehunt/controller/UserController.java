@@ -73,8 +73,8 @@ public class UserController {
     }
 
     @RequestMapping(path = "/{userId}/solutions", method = RequestMethod.GET)
-    public List<Solution> userSolutions(@PathVariable("userId") String userId) {
-        return solutions.forUser(userId);
+    public List<Solution> userSolutions(@PathVariable("userId") String userId, @RequestParam(required = false) boolean test) {
+        return solutions.forUser(userId, test);
     }
 
 }
