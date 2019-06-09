@@ -1,8 +1,7 @@
-package com.sdehunt.repository.impl;
+package com.sdehunt.commons.repo;
 
-import com.sdehunt.repository.AccessTokenRepository;
-import com.sdehunt.security.AccessToken;
-import com.sdehunt.security.OAuthProvider;
+import com.sdehunt.commons.security.AccessToken;
+import com.sdehunt.commons.security.OAuthProvider;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;

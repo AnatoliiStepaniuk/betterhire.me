@@ -1,6 +1,7 @@
 package com.sdehunt.security;
 
 import com.sdehunt.commons.model.User;
+import com.sdehunt.commons.security.OAuthProvider;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.client.RestTemplate;
 

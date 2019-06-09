@@ -7,6 +7,6 @@ import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
  */
 public interface TaskScoreCounter {
 
-    long count(String repo, String commit) throws CommitOrFileNotFoundException;
+    long count(String userId, String repo, String commit) throws CommitOrFileNotFoundException;
 
 }

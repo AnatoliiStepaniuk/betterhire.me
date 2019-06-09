@@ -55,11 +55,11 @@ public class SolutionService {
 
         userRepository.get(solution.getUserId()).orElseThrow(UserNotFoundException::new);
 
-        if (isBranch(solution.getRepo(), solution.getCommit())) {
-            String commit = githubClient.getCommit(solution.getRepo(), solution.getCommit());
+        if (isBranch(solution.getUserId(), solution.getRepo(), solution.getCommit())) {
+            String commit = githubClient.getCommit(solution.getUserId(), solution.getRepo(), solution.getCommit());
             solution.setCommit(commit);
         } else {
-            if (!githubClient.commitPresent(solution.getRepo(), solution.getCommit())) {
+            if (!githubClient.commitPresent(solution.getUserId(), solution.getRepo(), solution.getCommit())) {
                 throw new CommitNotFoundException();
             }
         }
@@ -101,9 +101,9 @@ public class SolutionService {
     }
 
 
-    private boolean isBranch(String repo, String input) {
+    private boolean isBranch(String userId, String repo, String input) {
         try {
-            return githubClient.isBranch(repo, input);
+            return githubClient.isBranch(userId, repo, input);
         } catch (RepositoryNotFoundException e) {
             throw new com.sdehunt.exception.RepositoryNotFoundException(repo);
         }

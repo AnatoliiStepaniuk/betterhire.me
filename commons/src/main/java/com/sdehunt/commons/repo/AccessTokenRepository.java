@@ -1,7 +1,7 @@
-package com.sdehunt.repository;
+package com.sdehunt.commons.repo;
 
-import com.sdehunt.security.AccessToken;
-import com.sdehunt.security.OAuthProvider;
+import com.sdehunt.commons.security.AccessToken;
+import com.sdehunt.commons.security.OAuthProvider;
 
 import java.util.Optional;
 

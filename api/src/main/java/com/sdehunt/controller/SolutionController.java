@@ -32,9 +32,9 @@ public class SolutionController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public SolutionIdDTO submit(@PathVariable String taskId, @RequestBody SaveSolutionDTO solutionRequest, @CurrentUser UserPrincipal userPrincipal) {
+    public SolutionIdDTO submit(@PathVariable String taskId, @RequestBody SaveSolutionDTO solutionRequest, @CurrentUser UserPrincipal user) {
         Solution solution = new Solution()
-                .setUserId(solutionRequest.getUserId())
+                .setUserId(user.getId())
                 .setRepo(solutionRequest.getRepo())
                 .setCommit(solutionRequest.getCommit())
                 .setTaskId(TaskID.of(taskId));

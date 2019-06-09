@@ -22,6 +22,6 @@ public class GeneralScoreCounter {
     }
 
     public long count(Solution solution) throws CommitOrFileNotFoundException {
-        return taskCounters.get(solution.getTaskId()).count(solution.getRepo(), solution.getCommit());
+        return taskCounters.get(solution.getTaskId()).count(solution.getUserId(), solution.getRepo(), solution.getCommit());
     }
 }

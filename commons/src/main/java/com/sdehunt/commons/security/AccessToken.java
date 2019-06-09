@@ -1,4 +1,4 @@
-package com.sdehunt.security;
+package com.sdehunt.commons.security;
 
 import lombok.Data;
 

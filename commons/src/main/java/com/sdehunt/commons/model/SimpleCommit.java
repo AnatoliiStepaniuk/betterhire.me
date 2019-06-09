@@ -1,4 +1,4 @@
-package com.sdehunt.commons;
+package com.sdehunt.commons.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

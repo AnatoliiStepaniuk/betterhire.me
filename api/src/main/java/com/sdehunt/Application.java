@@ -5,11 +5,11 @@ import com.sdehunt.commons.github.JavaGithubClient;
 import com.sdehunt.commons.params.EhcacheParameterService;
 import com.sdehunt.commons.params.ParameterService;
 import com.sdehunt.commons.params.SsmParameterService;
-import com.sdehunt.repository.AccessTokenRepository;
+import com.sdehunt.commons.repo.AccessTokenRepository;
+import com.sdehunt.commons.repo.JdbiAccessTokenRepository;
 import com.sdehunt.repository.SolutionRepository;
 import com.sdehunt.repository.TaskRepository;
 import com.sdehunt.repository.UserRepository;
-import com.sdehunt.repository.impl.JdbiAccessTokenRepository;
 import com.sdehunt.repository.impl.JdbiSolutionRepository;
 import com.sdehunt.repository.impl.JdbiTaskRepository;
 import com.sdehunt.repository.impl.JdbiUserRepository;
@@ -75,8 +75,8 @@ public class Application implements WebMvcConfigurer {
     }
 
     @Bean
-    public GithubClient githubClient(ParameterService params) {
-        return new JavaGithubClient(params);
+    public GithubClient githubClient(ParameterService params, AccessTokenRepository accessTokens) {
+        return new JavaGithubClient(params, accessTokens);
     }
 
     @Bean

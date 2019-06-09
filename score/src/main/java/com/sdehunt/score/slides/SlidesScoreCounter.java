@@ -48,13 +48,13 @@ public class SlidesScoreCounter implements TaskScoreCounter {
     }
 
     @Override
-    public long count(String repo, String commit) throws CommitOrFileNotFoundException {
+    public long count(String userId, String repo, String commit) throws CommitOrFileNotFoundException {
 
         for (String f : inputFiles) { // TODO it once CACHE IT SOMEHOW
             githubClient.download(INPUT_REPO, INPUT_BRANCH, f);// TODO name files so that it does not clunch with files for other tasks
         }
         for (String f : solutionFiles) {
-            githubClient.download(repo, commit, f); // TODO solution files downloader
+            githubClient.download(userId, repo, commit, f); // TODO solution files downloader
         } // TODO clean solution files after finishing
 
         long score = 0;

@@ -1,7 +1,8 @@
 package com.sdehunt.security;
 
 import com.sdehunt.commons.model.User;
-import com.sdehunt.repository.AccessTokenRepository;
+import com.sdehunt.commons.repo.AccessTokenRepository;
+import com.sdehunt.commons.security.OAuthProvider;
 import com.sdehunt.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
