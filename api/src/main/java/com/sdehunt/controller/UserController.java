@@ -33,18 +33,19 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public Collection<User> getAll() {
-        return users.getAll();
+    public Collection<User> getAll(@RequestParam(required = false) boolean test) {
+        return users.getAll(test);
     }
 
     @RequestMapping(path = "", method = RequestMethod.POST)
-    public User create(@RequestBody CreateUserDTO createUserRequest) {
+    public User create(@RequestBody CreateUserDTO req) {
         User user = new User()
-                .setEmail(createUserRequest.getEmail())
-                .setGithubLogin(createUserRequest.getGithubLogin())
-                .setLinkedinId(createUserRequest.getLinkedinId())
-                .setNickname(createUserRequest.getNickname())
-                .setImageUrl(createUserRequest.getImageUrl());
+                .setEmail(req.getEmail())
+                .setGithubLogin(req.getGithubLogin())
+                .setLinkedinId(req.getLinkedinId())
+                .setNickname(req.getNickname())
+                .setImageUrl(req.getImageUrl())
+                .setTest(req.isTest());
 
         return users.create(user);
     }

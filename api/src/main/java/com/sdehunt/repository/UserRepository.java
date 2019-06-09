@@ -43,5 +43,5 @@ public interface UserRepository {
 
     void delete(String userId);
 
-    Collection<User> getAll(); // TODO use pagination in future
+    Collection<User> getAll(boolean test);
 }

@@ -9,4 +9,5 @@ public class CreateUserDTO {
     private String linkedinId;
     private String nickname;
     private String imageUrl;
+    private boolean test;
 }

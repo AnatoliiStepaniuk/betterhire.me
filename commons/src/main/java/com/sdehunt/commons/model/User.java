@@ -16,5 +16,6 @@ public class User {
     private String linkedinId;
     private Instant created;
     private Instant updated;
+    private boolean test;
 
 }

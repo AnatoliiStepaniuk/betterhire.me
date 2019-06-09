@@ -22,14 +22,15 @@ public class UserApiIT extends AbstractApiTest {
         String nickname = "NN" + UUID.randomUUID().toString();
         String imageUrl = "IMG" + UUID.randomUUID().toString();
 
-        int usersCountBefore = host().get("/users").as(Collection.class).size();
+        int usersCountBefore = host().get("/users?test=true").as(Collection.class).size();
 
         CreateUserDTO createRequest = new CreateUserDTO()
                 .setEmail(email)
                 .setGithubLogin(githubLogin)
                 .setLinkedinId(linkedInId)
                 .setNickname(nickname)
-                .setImageUrl(imageUrl);
+                .setImageUrl(imageUrl)
+                .setTest(true);
 
         Response response = host()
                 .contentType(APP_JSON)
@@ -42,7 +43,8 @@ public class UserApiIT extends AbstractApiTest {
                 .body("githubLogin", is(githubLogin))
                 .body("linkedinId", is(linkedInId))
                 .body("nickname", is(nickname))
-                .body("imageUrl", is(imageUrl));
+                .body("imageUrl", is(imageUrl))
+                .body("test", is(true));
 
         User user = response.as(User.class);
 
@@ -55,9 +57,10 @@ public class UserApiIT extends AbstractApiTest {
                 .body("nickname", is(user.getNickname()))
                 .body("imageUrl", is(user.getImageUrl()))
                 .body("created", notNullValue())
-                .body("updated", notNullValue());
+                .body("updated", notNullValue())
+                .body("test", is(true));
 
-        int usersCountAfter = host().get("/users").as(Collection.class).size();
+        int usersCountAfter = host().get("/users?test=true").as(Collection.class).size();
         Assert.assertEquals(usersCountBefore + 1, usersCountAfter);
 
         CreateUserDTO updateRequest = new CreateUserDTO()
@@ -79,7 +82,8 @@ public class UserApiIT extends AbstractApiTest {
                 .body("nickname", is(updateRequest.getNickname()))
                 .body("imageUrl", is(updateRequest.getImageUrl()))
                 .body("updated", notNullValue())
-                .body("updated", not(equalTo(user.getCreated())));
+                .body("updated", not(equalTo(user.getCreated())))
+                .body("test", is(true));
 
         host().get("/users/{userId}", user.getId())
                 .then().log().ifValidationFails()
@@ -91,14 +95,15 @@ public class UserApiIT extends AbstractApiTest {
                 .body("nickname", is(updateRequest.getNickname()))
                 .body("imageUrl", is(updateRequest.getImageUrl()))
                 .body("updated", notNullValue())
-                .body("updated", not(equalTo(user.getCreated())));
+                .body("updated", not(equalTo(user.getCreated())))
+                .body("test", is(true));
 
         host().delete("/users/{userId}", user.getId())
                 .then().log().ifValidationFails()
                 .statusCode(SUCCESS)
                 .body(isEmptyString());
 
-        int usersCountAfterRemoval = host().get("/users").as(Collection.class).size();
+        int usersCountAfterRemoval = host().get("/users?test=true").as(Collection.class).size();
         Assert.assertEquals(usersCountBefore, usersCountAfterRemoval);
 
         host().get("/users/{userId}", user.getId())

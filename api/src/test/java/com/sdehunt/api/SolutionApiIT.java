@@ -28,7 +28,8 @@ public class SolutionApiIT extends AbstractApiTest {
         TaskID taskId = TaskID.SLIDES_TEST;
         CreateUserDTO createUserDTO = new CreateUserDTO()
                 .setEmail(UUID.randomUUID().toString() + "@gmail.com")
-                .setNickname("NN" + UUID.randomUUID().toString());
+                .setNickname("NN" + UUID.randomUUID().toString())
+                .setTest(true);
         String userId = host().contentType(APP_JSON).body(createUserDTO).post("/users").as(User.class).getId();
         String repo = "sdehuntdeveloper/google_hash_code_2019_public";
         String commit = "61f487523ad641cc6fffc44ded7537d94cf0d1eb";
@@ -108,7 +109,8 @@ public class SolutionApiIT extends AbstractApiTest {
         TaskID taskId = TaskID.SLIDES_TEST;
         CreateUserDTO createUserDTO = new CreateUserDTO()
                 .setEmail(UUID.randomUUID().toString() + "@gmail.com")
-                .setNickname("NN" + UUID.randomUUID().toString());
+                .setNickname("NN" + UUID.randomUUID().toString())
+                .setTest(true);
         String userId = host().contentType(APP_JSON).body(createUserDTO).post("/users").as(User.class).getId();
 
         String repo = "sdehuntdeveloper/google_hash_code_2019_public";
@@ -181,7 +183,8 @@ public class SolutionApiIT extends AbstractApiTest {
         TaskID taskId = TaskID.SLIDES_TEST;
         CreateUserDTO createUserDTO = new CreateUserDTO()
                 .setEmail(UUID.randomUUID().toString() + "@gmail.com")
-                .setNickname("NN" + UUID.randomUUID().toString());
+                .setNickname("NN" + UUID.randomUUID().toString())
+                .setTest(true);
         String userId = host().contentType(APP_JSON).body(createUserDTO).post("/users").as(User.class).getId();
         String invalidSolutionRepo = "sdehuntdeveloper/google_hash_code_2019_invalid";
         String commit = "master";

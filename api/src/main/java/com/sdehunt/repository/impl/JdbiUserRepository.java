@@ -30,8 +30,8 @@ public class JdbiUserRepository implements UserRepository {
         long now = Instant.now().getEpochSecond();
         jdbi.withHandle(
                 db -> db.execute(
-                        format("INSERT INTO %s (`id`, `name`, `nickname`, `email`, `github_login`, `linkedin_id`, `image_url`, `created`, `updated`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", TABLE),
-                        u.getId(), u.getName(), u.getNickname(), u.getEmail(), u.getGithubLogin(), u.getLinkedinId(), u.getImageUrl(), now, now
+                        format("INSERT INTO %s (`id`, `name`, `nickname`, `email`, `github_login`, `linkedin_id`, `image_url`, `test`, `created`, `updated`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", TABLE),
+                        u.getId(), u.getName(), u.getNickname(), u.getEmail(), u.getGithubLogin(), u.getLinkedinId(), u.getImageUrl(), u.isTest(), now, now
                 ));
 
         return get(u.getId()).orElse(null);
@@ -88,11 +88,17 @@ public class JdbiUserRepository implements UserRepository {
     }
 
     @Override
-    public Collection<User> getAll() {
+    public Collection<User> getAll(boolean test) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s", TABLE))
+                db -> db.select(getAllQuery(test))
                         .map(new UserRowMapper()).list()
         );
+    }
+
+    private String getAllQuery(boolean test) {
+        final String query = format("SELECT * FROM %s", TABLE);
+        final String testClause = " WHERE test = false";
+        return test ? query : query + testClause;
     }
 
     private class UserRowMapper implements RowMapper<User> {
@@ -107,8 +113,8 @@ public class JdbiUserRepository implements UserRepository {
                     .setLinkedinId(rs.getString("linkedin_id"))
                     .setImageUrl(rs.getString("image_url"))
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")))
-                    .setUpdated(Instant.ofEpochSecond(rs.getLong("updated"))
-                    );
+                    .setUpdated(Instant.ofEpochSecond(rs.getLong("updated")))
+                    .setTest(rs.getBoolean("test"));
         }
     }
 }
