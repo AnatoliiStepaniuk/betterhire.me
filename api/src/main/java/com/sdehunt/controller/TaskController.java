@@ -37,7 +37,7 @@ public class TaskController {
     }
 
     @RequestMapping(method = GET, path = "/{taskId}/short", produces = APPLICATION_JSON_VALUE)
-    public ShortTask getShortTask(@PathVariable("taskId") String taskId) { // TODO test
+    public ShortTask getShortTask(@PathVariable("taskId") String taskId) {
         return tasks.getShort(taskId).orElseThrow(TaskNotFoundException::new);
     }
 
