@@ -43,6 +43,11 @@ public interface SolutionRepository {
     List<BestResult> best(String taskId);
 
     /**
+     * Checks if solution with this repo+commit is already present for specified user
+     */
+    boolean isPresentForUser(Solution solution);
+
+    /**
      * Returns Solutions of specified user
      */
     default List<Solution> forUser(String userId) {

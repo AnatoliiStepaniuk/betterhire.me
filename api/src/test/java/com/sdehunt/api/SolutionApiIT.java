@@ -136,6 +136,8 @@ public class SolutionApiIT extends AbstractApiTest {
                 .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
                 .then().statusCode(is(SUCCESS));
 
+        // TODO remove solution
+
         // Verify invalid Repo response
         SaveSolutionDTO invalidRepoDTO = new SaveSolutionDTO()
                 .setRepo(invalidRepo)
@@ -176,6 +178,8 @@ public class SolutionApiIT extends AbstractApiTest {
                 .body(invalidSolutionDTO)
                 .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
                 .then().statusCode(is(NOT_FOUND));
+
+        // TODO remove solution
     }
 
     @Test
@@ -208,6 +212,9 @@ public class SolutionApiIT extends AbstractApiTest {
                 .as(SolutionIdDTO.class).getId();
 
         verifySolutionStatus(invalidSolutionId, SolutionStatus.INVALID_SOLUTION);
+
+        // TODO remove solution
+
     }
 
     @SneakyThrows(InterruptedException.class)

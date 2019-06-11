@@ -105,11 +105,20 @@ public class JdbiSolutionRepository implements SolutionRepository {
     @Override
     public List<BestResult> best(String taskId) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT best.final_score as score, %s.nickname FROM (SELECT max(score) final_score, user FROM %s\n" +
-                        "WHERE status = 'accepted' AND test = false AND task = ?\n" +
-                        "GROUP BY %s.user) as best\n" +
-                        "INNER JOIN %s ON best.user = user.id ORDER BY score DESC", USER_TABLE, TABLE, TABLE, USER_TABLE), taskId)
+                db -> db.select(format("SELECT best.final_score as score, %s.nickname FROM (SELECT max(score) final_score, user FROM %s" +
+                        " WHERE status = 'accepted' AND test = false AND task = ?" +
+                        " GROUP BY %s.user) as best" +
+                        " INNER JOIN %s ON best.user = user.id ORDER BY score DESC", USER_TABLE, TABLE, TABLE, USER_TABLE), taskId)
                         .map(new BestResultRowMapper()).list()
+        );
+    }
+
+    @Override
+    public boolean isPresentForUser(Solution solution) {
+        return jdbi.withHandle(
+                db -> db.select(format("SELECT * FROM %s  WHERE `user`= ? AND `repo` = ? AND `commit` = ?", TABLE),
+                        solution.getUserId(), solution.getRepo(), solution.getCommit())
+                        .map(new SolutionRowMapper()).findFirst().isPresent()
         );
     }
 

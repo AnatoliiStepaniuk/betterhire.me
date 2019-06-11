@@ -10,6 +10,7 @@ import com.sdehunt.commons.model.SolutionStatus;
 import com.sdehunt.commons.model.User;
 import com.sdehunt.commons.params.ParameterService;
 import com.sdehunt.exception.CommitNotFoundException;
+import com.sdehunt.exception.SolutionIsPresentException;
 import com.sdehunt.exception.UserNotFoundException;
 import com.sdehunt.exception.WrongRepositoryOwnerException;
 import com.sdehunt.repository.SolutionRepository;
@@ -65,6 +66,10 @@ public class SolutionService {
             if (!githubClient.commitPresent(solution.getUserId(), solution.getRepo(), solution.getCommit())) {
                 throw new CommitNotFoundException();
             }
+        }
+
+        if (solutionRepository.isPresentForUser(solution)) {
+            throw new SolutionIsPresentException();
         }
 
         String solutionId = solutionRepository.save(solution.setStatus(SolutionStatus.IN_PROGRESS));
