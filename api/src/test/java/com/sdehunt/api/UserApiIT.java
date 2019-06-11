@@ -2,6 +2,7 @@ package com.sdehunt.api;
 
 import com.sdehunt.commons.model.User;
 import com.sdehunt.dto.CreateUserDTO;
+import com.sdehunt.repository.UserQuery;
 import io.restassured.response.Response;
 import org.junit.Assert;
 import org.junit.Test;
@@ -48,6 +49,7 @@ public class UserApiIT extends AbstractApiTest {
 
         User user = response.as(User.class);
 
+        // Get by id test
         host().get("/users/{userId}", user.getId())
                 .then().log().ifValidationFails()
                 .body("id", is(user.getId()))
@@ -59,6 +61,27 @@ public class UserApiIT extends AbstractApiTest {
                 .body("created", notNullValue())
                 .body("updated", notNullValue())
                 .body("test", is(true));
+
+        // Query test
+        UserQuery query = new UserQuery()
+                .setGithubLogin(githubLogin)
+                .setEmail(email)
+                .setLinkedinId(linkedInId)
+                .setNickname(nickname)
+                .setTest(true);
+        host().contentType(APP_JSON)
+                .body(query)
+                .post("/users/query")
+                .then()
+                .body("[0].id", is(user.getId()))
+                .body("[0].email", is(user.getEmail()))
+                .body("[0].githubLogin", is(user.getGithubLogin()))
+                .body("[0].linkedinId", is(user.getLinkedinId()))
+                .body("[0].nickname", is(user.getNickname()))
+                .body("[0].imageUrl", is(user.getImageUrl()))
+                .body("[0].created", notNullValue())
+                .body("[0].updated", notNullValue())
+                .body("[0].test", is(true));
 
         int usersCountAfter = host().get("/users?test=true").as(Collection.class).size();
         Assert.assertEquals(usersCountBefore + 1, usersCountAfter);
