@@ -27,9 +27,10 @@ public class SolutionApiIT extends AbstractApiTest {
     @Test
     public void crudTest() {
         TaskID taskId = TaskID.SLIDES_TEST;
-        String repo = "sdehuntdeveloper/google_hash_code_2019_public";
+        String githubLogin = "sdehuntdeveloper";
+        String userId = getUserIdByGithubLogin(githubLogin);
+        String repo = "google_hash_code_2019_public";
         String commit = "61f487523ad641cc6fffc44ded7537d94cf0d1eb";
-        String userId = getUserIdByGithubLogin(repo.split("/")[0]);
 
         String jwt = Jwts.builder()
                 .setSubject(userId)
@@ -56,7 +57,7 @@ public class SolutionApiIT extends AbstractApiTest {
                 .body("size()", equalTo(1))
                 .body("[0].taskId", equalTo(taskId.name()))
                 .body("[0].userId", equalTo(userId))
-                .body("[0].repo", equalTo(repo))
+                .body("[0].repo", equalTo(githubLogin + "/" + repo))
                 .body("[0].commit", equalTo(commit))
                 .body("[0].status", equalTo(SolutionStatus.ACCEPTED.name()))
                 .body("[0].test", equalTo(true));
@@ -68,7 +69,7 @@ public class SolutionApiIT extends AbstractApiTest {
                 .body("id", equalTo(id))
                 .body("taskId", equalToIgnoringCase(taskId.name()))
                 .body("userId", equalTo(userId))
-                .body("repo", equalTo(repo))
+                .body("repo", equalTo(githubLogin + "/" + repo))
                 .body("commit", equalTo(commit))
                 .body("status", equalTo(SolutionStatus.ACCEPTED.name()));
 
@@ -80,7 +81,7 @@ public class SolutionApiIT extends AbstractApiTest {
                 .body("[0].id", equalTo(id))
                 .body("[0].taskId", equalToIgnoringCase(taskId.name()))
                 .body("[0].userId", equalTo(userId))
-                .body("[0].repo", equalTo(repo))
+                .body("[0].repo", equalTo(githubLogin + "/" + repo))
                 .body("[0].commit", equalTo(commit))
                 .body("[0].status", equalTo(SolutionStatus.ACCEPTED.name()));
 
@@ -104,9 +105,9 @@ public class SolutionApiIT extends AbstractApiTest {
     @Test
     public void invalidInputTest() {
         TaskID taskId = TaskID.SLIDES_TEST;
-        String repo = "sdehuntdeveloper/google_hash_code_2019_public";
+        String userId = getUserIdByGithubLogin("sdehuntdeveloper");
+        String repo = "google_hash_code_2019_public";
         String commit = "master";
-        String userId = getUserIdByGithubLogin(repo.split("/")[0]);
         String invalidRepo = "invalid_repo";
         String invalidCommit = "invalid_commit";
 
@@ -179,8 +180,8 @@ public class SolutionApiIT extends AbstractApiTest {
     @Test
     public void invalidSolutionTest() {
         TaskID taskId = TaskID.SLIDES_TEST;
-        String invalidSolutionRepo = "sdehuntdeveloper/google_hash_code_2019_invalid";
-        String userId = getUserIdByGithubLogin(invalidSolutionRepo.split("/")[0]);
+        String userId = getUserIdByGithubLogin("sdehuntdeveloper");
+        String invalidSolutionRepo = "google_hash_code_2019_invalid";
         String commit = "master";
 
         String jwt = Jwts.builder()

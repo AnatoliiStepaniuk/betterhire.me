@@ -8,11 +8,11 @@ import com.sdehunt.commons.github.exceptions.GithubTimeoutException;
 import com.sdehunt.commons.github.exceptions.RepositoryNotFoundException;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.SolutionStatus;
-import com.sdehunt.commons.model.User;
 import com.sdehunt.commons.params.ParameterService;
-import com.sdehunt.exception.*;
+import com.sdehunt.exception.CommitNotFoundException;
+import com.sdehunt.exception.SolutionIsPresentException;
+import com.sdehunt.exception.TooManyRequestsException;
 import com.sdehunt.repository.SolutionRepository;
-import com.sdehunt.repository.UserRepository;
 import com.sdehunt.score.GeneralScoreCounter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +25,6 @@ public class SolutionService {
 
     private SolutionRepository solutionRepository;
 
-    private UserRepository userRepository;
-
     private GithubClient githubClient;
 
     private final Logger logger;
@@ -36,13 +34,11 @@ public class SolutionService {
     public SolutionService(
             GeneralScoreCounter scoreCounter,
             SolutionRepository solutionRepository,
-            UserRepository userRepository,
             GithubClient githubClient,
             ParameterService params
     ) {
         this.scoreCounter = scoreCounter;
         this.solutionRepository = solutionRepository;
-        this.userRepository = userRepository;
         this.githubClient = githubClient;
         this.executor = Executors.newCachedThreadPool();
         this.params = params;
@@ -53,10 +49,6 @@ public class SolutionService {
      * Returns assigned solutionId and performs solution counting/status update in separate thread.
      */
     public String process(Solution solution) {
-
-        User user = userRepository.get(solution.getUserId()).orElseThrow(UserNotFoundException::new);
-        verifySolutionOwner(solution, user);
-
         if (isBranch(solution.getUserId(), solution.getRepo(), solution.getCommit())) {
             String commit = githubClient.getCommit(solution.getUserId(), solution.getRepo(), solution.getCommit());
             solution.setCommit(commit);
@@ -95,16 +87,6 @@ public class SolutionService {
         });
 
         return solutionId;
-    }
-
-    private void verifySolutionOwner(Solution solution, User user) {
-        if (!solution.getRepo().contains("/")) { // TODO maybe we could just accept repo name only and take repo owner from DB. discuss with Pasha
-            throw new com.sdehunt.exception.RepositoryNotFoundException();
-        }
-        String repoOwner = solution.getRepo().split("/")[0];
-        if (!repoOwner.equals(user.getGithubLogin())) {
-            throw new WrongRepositoryOwnerException();
-        }
     }
 
     private Callable<Long> getCountScoreTask(final Solution solution) {

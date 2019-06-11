@@ -4,11 +4,13 @@ import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.BestResult;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.SolutionStatus;
+import com.sdehunt.commons.model.User;
 import com.sdehunt.dto.SaveSolutionDTO;
 import com.sdehunt.dto.SolutionIdDTO;
 import com.sdehunt.exception.SolutionNotFoundException;
 import com.sdehunt.exception.UserNotFoundException;
 import com.sdehunt.repository.SolutionRepository;
+import com.sdehunt.repository.UserRepository;
 import com.sdehunt.repository.impl.SolutionQueryImpl;
 import com.sdehunt.security.CurrentUser;
 import com.sdehunt.security.UserPrincipal;
@@ -29,15 +31,21 @@ public class SolutionController {
     @Autowired
     private SolutionService solutionService;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @RequestMapping(
             method = RequestMethod.POST, path = "/tasks/{taskId}/solutions",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public SolutionIdDTO submit(@PathVariable String taskId, @RequestBody SaveSolutionDTO req, @CurrentUser UserPrincipal user) {
+    public SolutionIdDTO submit(@PathVariable String taskId, @RequestBody SaveSolutionDTO req, @CurrentUser UserPrincipal currentUser) {
+        String userId = Optional.ofNullable(currentUser).map(UserPrincipal::getId).orElseThrow(UserNotFoundException::new);
+        User user = userRepository.get(userId).orElseThrow(UserNotFoundException::new);
+        String repo = user.getGithubLogin() + "/" + req.getRepo();
         Solution solution = new Solution()
-                .setUserId(Optional.ofNullable(user).map(UserPrincipal::getId).orElseThrow(UserNotFoundException::new))
-                .setRepo(req.getRepo())
+                .setUserId(userId)
+                .setRepo(repo)
                 .setCommit(req.getCommit())
                 .setTaskId(TaskID.of(taskId))
                 .setTest(req.isTest());
