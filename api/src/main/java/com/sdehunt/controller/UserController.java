@@ -39,7 +39,7 @@ public class UserController {
     }
 
     @RequestMapping(path = "/query", method = RequestMethod.POST)
-    public Collection<User> query(@RequestBody UserQuery query) {
+    public Collection<User> query(@RequestBody UserQuery query) { // TODO create tests for all combinations
         return users.query(query);
     }
 

@@ -3,9 +3,10 @@ package com.sdehunt.api;
 import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.SolutionStatus;
-import com.sdehunt.dto.CreateUserDTO;
+import com.sdehunt.commons.model.User;
 import com.sdehunt.dto.SaveSolutionDTO;
 import com.sdehunt.dto.SolutionIdDTO;
+import com.sdehunt.repository.UserQuery;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.restassured.http.Header;
@@ -26,13 +27,9 @@ public class SolutionApiIT extends AbstractApiTest {
     @Test
     public void crudTest() {
         TaskID taskId = TaskID.SLIDES_TEST;
-        CreateUserDTO createUserDTO = new CreateUserDTO()
-                .setEmail(UUID.randomUUID().toString() + "@gmail.com")
-                .setNickname("NN" + UUID.randomUUID().toString())
-                .setTest(true);
-        String userId = "976db4b4-c82c-4971-9a47-32835bfc6690"; // sdehuntdeveloper userId // TODO can unhardcode it when get add route for getting user by it's github login
         String repo = "sdehuntdeveloper/google_hash_code_2019_public";
         String commit = "61f487523ad641cc6fffc44ded7537d94cf0d1eb";
+        String userId = getUserIdByGithubLogin(repo.split("/")[0]);
 
         String jwt = Jwts.builder()
                 .setSubject(userId)
@@ -107,14 +104,9 @@ public class SolutionApiIT extends AbstractApiTest {
     @Test
     public void invalidInputTest() {
         TaskID taskId = TaskID.SLIDES_TEST;
-        CreateUserDTO createUserDTO = new CreateUserDTO()
-                .setEmail(UUID.randomUUID().toString() + "@gmail.com")
-                .setNickname("NN" + UUID.randomUUID().toString())
-                .setTest(true);
-        String userId = "976db4b4-c82c-4971-9a47-32835bfc6690"; // sdehuntdeveloper userId // TODO can unhardcode it when get add route for getting user by it's github login
-
         String repo = "sdehuntdeveloper/google_hash_code_2019_public";
         String commit = "master";
+        String userId = getUserIdByGithubLogin(repo.split("/")[0]);
         String invalidRepo = "invalid_repo";
         String invalidCommit = "invalid_commit";
 
@@ -187,12 +179,8 @@ public class SolutionApiIT extends AbstractApiTest {
     @Test
     public void invalidSolutionTest() {
         TaskID taskId = TaskID.SLIDES_TEST;
-        CreateUserDTO createUserDTO = new CreateUserDTO()
-                .setEmail(UUID.randomUUID().toString() + "@gmail.com")
-                .setNickname("NN" + UUID.randomUUID().toString())
-                .setTest(true);
-        String userId = "976db4b4-c82c-4971-9a47-32835bfc6690"; // sdehuntdeveloper userId // TODO can unhardcode it when get add route for getting user by it's github login
         String invalidSolutionRepo = "sdehuntdeveloper/google_hash_code_2019_invalid";
+        String userId = getUserIdByGithubLogin(invalidSolutionRepo.split("/")[0]);
         String commit = "master";
 
         String jwt = Jwts.builder()
@@ -233,4 +221,10 @@ public class SolutionApiIT extends AbstractApiTest {
         Assert.assertEquals(status, solutionStatus);
     }
 
+    private String getUserIdByGithubLogin(String githubLogin) {
+        return host().contentType(APP_JSON)
+                .body(new UserQuery().setGithubLogin(githubLogin).setTest(true))
+                .post("/users/query")
+                .as(User[].class)[0].getId();
+    }
 }
