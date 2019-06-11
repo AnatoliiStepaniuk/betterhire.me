@@ -2,7 +2,6 @@ package com.sdehunt.service;
 
 import com.sdehunt.commons.exception.InvalidSolutionException;
 import com.sdehunt.commons.github.GithubClient;
-import com.sdehunt.commons.github.JavaGithubClient;
 import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
 import com.sdehunt.commons.github.exceptions.GithubTimeoutException;
 import com.sdehunt.commons.github.exceptions.RepositoryNotFoundException;
@@ -42,7 +41,7 @@ public class SolutionService {
         this.githubClient = githubClient;
         this.executor = Executors.newCachedThreadPool();
         this.params = params;
-        this.logger = LoggerFactory.getLogger(JavaGithubClient.class);
+        this.logger = LoggerFactory.getLogger(SolutionService.class);
     }
 
     /**

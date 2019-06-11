@@ -5,6 +5,7 @@ import com.sdehunt.commons.exception.InvalidSolutionException;
 import com.sdehunt.commons.github.GithubClient;
 import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
 import com.sdehunt.score.TaskScoreCounter;
+import lombok.SneakyThrows;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -50,12 +51,7 @@ public class SlidesScoreCounter implements TaskScoreCounter {
     @Override
     public long count(String userId, String repo, String commit) throws CommitOrFileNotFoundException {
 
-        for (String f : inputFiles) { // TODO it once CACHE IT SOMEHOW
-            githubClient.download(INPUT_REPO, INPUT_BRANCH, f);// TODO name files so that it does not clunch with files for other tasks
-        }
-        for (String f : solutionFiles) {
-            githubClient.download(userId, repo, commit, f); // TODO solution files downloader
-        } // TODO clean solution files after finishing
+        downloadFiles(userId, repo, commit);
 
         long score = 0;
         for (int i = 0; i < inputFiles.size(); i++) {
@@ -77,6 +73,25 @@ public class SlidesScoreCounter implements TaskScoreCounter {
 
         return score;
     } // TODO add unit tests
+
+    private void downloadFiles(String userId, String repo, String commit) throws CommitOrFileNotFoundException {
+        for (String f : inputFiles) { // TODO it once CACHE IT SOMEHOW
+            githubClient.download(INPUT_REPO, INPUT_BRANCH, f);// TODO name files so that it does not clunch with files for other tasks
+        }
+        for (String f : solutionFiles) {
+            githubClient.download(userId, repo, commit, f); // TODO solution files downloader
+        }
+    }
+
+    @SneakyThrows(IOException.class)
+    private void removeFiles() {
+        for (String f : inputFiles) {
+            Files.delete(Paths.get(f.substring(f.lastIndexOf("/" + 1))));
+        }
+        for (String f : solutionFiles) {
+            Files.delete(Paths.get(f.substring(f.lastIndexOf("/" + 1))));
+        }
+    }
 
     private Set<String> getTags(Map<Integer, Picture> pictures, String line) {
         if (line.split(" ").length == 2) { // TODO separate method

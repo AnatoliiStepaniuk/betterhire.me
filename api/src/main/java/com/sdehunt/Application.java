@@ -1,7 +1,7 @@
 package com.sdehunt;
 
 import com.sdehunt.commons.github.GithubClient;
-import com.sdehunt.commons.github.JavaGithubClient;
+import com.sdehunt.commons.github.UnirestGithubClient;
 import com.sdehunt.commons.params.EhcacheParameterService;
 import com.sdehunt.commons.params.ParameterService;
 import com.sdehunt.commons.params.SsmParameterService;
@@ -76,7 +76,7 @@ public class Application implements WebMvcConfigurer {
 
     @Bean
     public GithubClient githubClient(ParameterService params, AccessTokenRepository accessTokens) {
-        return new JavaGithubClient(params, accessTokens);
+        return new UnirestGithubClient(params, accessTokens);
     }
 
     @Bean
