@@ -3,13 +3,13 @@ package com.sdehunt.api;
 import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.SolutionStatus;
-import com.sdehunt.commons.model.User;
 import com.sdehunt.dto.CreateUserDTO;
 import com.sdehunt.dto.SaveSolutionDTO;
 import com.sdehunt.dto.SolutionIdDTO;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.restassured.http.Header;
+import io.restassured.response.Response;
 import lombok.SneakyThrows;
 import org.junit.Assert;
 import org.junit.Test;
@@ -30,7 +30,7 @@ public class SolutionApiIT extends AbstractApiTest {
                 .setEmail(UUID.randomUUID().toString() + "@gmail.com")
                 .setNickname("NN" + UUID.randomUUID().toString())
                 .setTest(true);
-        String userId = host().contentType(APP_JSON).body(createUserDTO).post("/users").as(User.class).getId();
+        String userId = "976db4b4-c82c-4971-9a47-32835bfc6690"; // sdehuntdeveloper userId // TODO can unhardcode it when get add route for getting user by it's github login
         String repo = "sdehuntdeveloper/google_hash_code_2019_public";
         String commit = "61f487523ad641cc6fffc44ded7537d94cf0d1eb";
 
@@ -111,7 +111,7 @@ public class SolutionApiIT extends AbstractApiTest {
                 .setEmail(UUID.randomUUID().toString() + "@gmail.com")
                 .setNickname("NN" + UUID.randomUUID().toString())
                 .setTest(true);
-        String userId = host().contentType(APP_JSON).body(createUserDTO).post("/users").as(User.class).getId();
+        String userId = "976db4b4-c82c-4971-9a47-32835bfc6690"; // sdehuntdeveloper userId // TODO can unhardcode it when get add route for getting user by it's github login
 
         String repo = "sdehuntdeveloper/google_hash_code_2019_public";
         String commit = "master";
@@ -130,13 +130,17 @@ public class SolutionApiIT extends AbstractApiTest {
                 .setRepo(repo)
                 .setCommit(commit)
                 .setTest(true);
-        host().contentType(APP_JSON)
+
+        Response submitResponse = host().contentType(APP_JSON)
                 .header(new Header("Authorization", "Bearer " + jwt))
                 .body(validDTO)
-                .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
-                .then().statusCode(is(SUCCESS));
-
-        // TODO remove solution
+                .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase());
+        submitResponse.then().statusCode(is(SUCCESS));
+        String solutionId = submitResponse.as(SolutionIdDTO.class).getId();
+        // Delete
+        host().delete("/solutions/{id}", solutionId)
+                .then().log().ifValidationFails()
+                .statusCode(SUCCESS);
 
         // Verify invalid Repo response
         SaveSolutionDTO invalidRepoDTO = new SaveSolutionDTO()
@@ -178,8 +182,6 @@ public class SolutionApiIT extends AbstractApiTest {
                 .body(invalidSolutionDTO)
                 .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
                 .then().statusCode(is(NOT_FOUND));
-
-        // TODO remove solution
     }
 
     @Test
@@ -189,7 +191,7 @@ public class SolutionApiIT extends AbstractApiTest {
                 .setEmail(UUID.randomUUID().toString() + "@gmail.com")
                 .setNickname("NN" + UUID.randomUUID().toString())
                 .setTest(true);
-        String userId = host().contentType(APP_JSON).body(createUserDTO).post("/users").as(User.class).getId();
+        String userId = "976db4b4-c82c-4971-9a47-32835bfc6690"; // sdehuntdeveloper userId // TODO can unhardcode it when get add route for getting user by it's github login
         String invalidSolutionRepo = "sdehuntdeveloper/google_hash_code_2019_invalid";
         String commit = "master";
 
@@ -212,9 +214,10 @@ public class SolutionApiIT extends AbstractApiTest {
                 .as(SolutionIdDTO.class).getId();
 
         verifySolutionStatus(invalidSolutionId, SolutionStatus.INVALID_SOLUTION);
-
-        // TODO remove solution
-
+        // Delete
+        host().delete("/solutions/{id}", invalidSolutionId)
+                .then().log().ifValidationFails()
+                .statusCode(SUCCESS);
     }
 
     @SneakyThrows(InterruptedException.class)

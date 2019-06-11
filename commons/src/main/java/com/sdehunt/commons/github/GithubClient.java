@@ -1,6 +1,7 @@
 package com.sdehunt.commons.github;
 
 import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
+import com.sdehunt.commons.github.exceptions.GithubTimeoutException;
 import com.sdehunt.commons.github.exceptions.RepositoryNotFoundException;
 
 import java.util.Collection;
@@ -42,16 +43,16 @@ public interface GithubClient {
     /**
      * Returns collection of repository branches
      */
-    Collection<String> getBranches(String userId, String repo) throws RepositoryNotFoundException;
+    Collection<String> getBranches(String userId, String repo) throws RepositoryNotFoundException, GithubTimeoutException;
 
-    default Collection<String> getBranches(String repo) throws RepositoryNotFoundException {
+    default Collection<String> getBranches(String repo) throws RepositoryNotFoundException, GithubTimeoutException {
         return getBranches("", repo);
     }
 
     /**
      * Returns true if input string matches one of the repo branches
      */
-    default boolean isBranch(String userId, String repo, String input) throws RepositoryNotFoundException {
+    default boolean isBranch(String userId, String repo, String input) throws RepositoryNotFoundException, GithubTimeoutException {
         return getBranches(userId, repo).contains(input);
     }
 }

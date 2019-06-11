@@ -4,15 +4,13 @@ import com.sdehunt.commons.exception.InvalidSolutionException;
 import com.sdehunt.commons.github.GithubClient;
 import com.sdehunt.commons.github.JavaGithubClient;
 import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
+import com.sdehunt.commons.github.exceptions.GithubTimeoutException;
 import com.sdehunt.commons.github.exceptions.RepositoryNotFoundException;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.SolutionStatus;
 import com.sdehunt.commons.model.User;
 import com.sdehunt.commons.params.ParameterService;
-import com.sdehunt.exception.CommitNotFoundException;
-import com.sdehunt.exception.SolutionIsPresentException;
-import com.sdehunt.exception.UserNotFoundException;
-import com.sdehunt.exception.WrongRepositoryOwnerException;
+import com.sdehunt.exception.*;
 import com.sdehunt.repository.SolutionRepository;
 import com.sdehunt.repository.UserRepository;
 import com.sdehunt.score.GeneralScoreCounter;
@@ -124,6 +122,8 @@ public class SolutionService {
             return githubClient.isBranch(userId, repo, input);
         } catch (RepositoryNotFoundException e) {
             throw new com.sdehunt.exception.RepositoryNotFoundException(repo);
+        } catch (GithubTimeoutException e) {
+            throw new TooManyRequestsException();
         }
     }
 

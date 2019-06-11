@@ -119,7 +119,7 @@ public class JavaGithubClient implements GithubClient {
 
     @Override
     @SneakyThrows({InterruptedException.class})
-    public Collection<String> getBranches(String userId, String repo) throws RepositoryNotFoundException {
+    public Collection<String> getBranches(String userId, String repo) throws RepositoryNotFoundException, GithubTimeoutException {
         for (int i = 0; i < TIMEOUT_ATTEMPTS; i++) {
             try {
                 return executor.submit(() -> getBranchesOnce(userId, repo))
