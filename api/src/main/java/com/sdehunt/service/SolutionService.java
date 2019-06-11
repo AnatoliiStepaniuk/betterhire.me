@@ -7,9 +7,11 @@ import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
 import com.sdehunt.commons.github.exceptions.RepositoryNotFoundException;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.SolutionStatus;
+import com.sdehunt.commons.model.User;
 import com.sdehunt.commons.params.ParameterService;
 import com.sdehunt.exception.CommitNotFoundException;
 import com.sdehunt.exception.UserNotFoundException;
+import com.sdehunt.exception.WrongRepositoryOwnerException;
 import com.sdehunt.repository.SolutionRepository;
 import com.sdehunt.repository.UserRepository;
 import com.sdehunt.score.GeneralScoreCounter;
@@ -53,7 +55,8 @@ public class SolutionService {
      */
     public String process(Solution solution) {
 
-        userRepository.get(solution.getUserId()).orElseThrow(UserNotFoundException::new);
+        User user = userRepository.get(solution.getUserId()).orElseThrow(UserNotFoundException::new);
+        verifySolutionOwner(solution, user);
 
         if (isBranch(solution.getUserId(), solution.getRepo(), solution.getCommit())) {
             String commit = githubClient.getCommit(solution.getUserId(), solution.getRepo(), solution.getCommit());
@@ -89,6 +92,16 @@ public class SolutionService {
         });
 
         return solutionId;
+    }
+
+    private void verifySolutionOwner(Solution solution, User user) {
+        if (!solution.getRepo().contains("/")) { // TODO maybe we could just accept repo name only and take repo owner from DB. discuss with Pasha
+            throw new com.sdehunt.exception.RepositoryNotFoundException();
+        }
+        String repoOwner = solution.getRepo().split("/")[0];
+        if (!repoOwner.equals(user.getGithubLogin())) {
+            throw new WrongRepositoryOwnerException();
+        }
     }
 
     private Callable<Long> getCountScoreTask(final Solution solution) {
