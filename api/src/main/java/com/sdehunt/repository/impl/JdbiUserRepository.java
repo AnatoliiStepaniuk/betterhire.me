@@ -1,6 +1,7 @@
 package com.sdehunt.repository.impl;
 
 import com.sdehunt.commons.model.User;
+import com.sdehunt.repository.UserQuery;
 import com.sdehunt.repository.UserRepository;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.RowMapper;
@@ -10,9 +11,7 @@ import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static java.lang.String.format;
 
@@ -92,6 +91,42 @@ public class JdbiUserRepository implements UserRepository {
         return jdbi.withHandle(
                 db -> db.select(getAllQuery(test))
                         .map(new UserRowMapper()).list()
+        );
+    }
+
+    @Override
+    public Collection<User> query(UserQuery query) {
+        String sql = format("SELECT * FROM %s", TABLE);
+        List<String> conditions = new ArrayList<>();
+        List<Object> params = new ArrayList<>();
+        query.getNickname().ifPresent(nickname -> {
+            conditions.add("`nickname` = ?");
+            params.add(nickname);
+        });
+        query.getEmail().ifPresent(email -> {
+            conditions.add("`email` = ?");
+            params.add(email);
+        });
+        query.getGithubLogin().ifPresent(githubLogin -> {
+            conditions.add("`github_login` = ?");
+            params.add(githubLogin);
+        });
+        query.getLinkedinId().ifPresent(linkedinId -> {
+            conditions.add("`linkedin_id` = ?");
+            params.add(linkedinId);
+        });
+
+        if (!query.isTest()) {
+            conditions.add("`test` = false");
+        }
+
+        if (!conditions.isEmpty()) {
+            sql += " WHERE " + String.join(" AND ", conditions);
+        }
+
+        String finalSql = sql;
+        return jdbi.withHandle(
+                handle -> handle.select(finalSql, params.toArray()).map(new UserRowMapper()).list()
         );
     }
 

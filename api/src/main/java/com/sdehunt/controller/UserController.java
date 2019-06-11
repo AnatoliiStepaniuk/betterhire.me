@@ -5,6 +5,7 @@ import com.sdehunt.commons.model.User;
 import com.sdehunt.dto.CreateUserDTO;
 import com.sdehunt.exception.UserNotFoundException;
 import com.sdehunt.repository.SolutionRepository;
+import com.sdehunt.repository.UserQuery;
 import com.sdehunt.repository.UserRepository;
 import com.sdehunt.security.CurrentUser;
 import com.sdehunt.security.UserPrincipal;
@@ -32,13 +33,18 @@ public class UserController {
                 .orElseThrow(() -> new RuntimeException("User id " + userPrincipal.getId() + " is not found"));
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(path = "", method = RequestMethod.GET)
     public Collection<User> getAll(@RequestParam(required = false) boolean test) {
         return users.getAll(test);
     }
 
+    @RequestMapping(path = "/query", method = RequestMethod.POST)
+    public Collection<User> query(@RequestBody UserQuery query) {
+        return users.query(query);
+    }
+
     @RequestMapping(path = "", method = RequestMethod.POST)
-    public User create(@RequestBody CreateUserDTO req) {
+    public User create(@RequestBody CreateUserDTO req) { // TODO maybe use user instead of DTO?
         User user = new User()
                 .setEmail(req.getEmail())
                 .setGithubLogin(req.getGithubLogin())

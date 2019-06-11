@@ -17,7 +17,7 @@ public class SolutionQueryImpl implements SolutionQuery {
     @Getter
     private boolean test;
 
-    public SolutionQueryImpl user(String user) {
+    public SolutionQueryImpl user(String user) { // TODO setters lombok?
         this.user = user;
         return this;
     }

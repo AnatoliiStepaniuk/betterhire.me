@@ -44,4 +44,6 @@ public interface UserRepository {
     void delete(String userId);
 
     Collection<User> getAll(boolean test);
+
+    Collection<User> query(UserQuery userQuery);
 }
