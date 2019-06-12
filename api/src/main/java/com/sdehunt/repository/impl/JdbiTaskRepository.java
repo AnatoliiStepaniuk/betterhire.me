@@ -36,7 +36,7 @@ public class JdbiTaskRepository implements TaskRepository {
     @Override
     public List<ShortTask> getAllShort(boolean test) {
         return jdbi.withHandle(
-                db -> db.select(getAllQuery(test)).map(new ShortTaskRowMapper()).list()
+                db -> db.select(getAllQuery(test)).map(new ShortTaskRowMapper()).list() // TODO do not read full description from db
         );
     }
 
@@ -57,7 +57,7 @@ public class JdbiTaskRepository implements TaskRepository {
     @Override
     public Optional<ShortTask> getShort(String id) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s WHERE id = ?", TABLE), id)
+                db -> db.select(format("SELECT * FROM %s WHERE id = ?", TABLE), id) // TODO do not read full description from DB.
                         .map(new ShortTaskRowMapper()).findFirst()
         );
     }
@@ -89,6 +89,9 @@ public class JdbiTaskRepository implements TaskRepository {
                     .setName(rs.getString("name"))
                     .setShortDescription(rs.getString("short_description"))
                     .setImageUrl(rs.getString("image_url"))
+                    .setParticipants(rs.getInt("participants"))
+                    .setOffers(rs.getInt("offers"))
+                    .setBestOffer(rs.getInt("bestOffer"))
                     .setSubmittable(rs.getBoolean("submittable"))
                     .setEnabled(rs.getBoolean("enabled"))
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")))
@@ -107,6 +110,9 @@ public class JdbiTaskRepository implements TaskRepository {
                     .setName(rs.getString("name"))
                     .setShortDescription(rs.getString("short_description"))
                     .setImageUrl(rs.getString("image_url"))
+                    .setParticipants(rs.getInt("participants"))
+                    .setOffers(rs.getInt("offers"))
+                    .setBestOffer(rs.getInt("bestOffer"))
                     .setSubmittable(rs.getBoolean("submittable"))
                     .setEnabled(rs.getBoolean("enabled"))
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")))
