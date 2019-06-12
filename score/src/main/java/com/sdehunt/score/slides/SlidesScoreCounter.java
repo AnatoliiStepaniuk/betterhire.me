@@ -2,8 +2,8 @@ package com.sdehunt.score.slides;
 
 import com.sdehunt.commons.FileUtils;
 import com.sdehunt.commons.exception.InvalidSolutionException;
-import com.sdehunt.commons.github.GithubClient;
 import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
+import com.sdehunt.score.FilesDownloader;
 import com.sdehunt.score.TaskScoreCounter;
 import lombok.SneakyThrows;
 
@@ -19,31 +19,30 @@ public class SlidesScoreCounter implements TaskScoreCounter {
 
     private final PicturesReader picturesReader = new EagerPicturesReader();
 
-    private static final String INPUT_REPO = "AnatoliiStepaniuk/google_hash_code_2019";
+    private static final String INPUT_REPO = "AnatoliiStepaniuk/sdehunt_input";
     private static final String INPUT_BRANCH = "master";
-    private List<String> inputFiles;
-    private List<String> solutionFiles;
+    private final List<String> inputFiles;
+    private final List<String> solutionFiles;
+    private final FilesDownloader filesDownloader;
 
-    private final GithubClient githubClient;
-
-    public SlidesScoreCounter(GithubClient githubClient) {
+    public SlidesScoreCounter(FilesDownloader filesDownloader) {
         this(
-                githubClient,
-                Arrays.asList("input/a_input.txt", "input/b_input.txt", "input/c_input.txt", "input/d_input.txt", "input/e_input.txt"),
+                filesDownloader,
+                Arrays.asList("slides/a_input.txt", "slides/b_input.txt", "slides/c_input.txt", "slides/d_input.txt", "slides/e_input.txt"),
                 Arrays.asList("solutions/a_result.txt", "solutions/b_result.txt", "solutions/c_result.txt", "solutions/d_result.txt", "solutions/e_result.txt")
         );
     }
 
-    public SlidesScoreCounter(GithubClient githubClient, List<String> inputFiles, List<String> solutionFiles) {
-        this.githubClient = githubClient;
+    public SlidesScoreCounter(FilesDownloader filesDownloader, List<String> inputFiles, List<String> solutionFiles) {
         this.inputFiles = inputFiles;
         this.solutionFiles = solutionFiles;
+        this.filesDownloader = filesDownloader;
     }
 
-    public static SlidesScoreCounter test(GithubClient githubClient) {
+    public static SlidesScoreCounter test(FilesDownloader filesDownloader) {
         return new SlidesScoreCounter(
-                githubClient,
-                Collections.singletonList("input/a_input.txt"),
+                filesDownloader,
+                Collections.singletonList("slides/a_input.txt"),
                 Collections.singletonList("solutions/a_result.txt")
         );
     }
@@ -51,7 +50,8 @@ public class SlidesScoreCounter implements TaskScoreCounter {
     @Override
     public long count(String userId, String repo, String commit) throws CommitOrFileNotFoundException {
 
-        downloadFiles(userId, repo, commit);
+        filesDownloader.downloadInputFiles(INPUT_REPO, INPUT_BRANCH, inputFiles);
+        filesDownloader.downloadSolutionFiles(userId, repo, commit, solutionFiles);
 
         long score = 0;
         for (int i = 0; i < inputFiles.size(); i++) {
@@ -73,15 +73,6 @@ public class SlidesScoreCounter implements TaskScoreCounter {
 
         return score;
     } // TODO add unit tests
-
-    private void downloadFiles(String userId, String repo, String commit) throws CommitOrFileNotFoundException {
-        for (String f : inputFiles) { // TODO it once CACHE IT SOMEHOW
-            githubClient.download(INPUT_REPO, INPUT_BRANCH, f);// TODO name files so that it does not clunch with files for other tasks
-        }
-        for (String f : solutionFiles) {
-            githubClient.download(userId, repo, commit, f); // TODO solution files downloader
-        }
-    }
 
     @SneakyThrows(IOException.class)
     private void removeFiles() {

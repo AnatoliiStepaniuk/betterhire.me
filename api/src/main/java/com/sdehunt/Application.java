@@ -13,7 +13,9 @@ import com.sdehunt.repository.UserRepository;
 import com.sdehunt.repository.impl.JdbiSolutionRepository;
 import com.sdehunt.repository.impl.JdbiTaskRepository;
 import com.sdehunt.repository.impl.JdbiUserRepository;
+import com.sdehunt.score.FilesDownloader;
 import com.sdehunt.score.GeneralScoreCounter;
+import com.sdehunt.score.GithubFilesDownloader;
 import com.sdehunt.security.AppProperties;
 import com.sdehunt.service.SolutionService;
 import com.zaxxer.hikari.HikariDataSource;
@@ -80,8 +82,13 @@ public class Application implements WebMvcConfigurer {
     }
 
     @Bean
-    public GeneralScoreCounter generalScoreCounter(GithubClient githubClient) {
-        return new GeneralScoreCounter(githubClient);
+    public FilesDownloader filesDownloader(GithubClient githubClient) {
+        return new GithubFilesDownloader(githubClient);
+    }
+
+    @Bean
+    public GeneralScoreCounter generalScoreCounter(FilesDownloader filesDownloader) {
+        return new GeneralScoreCounter(filesDownloader);
     }
 
     @Bean

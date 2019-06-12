@@ -1,8 +1,5 @@
-package com.sdehunt.score;
+package com.sdehunt.score.slides;
 
-import com.sdehunt.score.slides.EagerPicturesReader;
-import com.sdehunt.score.slides.Picture;
-import com.sdehunt.score.slides.PicturesReader;
 import org.junit.Assert;
 import org.junit.Test;
 

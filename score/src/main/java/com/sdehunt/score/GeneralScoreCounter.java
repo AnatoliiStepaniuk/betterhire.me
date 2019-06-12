@@ -1,9 +1,9 @@
 package com.sdehunt.score;
 
 import com.sdehunt.commons.TaskID;
-import com.sdehunt.commons.github.GithubClient;
 import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
 import com.sdehunt.commons.model.Solution;
+import com.sdehunt.score.pizza.PizzaScoreCounter;
 import com.sdehunt.score.slides.SlidesScoreCounter;
 
 import java.util.HashMap;
@@ -16,9 +16,10 @@ public class GeneralScoreCounter {
 
     private Map<TaskID, TaskScoreCounter> taskCounters = new HashMap<>();
 
-    public GeneralScoreCounter(GithubClient githubClient) {
-        taskCounters.put(TaskID.SLIDES, new SlidesScoreCounter(githubClient));
-        taskCounters.put(TaskID.SLIDES_TEST, SlidesScoreCounter.test(githubClient));
+    public GeneralScoreCounter(FilesDownloader filesDownloader) {
+        taskCounters.put(TaskID.SLIDES, new SlidesScoreCounter(filesDownloader));
+        taskCounters.put(TaskID.SLIDES_TEST, SlidesScoreCounter.test(filesDownloader));
+        taskCounters.put(TaskID.PIZZA, new PizzaScoreCounter(filesDownloader));
     }
 
     public long count(Solution solution) throws CommitOrFileNotFoundException {
