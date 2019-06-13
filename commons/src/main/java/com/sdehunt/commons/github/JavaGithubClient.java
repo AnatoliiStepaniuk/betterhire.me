@@ -76,10 +76,12 @@ public class JavaGithubClient implements GithubClient {
         }
 
         if (response.statusCode() == 404) {
+            logger.debug(String.format("File %s of repo %s for commit %s was not found", file, repo, commit));
             throw new CommitOrFileNotFoundException();
         }
 
         if (response.statusCode() != 200) {
+            logger.warn("Status code " + response.statusCode() + " for URI " + uri);
             throw new RuntimeException("Status code " + response.statusCode() + " for URI " + uri);
         }
         logger.debug(String.format("Downloaded file %s of repo %s for commit %s", file, repo, commit));
@@ -94,6 +96,7 @@ public class JavaGithubClient implements GithubClient {
         logger.debug(String.format("Received response %d for commits request for repo %s and branch %s", response.statusCode(), repo, branch));
 
         if (response.statusCode() != 200) {
+            logger.warn("Status code " + response.statusCode() + " for URI " + uri);
             throw new RuntimeException("Status code " + response.statusCode() + " for URI " + uri);
         }
         return objectMapper.readValue(response.body(), SimpleCommit.class).getSha();
@@ -113,6 +116,7 @@ public class JavaGithubClient implements GithubClient {
         } else if (response.statusCode() == 404) {
             return false;
         } else {
+            logger.warn("Status code " + response.statusCode() + " for URI " + uri);
             throw new RuntimeException("Status code " + response.statusCode() + " for URI " + uri);
         }
     }
@@ -147,6 +151,7 @@ public class JavaGithubClient implements GithubClient {
             throw new RepositoryNotFoundException(repo);
         }
         if (response.statusCode() != 200) {
+            logger.warn("Status code " + response.statusCode() + " for URI " + uri);
             throw new RuntimeException("Status code " + response.statusCode() + " for URI " + uri);
         }
         return Arrays.stream(objectMapper.readValue(response.body(), BranchResponse[].class))

@@ -78,10 +78,12 @@ public class UnirestGithubClient implements GithubClient {
         }
 
         if (response.statusCode() == 404) {
+            logger.debug(String.format("File %s of repo %s for commit %s was not found", file, repo, commit));
             throw new CommitOrFileNotFoundException();
         }
 
         if (response.statusCode() != 200) {
+            logger.warn("Status code " + response.statusCode() + " for URI " + uri);
             throw new RuntimeException("Status code " + response.statusCode() + " for URI " + uri);
         }
         logger.debug(String.format("Downloaded file %s of repo %s for commit %s", file, repo, commit));
@@ -95,6 +97,7 @@ public class UnirestGithubClient implements GithubClient {
         com.mashape.unirest.http.HttpResponse<String> response = Unirest.get(url).header("Authorization", "token " + getToken(userId)).asString();
         logger.debug(String.format("Received response %d for commits request for repo %s and branch %s", response.getStatus(), repo, branch));
         if (response.getStatus() != 200) {
+            logger.warn("Status code " + response.getStatus() + " for URL " + url);
             throw new RuntimeException("Status code " + response.getStatus() + " for URL " + url);
         }
         return objectMapper.readValue(response.getBody(), SimpleCommit.class).getSha();
@@ -115,6 +118,7 @@ public class UnirestGithubClient implements GithubClient {
         } else if (response.getStatus() == 404) {
             return false;
         } else {
+            logger.warn("Status code " + response.getStatus() + " for URL " + url);
             throw new RuntimeException("Status code " + response.getStatus() + " for URL " + url);
         }
     }
@@ -150,6 +154,7 @@ public class UnirestGithubClient implements GithubClient {
             throw new RepositoryNotFoundException(repo);
         }
         if (response.getStatus() != 200) {
+            logger.warn("Status code " + response.getStatus() + " for URL " + url);
             throw new RuntimeException("Status code " + response.getStatus() + " for URL " + url);
         }
         return Arrays.stream(objectMapper.readValue(response.getBody(), BranchResponse[].class))
