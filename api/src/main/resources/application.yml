@@ -61,5 +61,6 @@ app:
     # We're not using cookies because they won't work well in mobile clients.
     authorizedRedirectUris:
       - ${FRONT_END_HOST}:${FRONT_END_PORT}/oauth2/redirect
+      - ${FRONT_END_HOST}/oauth2/redirect
 #      - myandroidapp://oauth2/redirect
 #      - myiosapp://oauth2/redirect
