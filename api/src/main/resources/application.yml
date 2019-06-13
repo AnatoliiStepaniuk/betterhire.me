@@ -22,8 +22,8 @@ spring:
       client:
         registration:
           github:
-            clientId: d0173d642d8e3054a4f6
-            clientSecret: a8677dbfeb11a7a0e765a4b146cd69e426297f8a
+            clientId: ${GITHUB_CLIENT_ID}
+            clientSecret: ${GITHUB_CLIENT_SECRET}
             redirectUriTemplate: "{baseUrl}/oauth2/callback/{registrationId}"
             scope:
               - user:email
@@ -60,7 +60,9 @@ app:
     # redirectUri mentioned by the client in the /oauth2/authorize request.
     # We're not using cookies because they won't work well in mobile clients.
     authorizedRedirectUris:
-      - ${FRONT_END_HOST}:${FRONT_END_PORT}/oauth2/redirect
-      - ${FRONT_END_HOST}/oauth2/redirect
+      - https://${FRONT_END_HOST}:${FRONT_END_PORT}/oauth2/redirect
+      - https://${FRONT_END_HOST}/oauth2/redirect
+      - https://www.${FRONT_END_HOST}:${FRONT_END_PORT}/oauth2/redirect
+      - https://www.${FRONT_END_HOST}/oauth2/redirect
 #      - myandroidapp://oauth2/redirect
 #      - myiosapp://oauth2/redirect
