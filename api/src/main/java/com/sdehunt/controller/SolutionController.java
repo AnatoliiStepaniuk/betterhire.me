@@ -89,7 +89,11 @@ public class SolutionController {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/tasks/{taskId}/solutions/best", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<BestResult> getBestSolutionsForTask(@PathVariable String taskId) { // TODO test
-        return solutions.best(taskId);
+    public List<BestResult> getBestSolutionsForTask(
+            @PathVariable String taskId,
+            @RequestParam(value = "test", required = false) boolean test
+
+    ) {
+        return solutions.best(taskId, test);
     }
 }

@@ -1,6 +1,7 @@
 package com.sdehunt.api;
 
 import com.sdehunt.commons.TaskID;
+import com.sdehunt.commons.model.BestResult;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.SolutionStatus;
 import com.sdehunt.commons.model.User;
@@ -15,6 +16,7 @@ import lombok.SneakyThrows;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
 
@@ -28,12 +30,12 @@ public class SolutionApiIT extends AbstractApiTest {
     public void crudTest() {
         TaskID taskId = TaskID.SLIDES_TEST;
         String githubLogin = "sdehuntdeveloper";
-        String userId = getUserIdByGithubLogin(githubLogin);
+        User user = getUserIdByGithubLogin(githubLogin);
         String repo = "google_hash_code_2019_public";
         String commit = "61f487523ad641cc6fffc44ded7537d94cf0d1eb";
 
         String jwt = Jwts.builder()
-                .setSubject(userId)
+                .setSubject(user.getId())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime() + 864000000))
                 .signWith(SignatureAlgorithm.HS512, "926D96C90030DD58429D2751AC1BDBBC")
@@ -53,10 +55,10 @@ public class SolutionApiIT extends AbstractApiTest {
         verifySolutionStatus(id, SolutionStatus.ACCEPTED);
 
         // Verify save (query by userId)
-        host().get("/tasks/{taskId}/solutions?userId=" + userId + "&status=ACCEPTED&test=true", taskId).then()
+        host().get("/tasks/{taskId}/solutions?userId=" + user.getId() + "&status=ACCEPTED&test=true", taskId).then()
                 .body("size()", equalTo(1))
                 .body("[0].taskId", equalTo(taskId.name()))
-                .body("[0].userId", equalTo(userId))
+                .body("[0].userId", equalTo(user.getId()))
                 .body("[0].repo", equalTo(githubLogin + "/" + repo))
                 .body("[0].commit", equalTo(commit))
                 .body("[0].status", equalTo(SolutionStatus.ACCEPTED.name()))
@@ -68,22 +70,31 @@ public class SolutionApiIT extends AbstractApiTest {
                 .statusCode(SUCCESS)
                 .body("id", equalTo(id))
                 .body("taskId", equalToIgnoringCase(taskId.name()))
-                .body("userId", equalTo(userId))
+                .body("userId", equalTo(user.getId()))
                 .body("repo", equalTo(githubLogin + "/" + repo))
                 .body("commit", equalTo(commit))
                 .body("status", equalTo(SolutionStatus.ACCEPTED.name()));
 
         // Verify save (by userId)
-        host().get("/users/{userId}/solutions?test=true", userId)
+        host().get("/users/{userId}/solutions?test=true", user.getId())
                 .then().log().ifValidationFails()
                 .statusCode(SUCCESS)
                 .body("size()", equalTo(1))
                 .body("[0].id", equalTo(id))
                 .body("[0].taskId", equalToIgnoringCase(taskId.name()))
-                .body("[0].userId", equalTo(userId))
+                .body("[0].userId", equalTo(user.getId()))
                 .body("[0].repo", equalTo(githubLogin + "/" + repo))
                 .body("[0].commit", equalTo(commit))
                 .body("[0].status", equalTo(SolutionStatus.ACCEPTED.name()));
+
+        // Checking best solution
+        BestResult[] results = host().get("/tasks/{taskId}/solutions/best?test=true", taskId)
+                .as(BestResult[].class);
+
+        Arrays.stream(results)
+                .filter(r -> r.getUserName().equals(user.getNickname()))
+                .findAny()
+                .orElseThrow();
 
         // Delete
         host().delete("/solutions/{id}", id)
@@ -96,7 +107,7 @@ public class SolutionApiIT extends AbstractApiTest {
                 .statusCode(NOT_FOUND);
 
         // Verify delete (query)
-        host().get("/tasks/{taskId}/solutions?userId=" + userId, taskId.name().toLowerCase())
+        host().get("/tasks/{taskId}/solutions?userId=" + user.getId(), taskId.name().toLowerCase())
                 .then().log().ifValidationFails()
                 .statusCode(SUCCESS)
                 .body("size()", is(0));
@@ -105,7 +116,7 @@ public class SolutionApiIT extends AbstractApiTest {
     @Test
     public void invalidInputTest() {
         TaskID taskId = TaskID.SLIDES_TEST;
-        String userId = getUserIdByGithubLogin("sdehuntdeveloper");
+        String userId = getUserIdByGithubLogin("sdehuntdeveloper").getId();
         String repo = "google_hash_code_2019_public";
         String commit = "master";
         String invalidRepo = "invalid_repo";
@@ -180,7 +191,7 @@ public class SolutionApiIT extends AbstractApiTest {
     @Test
     public void invalidSolutionTest() {
         TaskID taskId = TaskID.SLIDES_TEST;
-        String userId = getUserIdByGithubLogin("sdehuntdeveloper");
+        String userId = getUserIdByGithubLogin("sdehuntdeveloper").getId();
         String invalidSolutionRepo = "google_hash_code_2019_invalid";
         String commit = "master";
 
@@ -222,10 +233,10 @@ public class SolutionApiIT extends AbstractApiTest {
         Assert.assertEquals(status, solutionStatus);
     }
 
-    private String getUserIdByGithubLogin(String githubLogin) {
+    private User getUserIdByGithubLogin(String githubLogin) {
         return host().contentType(APP_JSON)
                 .body(new UserQuery().setGithubLogin(githubLogin).setTest(true))
                 .post("/users/query")
-                .as(User[].class)[0].getId();
+                .as(User[].class)[0];
     }
 }

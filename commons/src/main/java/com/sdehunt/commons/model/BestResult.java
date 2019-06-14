@@ -6,6 +6,6 @@ import lombok.Data;
 public class BestResult {
 
     private long score;
-    private String nickname;
+    private String userName; // TODO update in tests!
 
 }

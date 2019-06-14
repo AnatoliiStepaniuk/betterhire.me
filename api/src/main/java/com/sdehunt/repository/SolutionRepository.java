@@ -40,7 +40,7 @@ public interface SolutionRepository {
     /**
      * Returns each users best results for specified task
      */
-    List<BestResult> best(String taskId);
+    List<BestResult> best(String taskId, boolean test);
 
     /**
      * Checks if solution with this repo+commit is already present for specified user

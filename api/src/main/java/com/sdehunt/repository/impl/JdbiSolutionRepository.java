@@ -103,12 +103,12 @@ public class JdbiSolutionRepository implements SolutionRepository {
     }
 
     @Override
-    public List<BestResult> best(String taskId) {
+    public List<BestResult> best(String taskId, boolean test) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT best.final_score as score, %s.nickname FROM (SELECT max(score) final_score, user FROM %s" +
-                        " WHERE status = 'accepted' AND test = false AND task = ?" +
+                db -> db.select(format("SELECT best.final_score as score, %s.github_login, %s.nickname FROM (SELECT max(score) final_score, user FROM %s" +
+                        " WHERE status = 'accepted' AND task = ? AND test = ?" +
                         " GROUP BY %s.user) as best" +
-                        " INNER JOIN %s ON best.user = user.id ORDER BY score DESC", USER_TABLE, TABLE, TABLE, USER_TABLE), taskId)
+                        " INNER JOIN %s ON best.user = user.id WHERE test = ? ORDER BY score DESC", USER_TABLE, USER_TABLE, TABLE, TABLE, USER_TABLE), taskId, test, test)
                         .map(new BestResultRowMapper()).list()
         );
     }
@@ -141,9 +141,13 @@ public class JdbiSolutionRepository implements SolutionRepository {
     private class BestResultRowMapper implements RowMapper<BestResult> {
         @Override
         public BestResult map(ResultSet rs, StatementContext ctx) throws SQLException {
+            String userName = rs.getString("nickname");
+            if (userName == null || userName.isEmpty() || userName.isBlank()) {
+                userName = rs.getString("github_login");
+            }
             return new BestResult()
                     .setScore(rs.getLong("score"))
-                    .setNickname(rs.getString("nickname"));
+                    .setUserName(userName);
         }
     }
 }
