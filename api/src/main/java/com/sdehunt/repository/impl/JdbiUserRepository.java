@@ -139,6 +139,10 @@ public class JdbiUserRepository implements UserRepository {
     private class UserRowMapper implements RowMapper<User> {
         @Override
         public User map(ResultSet rs, StatementContext ctx) throws SQLException {
+            String userName = rs.getString("nickname");
+            if (userName == null || userName.isEmpty() || userName.isBlank()) {
+                userName = rs.getString("github_login");
+            }
             return new User()
                     .setId(rs.getString("id"))
                     .setName(rs.getString("name"))
@@ -149,7 +153,10 @@ public class JdbiUserRepository implements UserRepository {
                     .setImageUrl(rs.getString("image_url"))
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")))
                     .setUpdated(Instant.ofEpochSecond(rs.getLong("updated")))
-                    .setTest(rs.getBoolean("test"));
+                    .setTest(rs.getBoolean("test"))
+                    .setSolved(rs.getInt("solved"))
+                    .setAvgRank(rs.getInt("avg_rank"))
+                    .setUserName(userName);
         }
     }
 }

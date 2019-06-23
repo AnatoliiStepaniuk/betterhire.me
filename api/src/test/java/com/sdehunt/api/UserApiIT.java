@@ -22,6 +22,7 @@ public class UserApiIT extends AbstractApiTest {
         String linkedInId = "LI" + UUID.randomUUID().toString();
         String nickname = "NN" + UUID.randomUUID().toString();
         String imageUrl = "IMG" + UUID.randomUUID().toString();
+        String name = "NAME" + UUID.randomUUID().toString();
 
         int usersCountBefore = host().get("/users?test=true").as(Collection.class).size();
 
@@ -31,6 +32,7 @@ public class UserApiIT extends AbstractApiTest {
                 .setLinkedinId(linkedInId)
                 .setNickname(nickname)
                 .setImageUrl(imageUrl)
+                .setName(name)
                 .setTest(true);
 
         Response response = host()
@@ -45,6 +47,9 @@ public class UserApiIT extends AbstractApiTest {
                 .body("linkedinId", is(linkedInId))
                 .body("nickname", is(nickname))
                 .body("imageUrl", is(imageUrl))
+                .body("userName", is(nickname))
+                .body("solved", is(0))
+                .body("avgRank", is(100))
                 .body("test", is(true));
 
         User user = response.as(User.class);
@@ -58,6 +63,9 @@ public class UserApiIT extends AbstractApiTest {
                 .body("linkedinId", is(user.getLinkedinId()))
                 .body("nickname", is(user.getNickname()))
                 .body("imageUrl", is(user.getImageUrl()))
+                .body("userName", is(nickname))
+                .body("solved", is(0))
+                .body("avgRank", is(100))
                 .body("created", notNullValue())
                 .body("updated", notNullValue())
                 .body("test", is(true));
@@ -79,6 +87,9 @@ public class UserApiIT extends AbstractApiTest {
                 .body("[0].linkedinId", is(user.getLinkedinId()))
                 .body("[0].nickname", is(user.getNickname()))
                 .body("[0].imageUrl", is(user.getImageUrl()))
+                .body("[0].userName", is(nickname))
+                .body("[0].solved", is(0))
+                .body("[0].avgRank", is(100))
                 .body("[0].created", notNullValue())
                 .body("[0].updated", notNullValue())
                 .body("[0].test", is(true));
@@ -104,6 +115,9 @@ public class UserApiIT extends AbstractApiTest {
                 .body("linkedinId", is(updateRequest.getLinkedinId()))
                 .body("nickname", is(updateRequest.getNickname()))
                 .body("imageUrl", is(updateRequest.getImageUrl()))
+                .body("userName", is(updateRequest.getNickname()))
+                .body("solved", is(0))
+                .body("avgRank", is(100))
                 .body("updated", notNullValue())
                 .body("updated", not(equalTo(user.getCreated())))
                 .body("test", is(true));
@@ -117,6 +131,9 @@ public class UserApiIT extends AbstractApiTest {
                 .body("linkedinId", is(updateRequest.getLinkedinId()))
                 .body("nickname", is(updateRequest.getNickname()))
                 .body("imageUrl", is(updateRequest.getImageUrl()))
+                .body("userName", is(updateRequest.getNickname()))
+                .body("solved", is(0))
+                .body("avgRank", is(100))
                 .body("updated", notNullValue())
                 .body("updated", not(equalTo(user.getCreated())))
                 .body("test", is(true));

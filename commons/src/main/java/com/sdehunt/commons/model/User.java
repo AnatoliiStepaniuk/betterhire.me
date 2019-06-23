@@ -8,12 +8,15 @@ import java.time.Instant;
 public class User {
 
     private String id;
-    private String name; // TODO? add tests
-    private String nickname; // TODO? add tests
-    private String imageUrl; // TODO? add to db + tests
+    private String name;
+    private String nickname;
+    private String imageUrl;
     private String email;
     private String githubLogin;
     private String linkedinId;
+    private String userName;
+    private int solved;
+    private int avgRank;
     private Instant created;
     private Instant updated;
     private boolean test;
