@@ -7,9 +7,11 @@ import com.sdehunt.commons.params.ParameterService;
 import com.sdehunt.commons.params.SsmParameterService;
 import com.sdehunt.commons.repo.AccessTokenRepository;
 import com.sdehunt.commons.repo.JdbiAccessTokenRepository;
+import com.sdehunt.repository.BestSolutionRepository;
 import com.sdehunt.repository.SolutionRepository;
 import com.sdehunt.repository.TaskRepository;
 import com.sdehunt.repository.UserRepository;
+import com.sdehunt.repository.impl.JdbiBestSolutionRepository;
 import com.sdehunt.repository.impl.JdbiSolutionRepository;
 import com.sdehunt.repository.impl.JdbiTaskRepository;
 import com.sdehunt.repository.impl.JdbiUserRepository;
@@ -74,6 +76,11 @@ public class Application implements WebMvcConfigurer {
     @Bean
     public AccessTokenRepository accessTokenRepository(DataSource dataSource) {
         return new JdbiAccessTokenRepository(dataSource);
+    }
+
+    @Bean
+    public BestSolutionRepository bestSolutionRepository(DataSource dataSource) {
+        return new JdbiBestSolutionRepository(dataSource);
     }
 
     @Bean
