@@ -46,6 +46,7 @@ public class TaskController {
         Task taskToUpdate = new Task();
         taskToUpdate.setId(TaskID.of(taskId));
         taskToUpdate.setDescription(updateTaskRequest.getDescription());
+        taskToUpdate.setDescriptionUrl(updateTaskRequest.getDescriptionUrl());
         taskToUpdate.setName(updateTaskRequest.getName());
         taskToUpdate.setImageUrl(updateTaskRequest.getImageUrl());
         taskToUpdate.setEnabled(updateTaskRequest.isEnabled());

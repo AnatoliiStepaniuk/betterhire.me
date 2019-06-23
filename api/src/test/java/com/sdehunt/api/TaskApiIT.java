@@ -24,6 +24,7 @@ public class TaskApiIT extends AbstractApiTest {
 
         TaskID taskId = TaskID.SLIDES_TEST;
         String description = UUID.randomUUID().toString();
+        String descriptionUrl = UUID.randomUUID().toString();
         String shortDescription = UUID.randomUUID().toString();
         String name = UUID.randomUUID().toString();
 
@@ -38,6 +39,7 @@ public class TaskApiIT extends AbstractApiTest {
 
         UpdateTaskDTO taskForUpdate = new UpdateTaskDTO()
                 .setDescription(description)
+                .setDescriptionUrl(descriptionUrl)
                 .setShortDescription(shortDescription)
                 .setName(name);
 
@@ -58,6 +60,7 @@ public class TaskApiIT extends AbstractApiTest {
                 .statusCode(SUCCESS)
                 .body("id", equalToIgnoringCase(taskId.name()))
                 .body("description", is(description))
+                .body("descriptionUrl", is(descriptionUrl))
                 .body("shortDescription", is(shortDescription))
                 .body("name", is(name))
                 .body("test", is(true));
@@ -70,6 +73,7 @@ public class TaskApiIT extends AbstractApiTest {
                 .statusCode(SUCCESS)
                 .body("id", equalToIgnoringCase(taskId.name()))
                 .body("description", isEmptyOrNullString())
+                .body("descriptionUrl", isEmptyOrNullString())
                 .body("shortDescription", is(shortDescription))
                 .body("name", is(name))
                 .body("test", is(true));
@@ -83,6 +87,7 @@ public class TaskApiIT extends AbstractApiTest {
                 .findFirst()
                 .orElseThrow();
         Assert.assertEquals(description, foundTask.getDescription());
+        Assert.assertEquals(descriptionUrl, foundTask.getDescriptionUrl());
 
         ShortTask[] shortTasks = host().get(TASKS + SHORT + "?test=true")
                 .as(ShortTask[].class);

@@ -6,6 +6,7 @@ import lombok.Data;
 public class UpdateTaskDTO {
     private String name;
     private String description;
+    private String descriptionUrl;
     private String shortDescription;
     private String imageUrl;
     private boolean enabled;

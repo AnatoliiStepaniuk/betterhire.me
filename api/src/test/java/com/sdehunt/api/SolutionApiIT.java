@@ -29,7 +29,7 @@ public class SolutionApiIT extends AbstractApiTest {
     @Test
     public void crudTest() {
         TaskID taskId = TaskID.SLIDES_TEST;
-        String githubLogin = "sdehuntdeveloper";
+        String githubLogin = "sdehuntdeveloper"; // TODo restore access_token somehow.
         User user = getUserIdByGithubLogin(githubLogin);
         String repo = "google_hash_code_2019_public";
         String commit = "61f487523ad641cc6fffc44ded7537d94cf0d1eb";
@@ -91,8 +91,9 @@ public class SolutionApiIT extends AbstractApiTest {
         BestResult[] results = host().get("/tasks/{taskId}/solutions/best?test=true", taskId)
                 .as(BestResult[].class);
 
+        String userName = user.getNickname() != null ? user.getNickname() : user.getGithubLogin();
         Arrays.stream(results)
-                .filter(r -> r.getUserName().equals(user.getNickname()))
+                .filter(r -> r.getUserName().equals(userName))
                 .findAny()
                 .orElseThrow();
 
