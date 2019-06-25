@@ -24,6 +24,7 @@ import static java.lang.String.format;
 public class JdbiSolutionRepository implements SolutionRepository {
 
     private static final String TABLE = "`sdehunt_db`.`solution`";
+    private static final String BEST_SOLUTION_TABLE = "`sdehunt_db`.`best_solution`";
     private static final String USER_TABLE = "`sdehunt_db`.`user`";
 
     private Jdbi jdbi;
@@ -105,10 +106,8 @@ public class JdbiSolutionRepository implements SolutionRepository {
     @Override
     public List<BestResult> best(String taskId, boolean test) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT best.final_score as score, %s.github_login, %s.nickname FROM (SELECT max(score) final_score, user FROM %s" +
-                        " WHERE status = 'accepted' AND task = ? AND test = ?" +
-                        " GROUP BY %s.user) as best" +
-                        " INNER JOIN %s ON best.user = user.id WHERE test = ? ORDER BY score DESC", USER_TABLE, USER_TABLE, TABLE, TABLE, USER_TABLE), taskId, test, test)
+                db -> db.select(format("SELECT score, github_login, nickname FROM %s bs INNER JOIN %s u" +
+                        " WHERE `task` = ? AND bs.`test` = ? AND u.`test` = ? ORDER BY score DESC", BEST_SOLUTION_TABLE, USER_TABLE), taskId, test, test)
                         .map(new BestResultRowMapper()).list()
         );
     }

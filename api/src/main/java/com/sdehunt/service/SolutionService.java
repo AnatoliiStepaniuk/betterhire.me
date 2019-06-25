@@ -21,20 +21,20 @@ import java.util.concurrent.*;
 public class SolutionService {
 
     private GeneralScoreCounter scoreCounter;
-
     private SolutionRepository solutionRepository;
-
     private GithubClient githubClient;
-
     private final Logger logger;
     private ExecutorService executor;
     private ParameterService params;
+
+    private BestSolutionService bestSolutionService;
 
     public SolutionService(
             GeneralScoreCounter scoreCounter,
             SolutionRepository solutionRepository,
             GithubClient githubClient,
-            ParameterService params
+            ParameterService params,
+            BestSolutionService bestSolutionService
     ) {
         this.scoreCounter = scoreCounter;
         this.solutionRepository = solutionRepository;
@@ -42,6 +42,7 @@ public class SolutionService {
         this.executor = Executors.newCachedThreadPool();
         this.params = params;
         this.logger = LoggerFactory.getLogger(SolutionService.class);
+        this.bestSolutionService = bestSolutionService;
     }
 
     /**
@@ -93,6 +94,7 @@ public class SolutionService {
             long score = count(solution);
             Solution toUpdate = solution.setScore(score).setStatus(SolutionStatus.ACCEPTED);
             solutionRepository.update(toUpdate);
+            bestSolutionService.updateIfNeeded(solution, score);
             return score;
         };
     }

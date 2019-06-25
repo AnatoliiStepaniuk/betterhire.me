@@ -19,6 +19,7 @@ import com.sdehunt.score.FilesDownloader;
 import com.sdehunt.score.GeneralScoreCounter;
 import com.sdehunt.score.GithubFilesDownloader;
 import com.sdehunt.security.AppProperties;
+import com.sdehunt.service.BestSolutionService;
 import com.sdehunt.service.SolutionService;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.boot.SpringApplication;
@@ -99,13 +100,19 @@ public class Application implements WebMvcConfigurer {
     }
 
     @Bean
+    public BestSolutionService bestSolutionService(BestSolutionRepository bestSolutions, UserRepository users) {
+        return new BestSolutionService(bestSolutions, users);
+    }
+
+    @Bean
     public SolutionService solutionService(
             GeneralScoreCounter scoreCounter,
             SolutionRepository solutionRepository,
             GithubClient githubClient,
-            ParameterService params
+            ParameterService params,
+            BestSolutionService bestSolutionService
     ) {
-        return new SolutionService(scoreCounter, solutionRepository, githubClient, params);
+        return new SolutionService(scoreCounter, solutionRepository, githubClient, params, bestSolutionService);
     }
 
     @Bean

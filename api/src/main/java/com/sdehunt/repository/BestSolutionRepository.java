@@ -3,6 +3,7 @@ package com.sdehunt.repository;
 import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.BestSolution;
 
+import java.util.Collections;
 import java.util.List;
 
 public interface BestSolutionRepository {
@@ -11,7 +12,11 @@ public interface BestSolutionRepository {
 
     List<BestSolution> getForUser(String userId, boolean test);
 
-    void save(BestSolution bestSolution);
+    void save(List<BestSolution> bestSolutions);
+
+    default void save(BestSolution bestSolution) {
+        save(Collections.singletonList(bestSolution));
+    }
 
     default List<BestSolution> getForTask(TaskID taskID) {
         return getForTask(taskID, false);
