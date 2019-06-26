@@ -73,7 +73,7 @@ public class JdbiUserRepository implements UserRepository {
         jdbi.withHandle(
                 db -> db.execute(
                         format("UPDATE %s SET name = ?, nickname = ?, email = ?, github_login = ?, linkedin_id = ?, image_url = ?, updated = ?, solved = ?, avg_rank = ?, last_submit = ? WHERE id = ?", TABLE),
-                        u.getName(), u.getNickname(), u.getEmail(), u.getGithubLogin(), u.getLinkedinId(), u.getImageUrl(), Instant.now().getEpochSecond(), u.getSolved(), u.getAvgRank(), u.getLastSubmit().getEpochSecond(), u.getId())
+                        u.getName(), u.getNickname(), u.getEmail(), u.getGithubLogin(), u.getLinkedinId(), u.getImageUrl(), Instant.now().getEpochSecond(), u.getSolved(), u.getAvgRank(), Optional.ofNullable(u.getLastSubmit()).map(Instant::getEpochSecond).orElse(null), u.getId())
         );
 
         return get(u.getId()).orElseThrow();
