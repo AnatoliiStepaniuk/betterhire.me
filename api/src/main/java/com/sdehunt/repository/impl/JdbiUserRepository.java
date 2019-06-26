@@ -155,7 +155,7 @@ public class JdbiUserRepository implements UserRepository {
                     .setUpdated(Instant.ofEpochSecond(rs.getLong("updated")))
                     .setTest(rs.getBoolean("test"))
                     .setSolved(rs.getInt("solved"))
-                    .setAvgRank(rs.getInt("avg_rank"))
+                    .setAvgRank(rs.getString("avg_rank") != null ? Integer.valueOf(rs.getString("avg_rank")) : null)
                     .setLastSubmit(Instant.ofEpochSecond(rs.getLong("last_submit")))
                     .setUserName(userName);
         }

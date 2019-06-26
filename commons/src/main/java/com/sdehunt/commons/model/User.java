@@ -17,7 +17,7 @@ public class User {
     private String userName;
     private Instant lastSubmit;
     private int solved;
-    private int avgRank;
+    private Integer avgRank;
     private Instant created;
     private Instant updated;
     private boolean test;
