@@ -1,6 +1,5 @@
 package com.sdehunt.service;
 
-import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.BestSolution;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.User;
@@ -27,11 +26,15 @@ public class BestSolutionService {
         // Getting all best solutions for task
         List<BestSolution> solutions = bestSolutions.getForTask(s.getTaskId(), s.isTest());
         // Updating score for user or adding new entry if it is his first attempt
-        updateScoreForUser(solutions, s.getTaskId(), s.getUserId(), score, s.isTest());
+        Optional<BestSolution> betterSolution = updateUserSolutionIfBetter(solutions, s, score);
+        if (betterSolution.isEmpty()) {
+            return;
+        }
         // Sorting by score to define new order
         solutions.sort(Comparator.comparingLong(BestSolution::getScore).reversed());
-        // Updating rank based on new order and getting entries with changed rank (for updating)
+        // Updating rank based on new order and getting entries with changed rank or score(for updating)
         List<BestSolution> solutionsToUpdate = updateRank(solutions);
+        solutionsToUpdate.add(betterSolution.get()); // Adding better solution manually because method updateRank returns only solutions with rank changed (although rank can be the same even if score increased).
         // Updating entries with changed rank
         bestSolutions.save(solutionsToUpdate);
         // Updating average rank for users with changed rank for this task
@@ -42,20 +45,27 @@ public class BestSolutionService {
         return (int) (100.0 * position / total) + 1;
     }
 
-    private void updateScoreForUser(List<BestSolution> solutions, TaskID taskId, String userId, long score, boolean test) {
+    private Optional<BestSolution> updateUserSolutionIfBetter(List<BestSolution> solutions, Solution solution, long score) {
         Optional<BestSolution> found = solutions.stream()
-                .filter(s -> s.getTaskID() == taskId && s.getUserId().equals(userId))
+                .filter(s -> s.getTaskID() == solution.getTaskId() && s.getUserId().equals(solution.getUserId()))
                 .findAny();
+        BestSolution bestSolution = null;
         if (found.isPresent()) {
-            found.get().setScore(score);
+            if (score > found.get().getScore()) {
+                bestSolution = found.get().setScore(score).setSolutionId(solution.getId());
+            }
         } else {
-            solutions.add(new BestSolution()
-                    .setTaskID(taskId)
-                    .setUserId(userId)
+            bestSolution = new BestSolution()
+                    .setTaskID(solution.getTaskId())
+                    .setUserId(solution.getUserId())
+                    .setSolutionId(solution.getId())
                     .setScore(score)
                     .setRank(-1)
-                    .setTest(test));
+                    .setTest(solution.isTest());
+            solutions.add(bestSolution);
         }
+
+        return Optional.ofNullable(bestSolution);
     }
 
     /*

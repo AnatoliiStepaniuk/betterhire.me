@@ -46,16 +46,17 @@ public class JdbiBestSolutionRepository implements BestSolutionRepository {
         if (bestSolutions.isEmpty()) {
             return;
         }
-        StringBuilder sql = new StringBuilder(format("INSERT INTO %s (`user`, `task`, `rank`, `score`, `test`) VALUES ", TABLE));
+        StringBuilder sql = new StringBuilder(format("INSERT INTO %s (`user`, `task`, `solution`, `rank`, `score`, `test`) VALUES ", TABLE));
         List<String> args = new ArrayList<>();
         for (int i = 0; i < bestSolutions.size(); i++) {
             BestSolution bs = bestSolutions.get(i);
             args.add(bs.getUserId());
             args.add(bs.getTaskID().name().toLowerCase());
+            args.add(bs.getSolutionId());
             args.add(String.valueOf(bs.getRank()));
             args.add(String.valueOf(bs.getScore()));
             args.add(bs.isTest() ? "1" : "0");
-            sql.append("(?, ?, ?, ?, ?)");
+            sql.append("(?, ?, ?, ?, ?, ?)");
             if (i != bestSolutions.size() - 1) {
                 sql.append(", ");
             }
@@ -63,6 +64,7 @@ public class JdbiBestSolutionRepository implements BestSolutionRepository {
 
         sql.append(" ON DUPLICATE KEY UPDATE user=VALUES(user), " +
                 "task=VALUES(task), " +
+                "solution=VALUES(solution), " +
                 "rank=VALUES(rank), " +
                 "score=VALUES(score), " +
                 "test=VALUES(test)");
@@ -75,10 +77,11 @@ public class JdbiBestSolutionRepository implements BestSolutionRepository {
         public BestSolution map(ResultSet rs, StatementContext ctx) throws SQLException {
 
             return new BestSolution()
-                    .setScore(rs.getLong("score"))
                     .setUserId(rs.getString("user"))
-                    .setRank(rs.getInt("rank"))
                     .setTaskID(TaskID.of(rs.getString("task")))
+                    .setScore(rs.getLong("score"))
+                    .setSolutionId(rs.getString("solution"))
+                    .setRank(rs.getInt("rank"))
                     .setTest(rs.getBoolean("test"));
         }
     }
