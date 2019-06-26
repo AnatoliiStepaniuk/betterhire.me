@@ -7,21 +7,25 @@ import com.sdehunt.commons.github.exceptions.GithubTimeoutException;
 import com.sdehunt.commons.github.exceptions.RepositoryNotFoundException;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.SolutionStatus;
+import com.sdehunt.commons.model.User;
 import com.sdehunt.commons.params.ParameterService;
 import com.sdehunt.exception.CommitNotFoundException;
 import com.sdehunt.exception.SolutionIsPresentException;
 import com.sdehunt.exception.TooManyRequestsException;
 import com.sdehunt.repository.SolutionRepository;
+import com.sdehunt.repository.UserRepository;
 import com.sdehunt.score.GeneralScoreCounter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Instant;
 import java.util.concurrent.*;
 
 public class SolutionService {
 
     private GeneralScoreCounter scoreCounter;
     private SolutionRepository solutionRepository;
+    private UserRepository userRepository;
     private GithubClient githubClient;
     private final Logger logger;
     private ExecutorService executor;
@@ -32,12 +36,14 @@ public class SolutionService {
     public SolutionService(
             GeneralScoreCounter scoreCounter,
             SolutionRepository solutionRepository,
+            UserRepository userRepository,
             GithubClient githubClient,
             ParameterService params,
             BestSolutionService bestSolutionService
     ) {
         this.scoreCounter = scoreCounter;
         this.solutionRepository = solutionRepository;
+        this.userRepository = userRepository;
         this.githubClient = githubClient;
         this.executor = Executors.newCachedThreadPool();
         this.params = params;
@@ -94,6 +100,8 @@ public class SolutionService {
             long score = count(solution);
             Solution toUpdate = solution.setScore(score).setStatus(SolutionStatus.ACCEPTED);
             solutionRepository.update(toUpdate);
+            User user = userRepository.get(solution.getUserId()).orElseThrow().setLastSubmit(Instant.now());
+            userRepository.update(user);
             bestSolutionService.updateIfNeeded(solution, score);
             return score;
         };

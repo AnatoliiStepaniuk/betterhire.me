@@ -7,7 +7,6 @@ import com.sdehunt.commons.model.User;
 import com.sdehunt.repository.BestSolutionRepository;
 import com.sdehunt.repository.UserRepository;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -78,7 +77,7 @@ public class BestSolutionService {
         User user = users.get(userId).orElseThrow();
         List<BestSolution> bestUserSolutions = bestSolutions.getForUser(userId);
         int avgRank = (int) (double) bestUserSolutions.stream().collect(Collectors.averagingInt(BestSolution::getRank));
-        user.setAvgRank(avgRank).setSolved(bestUserSolutions.size()).setLastSubmit(Instant.now());
+        user.setAvgRank(avgRank).setSolved(bestUserSolutions.size());
         users.update(user);
     }
 
