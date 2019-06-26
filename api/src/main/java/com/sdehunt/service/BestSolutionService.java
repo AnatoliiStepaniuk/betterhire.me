@@ -7,6 +7,7 @@ import com.sdehunt.commons.model.User;
 import com.sdehunt.repository.BestSolutionRepository;
 import com.sdehunt.repository.UserRepository;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -35,7 +36,7 @@ public class BestSolutionService {
         // Updating entries with changed rank
         bestSolutions.save(solutionsToUpdate);
         // Updating average rank for users with changed rank for this task
-        solutionsToUpdate.forEach(bs -> updateAvgRank(bs.getUserId()));
+        solutionsToUpdate.forEach(bs -> updateUser(bs.getUserId()));
     }
 
     private int getRank(int position, int total) {
@@ -73,11 +74,11 @@ public class BestSolutionService {
         return toUpdate;
     }
 
-    private void updateAvgRank(String userId) {
+    private void updateUser(String userId) {
         User user = users.get(userId).orElseThrow();
         List<BestSolution> bestUserSolutions = bestSolutions.getForUser(userId);
         int avgRank = (int) (double) bestUserSolutions.stream().collect(Collectors.averagingInt(BestSolution::getRank));
-        user.setAvgRank(avgRank).setSolved(bestUserSolutions.size());
+        user.setAvgRank(avgRank).setSolved(bestUserSolutions.size()).setLastSubmit(Instant.now());
         users.update(user);
     }
 

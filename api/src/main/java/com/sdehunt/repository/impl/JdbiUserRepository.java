@@ -72,11 +72,11 @@ public class JdbiUserRepository implements UserRepository {
     public User update(User u) {
         jdbi.withHandle(
                 db -> db.execute(
-                        format("UPDATE %s SET name = ?, nickname = ?, email = ?, github_login = ?, linkedin_id = ?, image_url = ?, updated = ?, solved = ?, avg_rank = ? WHERE id = ?", TABLE),
-                        u.getName(), u.getNickname(), u.getEmail(), u.getGithubLogin(), u.getLinkedinId(), u.getImageUrl(), Instant.now().getEpochSecond(), u.getSolved(), u.getAvgRank(), u.getId())
+                        format("UPDATE %s SET name = ?, nickname = ?, email = ?, github_login = ?, linkedin_id = ?, image_url = ?, updated = ?, solved = ?, avg_rank = ?, last_submit = ? WHERE id = ?", TABLE),
+                        u.getName(), u.getNickname(), u.getEmail(), u.getGithubLogin(), u.getLinkedinId(), u.getImageUrl(), Instant.now().getEpochSecond(), u.getSolved(), u.getAvgRank(), u.getLastSubmit().getEpochSecond(), u.getId())
         );
 
-        return get(u.getId()).orElse(null); // TODO  throw exception if not found
+        return get(u.getId()).orElseThrow();
     }
 
     @Override
@@ -156,6 +156,7 @@ public class JdbiUserRepository implements UserRepository {
                     .setTest(rs.getBoolean("test"))
                     .setSolved(rs.getInt("solved"))
                     .setAvgRank(rs.getInt("avg_rank"))
+                    .setLastSubmit(Instant.ofEpochSecond(rs.getLong("last_submit")))
                     .setUserName(userName);
         }
     }

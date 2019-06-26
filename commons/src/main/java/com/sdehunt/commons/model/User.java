@@ -15,6 +15,7 @@ public class User {
     private String githubLogin;
     private String linkedinId;
     private String userName;
+    private Instant lastSubmit;
     private int solved;
     private int avgRank;
     private Instant created;
