@@ -106,7 +106,7 @@ public class JdbiSolutionRepository implements SolutionRepository {
     @Override
     public List<BestResult> best(String taskId, boolean test) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT score, github_login, nickname FROM %s bs INNER JOIN %s u" +
+                db -> db.select(format("SELECT score, github_login, nickname FROM %s bs INNER JOIN %s u ON bs.`user` = u.`id`" +
                         " WHERE `task` = ? AND bs.`test` = ? AND u.`test` = ? ORDER BY score DESC", BEST_SOLUTION_TABLE, USER_TABLE), taskId, test, test)
                         .map(new BestResultRowMapper()).list()
         );
