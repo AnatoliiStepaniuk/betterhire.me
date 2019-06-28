@@ -3,6 +3,9 @@ logging:
     root: WARN
     com.sdehunt: TRACE
 
+server:
+  use-forward-headers: true
+
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/spring_social?useSSL=false
