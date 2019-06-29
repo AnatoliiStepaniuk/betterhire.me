@@ -2,6 +2,7 @@ package com.sdehunt.commons.github;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.sdehunt.commons.FileUtils;
@@ -19,14 +20,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.*;
@@ -47,14 +47,12 @@ public class UnirestGithubClient implements GithubClient {
     private final static int TIMEOUT_ATTEMPTS = 3;
     private final static int TIMEOUT_MILLIS = 3000;
     private final ParameterService params;
-    private final HttpClient client;
     private final AccessTokenRepository accessTokens;
     private final ObjectMapper objectMapper;
     private final Logger logger;
     private final ExecutorService executor;
 
     public UnirestGithubClient(ParameterService params, AccessTokenRepository accessTokens) {
-        this.client = HttpClient.newHttpClient();
         this.accessTokens = accessTokens;
         this.objectMapper = new ObjectMapper()
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
@@ -65,27 +63,25 @@ public class UnirestGithubClient implements GithubClient {
     }
 
     @Override
-    @SneakyThrows({IOException.class, URISyntaxException.class, InterruptedException.class})
+    @SneakyThrows({UnirestException.class, IOException.class})
     public void download(String userId, String repo, String commit, String file) throws CommitOrFileNotFoundException {
-        URI uri = new URI(RAW_DOMAIN + "/" + repo + "/" + commit + "/" + file);
+        String path = RAW_DOMAIN + "/" + repo + "/" + commit + "/" + file;
 
         logger.debug(String.format("Downloading file %s of repo %s for commit %s", file, repo, commit));
-        HttpResponse<Path> response = client.send(buildRequest(uri, userId), HttpResponse.BodyHandlers.ofFile(createFile(file)));
+        HttpResponse<InputStream> response = Unirest.get(path).header("Authorization", "token " + getToken(userId)).asBinary();
 
-        if (response.statusCode() == 503) { // Rarely reproduced issue of returning 503 status code
-            logger.warn(String.format("Second attempt to download file %s of repo %s for commit %s", file, repo, commit));
-            response = client.send(buildRequest(uri, userId), HttpResponse.BodyHandlers.ofFile(createFile(file)));
-        }
-
-        if (response.statusCode() == 404) {
+        if (response.getStatus() == 404) {
             logger.debug(String.format("File %s of repo %s for commit %s was not found", file, repo, commit));
             throw new CommitOrFileNotFoundException();
         }
 
-        if (response.statusCode() != 200) {
-            logger.warn("Status code " + response.statusCode() + " for URI " + uri);
-            throw new RuntimeException("Status code " + response.statusCode() + " for URI " + uri);
+        if (response.getStatus() != 200) {
+            logger.warn("Status code " + response.getStatus() + " for URI " + path);
+            throw new RuntimeException("Status code " + response.getStatus() + " for URI " + path);
         }
+
+        Files.copy(response.getBody(), createFile(file), StandardCopyOption.REPLACE_EXISTING);
+
         logger.debug(String.format("Downloaded file %s of repo %s for commit %s", file, repo, commit));
     }
 
@@ -123,7 +119,6 @@ public class UnirestGithubClient implements GithubClient {
         }
     }
 
-    @Override
     @SneakyThrows({InterruptedException.class})
     public Collection<String> getBranches(String userId, String repo) throws RepositoryNotFoundException, GithubTimeoutException {
         for (int i = 0; i < TIMEOUT_ATTEMPTS; i++) {
