@@ -49,7 +49,7 @@ public class UserApiIT extends AbstractApiTest {
                 .body("imageUrl", is(imageUrl))
                 .body("userName", is(nickname))
                 .body("solved", is(0))
-                .body("avgRank", is(100))
+                .body("avgRank", equalTo(null))
                 .body("test", is(true));
 
         User user = response.as(User.class);
@@ -65,7 +65,7 @@ public class UserApiIT extends AbstractApiTest {
                 .body("imageUrl", is(user.getImageUrl()))
                 .body("userName", is(nickname))
                 .body("solved", is(0))
-                .body("avgRank", is(100))
+                .body("avgRank", equalTo(null))
                 .body("created", notNullValue())
                 .body("updated", notNullValue())
                 .body("test", is(true));
@@ -89,7 +89,7 @@ public class UserApiIT extends AbstractApiTest {
                 .body("[0].imageUrl", is(user.getImageUrl()))
                 .body("[0].userName", is(nickname))
                 .body("[0].solved", is(0))
-                .body("[0].avgRank", is(100))
+                .body("[0].avgRank", equalTo(null))
                 .body("[0].created", notNullValue())
                 .body("[0].updated", notNullValue())
                 .body("[0].test", is(true));
@@ -117,7 +117,7 @@ public class UserApiIT extends AbstractApiTest {
                 .body("imageUrl", is(updateRequest.getImageUrl()))
                 .body("userName", is(updateRequest.getNickname()))
                 .body("solved", is(0))
-                .body("avgRank", is(100))
+                .body("avgRank", equalTo(null))
                 .body("updated", notNullValue())
                 .body("updated", not(equalTo(user.getCreated())))
                 .body("test", is(true));
@@ -133,7 +133,7 @@ public class UserApiIT extends AbstractApiTest {
                 .body("imageUrl", is(updateRequest.getImageUrl()))
                 .body("userName", is(updateRequest.getNickname()))
                 .body("solved", is(0))
-                .body("avgRank", is(100))
+                .body("avgRank", equalTo(null))
                 .body("updated", notNullValue())
                 .body("updated", not(equalTo(user.getCreated())))
                 .body("test", is(true));
