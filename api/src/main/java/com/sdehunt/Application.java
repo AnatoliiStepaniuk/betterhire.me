@@ -1,5 +1,7 @@
 package com.sdehunt;
 
+import com.sdehunt.commons.file.FileDownloader;
+import com.sdehunt.commons.file.UnirestFileDownloader;
 import com.sdehunt.commons.github.GithubClient;
 import com.sdehunt.commons.github.UnirestGithubClient;
 import com.sdehunt.commons.params.EhcacheParameterService;
@@ -15,9 +17,8 @@ import com.sdehunt.repository.impl.JdbiBestSolutionRepository;
 import com.sdehunt.repository.impl.JdbiSolutionRepository;
 import com.sdehunt.repository.impl.JdbiTaskRepository;
 import com.sdehunt.repository.impl.JdbiUserRepository;
-import com.sdehunt.score.FilesDownloader;
+import com.sdehunt.score.GeneralFilesDownloader;
 import com.sdehunt.score.GeneralScoreCounter;
-import com.sdehunt.score.GithubFilesDownloader;
 import com.sdehunt.security.AppProperties;
 import com.sdehunt.service.BestSolutionService;
 import com.sdehunt.service.SolutionService;
@@ -90,12 +91,17 @@ public class Application implements WebMvcConfigurer {
     }
 
     @Bean
-    public FilesDownloader filesDownloader(GithubClient githubClient) {
-        return new GithubFilesDownloader(githubClient);
+    public FileDownloader fileDownloader() {
+        return new UnirestFileDownloader();
     }
 
     @Bean
-    public GeneralScoreCounter generalScoreCounter(FilesDownloader filesDownloader) {
+    public GeneralFilesDownloader filesDownloader(GithubClient githubClient, FileDownloader fileDownloader) {
+        return new GeneralFilesDownloader(githubClient, fileDownloader);
+    }
+
+    @Bean
+    public GeneralScoreCounter generalScoreCounter(GeneralFilesDownloader filesDownloader) {
         return new GeneralScoreCounter(filesDownloader);
     }
 

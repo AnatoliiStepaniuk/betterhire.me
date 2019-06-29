@@ -17,7 +17,7 @@ public class GeneralScoreCounter {
 
     private Map<TaskID, TaskScoreCounter> taskCounters = new HashMap<>();
 
-    public GeneralScoreCounter(FilesDownloader filesDownloader) {
+    public GeneralScoreCounter(GeneralFilesDownloader filesDownloader) {
         taskCounters.put(TaskID.SLIDES, new SlidesScoreCounter(filesDownloader));
         taskCounters.put(TaskID.SLIDES_TEST, SlidesScoreCounter.test(filesDownloader));
         taskCounters.put(TaskID.PIZZA, new PizzaScoreCounter(filesDownloader));

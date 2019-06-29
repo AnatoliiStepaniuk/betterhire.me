@@ -3,7 +3,7 @@ package com.sdehunt.score.slides;
 import com.sdehunt.commons.FileUtils;
 import com.sdehunt.commons.exception.InvalidSolutionException;
 import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
-import com.sdehunt.score.FilesDownloader;
+import com.sdehunt.score.GeneralFilesDownloader;
 import com.sdehunt.score.TaskScoreCounter;
 import lombok.SneakyThrows;
 
@@ -19,30 +19,28 @@ public class SlidesScoreCounter implements TaskScoreCounter {
 
     private final PicturesReader picturesReader = new EagerPicturesReader();
 
-    private static final String INPUT_REPO = "AnatoliiStepaniuk/sdehunt_input";
-    private static final String INPUT_BRANCH = "master";
     private final List<String> inputFiles;
     private final List<String> solutionFiles;
-    private final FilesDownloader filesDownloader;
+    private final GeneralFilesDownloader filesDownloader;
 
-    public SlidesScoreCounter(FilesDownloader filesDownloader) {
+    public SlidesScoreCounter(GeneralFilesDownloader filesDownloader) {
         this(
                 filesDownloader,
-                Arrays.asList("slides/a_input.txt", "slides/b_input.txt", "slides/c_input.txt", "slides/d_input.txt", "slides/e_input.txt"),
+                Arrays.asList("slides/input/a_input.txt", "slides/input/b_input.txt", "slides/input/c_input.txt", "slides/input/d_input.txt", "slides/input/e_input.txt"),
                 Arrays.asList("solutions/a_result.txt", "solutions/b_result.txt", "solutions/c_result.txt", "solutions/d_result.txt", "solutions/e_result.txt")
         );
     }
 
-    public SlidesScoreCounter(FilesDownloader filesDownloader, List<String> inputFiles, List<String> solutionFiles) {
+    public SlidesScoreCounter(GeneralFilesDownloader filesDownloader, List<String> inputFiles, List<String> solutionFiles) {
         this.inputFiles = inputFiles;
         this.solutionFiles = solutionFiles;
         this.filesDownloader = filesDownloader;
     }
 
-    public static SlidesScoreCounter test(FilesDownloader filesDownloader) {
+    public static SlidesScoreCounter test(GeneralFilesDownloader filesDownloader) {
         return new SlidesScoreCounter(
                 filesDownloader,
-                Collections.singletonList("slides/a_input.txt"),
+                Collections.singletonList("slides/input/a_input.txt"),
                 Collections.singletonList("solutions/a_result.txt")
         );
     }
@@ -50,7 +48,7 @@ public class SlidesScoreCounter implements TaskScoreCounter {
     @Override
     public long count(String userId, String repo, String commit) throws CommitOrFileNotFoundException {
 
-        filesDownloader.downloadInputFiles(INPUT_REPO, INPUT_BRANCH, inputFiles);
+        filesDownloader.downloadInputFiles(inputFiles);
         filesDownloader.downloadSolutionFiles(userId, repo, commit, solutionFiles);
 
         long score = 0;
