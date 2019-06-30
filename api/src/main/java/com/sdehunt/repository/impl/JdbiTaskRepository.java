@@ -74,8 +74,8 @@ public class JdbiTaskRepository implements TaskRepository {
         long now = Instant.now().getEpochSecond();
         jdbi.withHandle(
                 db -> db.execute(
-                        format("UPDATE %s SET name = ?, short_description = ?, description = ?, description_url = ?, updated = ? WHERE id = ?", TABLE),
-                        task.getName(), task.getShortDescription(), task.getDescription(), task.getDescriptionUrl(), now, task.getId()
+                        format("UPDATE %s SET name = ?, short_description = ?, description = ?, description_url = ?, requirements = ?, updated = ? WHERE id = ?", TABLE),
+                        task.getName(), task.getShortDescription(), task.getDescription(), task.getDescriptionUrl(), task.getRequirements(), now, task.getId()
                 )
         );
     }
@@ -87,6 +87,7 @@ public class JdbiTaskRepository implements TaskRepository {
             task
                     .setDescription(rs.getString("description"))
                     .setDescriptionUrl(rs.getString("description_url"))
+                    .setRequirements(rs.getString("requirements"))
                     .setId(TaskID.of(rs.getString("id")))
                     .setName(rs.getString("name"))
                     .setShortDescription(rs.getString("short_description"))

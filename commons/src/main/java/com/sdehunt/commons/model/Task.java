@@ -9,4 +9,5 @@ public class Task extends ShortTask {
 
     private String descriptionUrl;
 
+    private String requirements;
 }
