@@ -1,7 +1,7 @@
 package com.sdehunt.api;
 
 import com.sdehunt.commons.TaskID;
-import com.sdehunt.commons.model.BestResult;
+import com.sdehunt.commons.model.BestTaskResult;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.SolutionStatus;
 import com.sdehunt.commons.model.User;
@@ -88,8 +88,8 @@ public class SolutionApiIT extends AbstractApiTest {
                 .body("[0].status", equalTo(SolutionStatus.ACCEPTED.name()));
 
         // Checking best solution
-        BestResult[] results = host().get("/tasks/{taskId}/solutions/best?test=true", taskId)
-                .as(BestResult[].class);
+        BestTaskResult[] results = host().get("/tasks/{taskId}/solutions/best?test=true", taskId)
+                .as(BestTaskResult[].class);
 
         String userName = user.getNickname() != null ? user.getNickname() : user.getGithubLogin();
         Arrays.stream(results)

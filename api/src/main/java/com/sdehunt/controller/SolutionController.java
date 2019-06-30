@@ -1,7 +1,7 @@
 package com.sdehunt.controller;
 
 import com.sdehunt.commons.TaskID;
-import com.sdehunt.commons.model.BestResult;
+import com.sdehunt.commons.model.BestTaskResult;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.SolutionStatus;
 import com.sdehunt.commons.model.User;
@@ -9,6 +9,7 @@ import com.sdehunt.dto.SaveSolutionDTO;
 import com.sdehunt.dto.SolutionIdDTO;
 import com.sdehunt.exception.SolutionNotFoundException;
 import com.sdehunt.exception.UserNotFoundException;
+import com.sdehunt.repository.BestSolutionRepository;
 import com.sdehunt.repository.SolutionRepository;
 import com.sdehunt.repository.UserRepository;
 import com.sdehunt.repository.impl.SolutionQueryImpl;
@@ -27,6 +28,9 @@ public class SolutionController {
 
     @Autowired
     private SolutionRepository solutions;
+
+    @Autowired
+    private BestSolutionRepository bestSolutions;
 
     @Autowired
     private SolutionService solutionService;
@@ -89,11 +93,11 @@ public class SolutionController {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/tasks/{taskId}/solutions/best", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<BestResult> getBestSolutionsForTask(
+    public List<BestTaskResult> getBestSolutionsForTask(
             @PathVariable String taskId,
             @RequestParam(value = "test", required = false) boolean test
 
     ) {
-        return solutions.best(taskId, test);
+        return bestSolutions.bestTaskResults(taskId, test);
     }
 }

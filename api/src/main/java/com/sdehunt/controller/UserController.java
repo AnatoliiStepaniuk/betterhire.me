@@ -1,15 +1,18 @@
 package com.sdehunt.controller;
 
+import com.sdehunt.commons.model.BestUserResult;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.User;
 import com.sdehunt.dto.CreateUserDTO;
 import com.sdehunt.exception.UserNotFoundException;
+import com.sdehunt.repository.BestSolutionRepository;
 import com.sdehunt.repository.SolutionRepository;
 import com.sdehunt.repository.UserQuery;
 import com.sdehunt.repository.UserRepository;
 import com.sdehunt.security.CurrentUser;
 import com.sdehunt.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +25,9 @@ public class UserController {
 
     @Autowired
     private SolutionRepository solutions;
+
+    @Autowired
+    private BestSolutionRepository bestSolutions;
 
     @Autowired
     private UserRepository users;
@@ -82,6 +88,15 @@ public class UserController {
     @RequestMapping(path = "/{userId}/solutions", method = RequestMethod.GET)
     public List<Solution> userSolutions(@PathVariable("userId") String userId, @RequestParam(required = false) boolean test) {
         return solutions.forUser(userId, test);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/{userId}/solutions/best", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<BestUserResult> getBestSolutionsForTask(
+            @PathVariable("userId") String userId,
+            @RequestParam(value = "test", required = false) boolean test
+
+    ) {
+        return bestSolutions.bestUserResults(userId, test);
     }
 
 }

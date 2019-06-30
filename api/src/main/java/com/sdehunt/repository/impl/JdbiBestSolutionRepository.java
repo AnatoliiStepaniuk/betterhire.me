@@ -2,6 +2,8 @@ package com.sdehunt.repository.impl;
 
 import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.BestSolution;
+import com.sdehunt.commons.model.BestTaskResult;
+import com.sdehunt.commons.model.BestUserResult;
 import com.sdehunt.repository.BestSolutionRepository;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.RowMapper;
@@ -18,6 +20,8 @@ import static java.lang.String.format;
 public class JdbiBestSolutionRepository implements BestSolutionRepository {
 
     private static final String TABLE = "`sdehunt_db`.`best_solution`";
+    private static final String BEST_SOLUTION_TABLE = "`sdehunt_db`.`best_solution`";
+    private static final String USER_TABLE = "`sdehunt_db`.`user`";
 
     private Jdbi jdbi;
 
@@ -72,6 +76,23 @@ public class JdbiBestSolutionRepository implements BestSolutionRepository {
         jdbi.withHandle(db -> db.execute(sql.toString(), args.toArray()));
     }
 
+    @Override
+    public List<BestTaskResult> bestTaskResults(String taskId, boolean test) {
+        return jdbi.withHandle(
+                db -> db.select(format("SELECT score, github_login, nickname FROM %s bs INNER JOIN %s u ON bs.`user` = u.`id`" +
+                        " WHERE `task` = ? AND bs.`test` = ? AND u.`test` = ? ORDER BY score DESC", BEST_SOLUTION_TABLE, USER_TABLE), taskId, test, test)
+                        .map(new BestTaskResultRowMapper()).list()
+        );
+    }
+
+    @Override
+    public List<BestUserResult> bestUserResults(String userId, boolean test) {
+        return jdbi.withHandle(
+                db -> db.select(format("SELECT * FROM %s WHERE `user` = ? AND `test` = ?", BEST_SOLUTION_TABLE), userId, test)
+                        .map(new BestUserResultRowMapper()).list()
+        );
+    }
+
     private class BestSolutionRowMapper implements RowMapper<BestSolution> {
         @Override
         public BestSolution map(ResultSet rs, StatementContext ctx) throws SQLException {
@@ -86,4 +107,25 @@ public class JdbiBestSolutionRepository implements BestSolutionRepository {
         }
     }
 
+    private class BestTaskResultRowMapper implements RowMapper<BestTaskResult> {
+        @Override
+        public BestTaskResult map(ResultSet rs, StatementContext ctx) throws SQLException {
+            String userName = rs.getString("nickname");
+            if (userName == null || userName.isEmpty() || userName.isBlank()) {
+                userName = rs.getString("github_login");
+            }
+            return new BestTaskResult()
+                    .setScore(rs.getLong("score"))
+                    .setUserName(userName);
+        }
+    }
+
+    private class BestUserResultRowMapper implements RowMapper<BestUserResult> {
+        @Override
+        public BestUserResult map(ResultSet rs, StatementContext ctx) throws SQLException {
+            return new BestUserResult()
+                    .setTaskID(TaskID.valueOf(rs.getString("task").toUpperCase()))
+                    .setRank(rs.getLong("rank"));
+        }
+    }
 }

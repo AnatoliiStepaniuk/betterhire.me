@@ -1,6 +1,5 @@
 package com.sdehunt.repository;
 
-import com.sdehunt.commons.model.BestResult;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.repository.impl.SolutionQueryImpl;
 
@@ -36,11 +35,6 @@ public interface SolutionRepository {
      * Returns Solutions for specified query
      */
     List<Solution> query(SolutionQuery request);
-
-    /**
-     * Returns each users best results for specified task
-     */
-    List<BestResult> best(String taskId, boolean test);
 
     /**
      * Checks if solution with this repo+commit is already present for specified user

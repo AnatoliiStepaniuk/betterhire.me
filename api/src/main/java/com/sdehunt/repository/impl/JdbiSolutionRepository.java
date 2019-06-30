@@ -1,7 +1,6 @@
 package com.sdehunt.repository.impl;
 
 import com.sdehunt.commons.TaskID;
-import com.sdehunt.commons.model.BestResult;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.SolutionStatus;
 import com.sdehunt.repository.SolutionQuery;
@@ -24,8 +23,6 @@ import static java.lang.String.format;
 public class JdbiSolutionRepository implements SolutionRepository {
 
     private static final String TABLE = "`sdehunt_db`.`solution`";
-    private static final String BEST_SOLUTION_TABLE = "`sdehunt_db`.`best_solution`";
-    private static final String USER_TABLE = "`sdehunt_db`.`user`";
 
     private Jdbi jdbi;
 
@@ -104,15 +101,6 @@ public class JdbiSolutionRepository implements SolutionRepository {
     }
 
     @Override
-    public List<BestResult> best(String taskId, boolean test) {
-        return jdbi.withHandle(
-                db -> db.select(format("SELECT score, github_login, nickname FROM %s bs INNER JOIN %s u ON bs.`user` = u.`id`" +
-                        " WHERE `task` = ? AND bs.`test` = ? AND u.`test` = ? ORDER BY score DESC", BEST_SOLUTION_TABLE, USER_TABLE), taskId, test, test)
-                        .map(new BestResultRowMapper()).list()
-        );
-    }
-
-    @Override
     public boolean isPresentForUser(Solution solution) {
         return jdbi.withHandle(
                 db -> db.select(format("SELECT * FROM %s  WHERE `user`= ? AND `repo` = ? AND `commit` = ?", TABLE),
@@ -134,19 +122,6 @@ public class JdbiSolutionRepository implements SolutionRepository {
                     .setStatus(SolutionStatus.valueOf(rs.getString("status").toUpperCase()))
                     .setTest(rs.getBoolean("test"))
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")));
-        }
-    }
-
-    private class BestResultRowMapper implements RowMapper<BestResult> {
-        @Override
-        public BestResult map(ResultSet rs, StatementContext ctx) throws SQLException {
-            String userName = rs.getString("nickname");
-            if (userName == null || userName.isEmpty() || userName.isBlank()) {
-                userName = rs.getString("github_login");
-            }
-            return new BestResult()
-                    .setScore(rs.getLong("score"))
-                    .setUserName(userName);
         }
     }
 }
