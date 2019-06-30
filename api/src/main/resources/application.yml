@@ -7,6 +7,9 @@ server:
   use-forward-headers: true
 
 spring:
+  profiles:
+    active: ${PROFILE}
+
   datasource:
     url: jdbc:mysql://localhost:3306/spring_social?useSSL=false
     username: root
