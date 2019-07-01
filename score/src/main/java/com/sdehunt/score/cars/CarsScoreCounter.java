@@ -1,7 +1,7 @@
 package com.sdehunt.score.cars;
 
-import com.sdehunt.commons.FileUtils;
 import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
+import com.sdehunt.commons.util.FileUtils;
 import com.sdehunt.score.GeneralFilesDownloader;
 import com.sdehunt.score.TaskScoreCounter;
 

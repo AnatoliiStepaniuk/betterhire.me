@@ -2,7 +2,6 @@ package com.sdehunt.commons.github;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sdehunt.commons.FileUtils;
 import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
 import com.sdehunt.commons.github.exceptions.GithubTimeoutException;
 import com.sdehunt.commons.github.exceptions.RepositoryNotFoundException;
@@ -11,6 +10,7 @@ import com.sdehunt.commons.params.ParameterService;
 import com.sdehunt.commons.repo.AccessTokenRepository;
 import com.sdehunt.commons.security.AccessToken;
 import com.sdehunt.commons.security.OAuthProvider;
+import com.sdehunt.commons.util.FileUtils;
 import lombok.Data;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;

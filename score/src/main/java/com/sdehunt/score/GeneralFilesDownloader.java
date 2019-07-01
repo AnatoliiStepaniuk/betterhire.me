@@ -1,9 +1,9 @@
 package com.sdehunt.score;
 
-import com.sdehunt.commons.FileUtils;
 import com.sdehunt.commons.file.FileDownloader;
 import com.sdehunt.commons.github.GithubClient;
 import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
+import com.sdehunt.commons.util.FileUtils;
 
 import java.nio.file.Paths;
 import java.util.List;

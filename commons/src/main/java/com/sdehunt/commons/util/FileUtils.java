@@ -1,4 +1,4 @@
-package com.sdehunt.commons;
+package com.sdehunt.commons.util;
 
 public class FileUtils {
 
