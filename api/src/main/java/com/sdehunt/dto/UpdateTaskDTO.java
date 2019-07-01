@@ -9,6 +9,7 @@ public class UpdateTaskDTO {
     private String descriptionUrl;
     private String shortDescription;
     private String imageUrl;
+    private String requirements;
     private boolean enabled;
     private boolean submittable;
 }

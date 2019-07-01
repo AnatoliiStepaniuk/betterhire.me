@@ -42,16 +42,17 @@ public class TaskController {
     }
 
     @RequestMapping(method = PUT, path = "/{taskId}", produces = APPLICATION_JSON_VALUE)
-    public void update(@PathVariable("taskId") String taskId, @RequestBody UpdateTaskDTO updateTaskRequest) {
+    public void update(@PathVariable("taskId") String taskId, @RequestBody UpdateTaskDTO request) {
         Task taskToUpdate = new Task();
         taskToUpdate.setId(TaskID.of(taskId));
-        taskToUpdate.setDescription(updateTaskRequest.getDescription());
-        taskToUpdate.setDescriptionUrl(updateTaskRequest.getDescriptionUrl());
-        taskToUpdate.setName(updateTaskRequest.getName());
-        taskToUpdate.setImageUrl(updateTaskRequest.getImageUrl());
-        taskToUpdate.setEnabled(updateTaskRequest.isEnabled());
-        taskToUpdate.setSubmittable(updateTaskRequest.isSubmittable());
-        taskToUpdate.setShortDescription(updateTaskRequest.getShortDescription());
+        taskToUpdate.setDescription(request.getDescription());
+        taskToUpdate.setDescriptionUrl(request.getDescriptionUrl());
+        taskToUpdate.setName(request.getName());
+        taskToUpdate.setImageUrl(request.getImageUrl());
+        taskToUpdate.setEnabled(request.isEnabled());
+        taskToUpdate.setSubmittable(request.isSubmittable());
+        taskToUpdate.setShortDescription(request.getShortDescription());
+        taskToUpdate.setRequirements(request.getRequirements());
 
         tasks.update(taskToUpdate);
     }

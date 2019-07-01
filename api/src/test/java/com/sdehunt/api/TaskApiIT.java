@@ -27,6 +27,7 @@ public class TaskApiIT extends AbstractApiTest {
         String descriptionUrl = UUID.randomUUID().toString();
         String shortDescription = UUID.randomUUID().toString();
         String name = UUID.randomUUID().toString();
+        String requirements = UUID.randomUUID().toString();
 
         // Verify task is present
         host().contentType(APP_JSON)
@@ -41,7 +42,8 @@ public class TaskApiIT extends AbstractApiTest {
                 .setDescription(description)
                 .setDescriptionUrl(descriptionUrl)
                 .setShortDescription(shortDescription)
-                .setName(name);
+                .setName(name)
+                .setRequirements(requirements);
 
         // Updating task
         host()
@@ -63,6 +65,7 @@ public class TaskApiIT extends AbstractApiTest {
                 .body("descriptionUrl", is(descriptionUrl))
                 .body("shortDescription", is(shortDescription))
                 .body("name", is(name))
+                .body("requirements", is(requirements))
                 .body("test", is(true));
 
         // Verify updated
@@ -88,6 +91,7 @@ public class TaskApiIT extends AbstractApiTest {
                 .orElseThrow();
         Assert.assertEquals(description, foundTask.getDescription());
         Assert.assertEquals(descriptionUrl, foundTask.getDescriptionUrl());
+        Assert.assertEquals(requirements, foundTask.getRequirements());
 
         ShortTask[] shortTasks = host().get(TASKS + SHORT + "?test=true")
                 .as(ShortTask[].class);
