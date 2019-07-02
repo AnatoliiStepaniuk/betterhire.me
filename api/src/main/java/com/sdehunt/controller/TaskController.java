@@ -53,6 +53,7 @@ public class TaskController {
         taskToUpdate.setSubmittable(request.isSubmittable());
         taskToUpdate.setShortDescription(request.getShortDescription());
         taskToUpdate.setRequirements(request.getRequirements());
+        taskToUpdate.setInputFilesUrl(request.getInputFilesUrl());
 
         tasks.update(taskToUpdate);
     }
