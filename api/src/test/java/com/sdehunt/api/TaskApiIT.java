@@ -2,13 +2,13 @@ package com.sdehunt.api;
 
 import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.ShortTask;
+import com.sdehunt.commons.model.Tag;
 import com.sdehunt.commons.model.Task;
 import com.sdehunt.dto.UpdateTaskDTO;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.UUID;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.*;
@@ -29,6 +29,8 @@ public class TaskApiIT extends AbstractApiTest {
         String name = UUID.randomUUID().toString();
         String requirements = UUID.randomUUID().toString();
         String inputFilesUrl = UUID.randomUUID().toString();
+        Tag tag = Tag.values()[new Random().nextInt(Tag.values().length)];
+        Set<Tag> tags = Collections.singleton(tag);
 
         // Verify task is present
         host().contentType(APP_JSON)
@@ -45,7 +47,8 @@ public class TaskApiIT extends AbstractApiTest {
                 .setShortDescription(shortDescription)
                 .setName(name)
                 .setRequirements(requirements)
-                .setInputFilesUrl(inputFilesUrl);
+                .setInputFilesUrl(inputFilesUrl)
+                .setTags(tags);
 
         // Updating task
         host()
@@ -69,7 +72,8 @@ public class TaskApiIT extends AbstractApiTest {
                 .body("name", is(name))
                 .body("requirements", is(requirements))
                 .body("inputFilesUrl", is(inputFilesUrl))
-                .body("test", is(true));
+                .body("test", is(true))
+                .body("tags", contains(tag.name()));
 
         // Verify updated
         host().contentType(APP_JSON)
@@ -82,7 +86,8 @@ public class TaskApiIT extends AbstractApiTest {
                 .body("descriptionUrl", isEmptyOrNullString())
                 .body("shortDescription", is(shortDescription))
                 .body("name", is(name))
-                .body("test", is(true));
+                .body("test", is(true))
+                .body("tags", contains(tag.name()));
 
         // Getting all tasks
         Task[] tasks = host().get(TASKS + "?test=true")
@@ -96,6 +101,7 @@ public class TaskApiIT extends AbstractApiTest {
         Assert.assertEquals(descriptionUrl, foundTask.getDescriptionUrl());
         Assert.assertEquals(requirements, foundTask.getRequirements());
         Assert.assertEquals(inputFilesUrl, foundTask.getInputFilesUrl());
+        Assert.assertEquals(tags, foundTask.getTags());
 
         ShortTask[] shortTasks = host().get(TASKS + SHORT + "?test=true")
                 .as(ShortTask[].class);

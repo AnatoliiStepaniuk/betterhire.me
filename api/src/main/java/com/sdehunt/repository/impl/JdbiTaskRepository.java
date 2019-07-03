@@ -91,17 +91,19 @@ public class JdbiTaskRepository implements TaskRepository {
                 .collect(Collectors.joining(","));
     }
 
+    private Set<Tag> tagsFromString(String tags) {
+        return Optional.ofNullable(tags)
+                .filter(t -> !t.isEmpty() && !t.isBlank())
+                .map(String::toUpperCase)
+                .map(s -> s.split(","))
+                .map(t -> Arrays.stream(t).map(Tag::valueOf).collect(Collectors.toSet()))
+                .orElse(new HashSet<>());
+    }
+
     private class TaskRowMapper implements RowMapper<Task> {
         @Override
         public Task map(ResultSet rs, StatementContext ctx) throws SQLException {
             Task task = new Task();
-
-            Set<Tag> tags = Optional.ofNullable(rs.getString("tags"))
-                    .filter(t -> !t.isEmpty() && !t.isBlank())
-                    .map(String::toUpperCase)
-                    .map(s -> s.split(","))
-                    .map(t -> Arrays.stream(t).map(Tag::valueOf).collect(Collectors.toSet()))
-                    .orElse(new HashSet<>());
 
             task
                     .setDescription(rs.getString("description"))
@@ -120,7 +122,7 @@ public class JdbiTaskRepository implements TaskRepository {
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")))
                     .setUpdated(Instant.ofEpochSecond(rs.getLong("updated")))
                     .setTest(rs.getBoolean("test"))
-                    .setTags(tags);
+                    .setTags(tagsFromString(rs.getString("tags")));
             return task;
         }
     }
@@ -140,7 +142,9 @@ public class JdbiTaskRepository implements TaskRepository {
                     .setEnabled(rs.getBoolean("enabled"))
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")))
                     .setUpdated(Instant.ofEpochSecond(rs.getLong("updated")))
-                    .setTest(rs.getBoolean("test"));
+                    .setTest(rs.getBoolean("test"))
+                    .setTags(tagsFromString(rs.getString("tags")));
+
         }
     }
 }
