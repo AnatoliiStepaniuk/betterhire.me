@@ -2,6 +2,7 @@ package com.sdehunt.repository.impl;
 
 import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.ShortTask;
+import com.sdehunt.commons.model.Tag;
 import com.sdehunt.commons.model.Task;
 import com.sdehunt.repository.TaskRepository;
 import org.jdbi.v3.core.Jdbi;
@@ -12,8 +13,8 @@ import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -74,16 +75,34 @@ public class JdbiTaskRepository implements TaskRepository {
         long now = Instant.now().getEpochSecond();
         jdbi.withHandle(
                 db -> db.execute(
-                        format("UPDATE %s SET name = ?, short_description = ?, description = ?, description_url = ?, requirements = ?, input = ?, updated = ? WHERE id = ?", TABLE),
-                        task.getName(), task.getShortDescription(), task.getDescription(), task.getDescriptionUrl(), task.getRequirements(), task.getInputFilesUrl(), now, task.getId()
+                        format("UPDATE %s SET name = ?, short_description = ?, description = ?, description_url = ?, requirements = ?, input = ?, tags = ?, updated = ? WHERE id = ?", TABLE),
+                        task.getName(), task.getShortDescription(), task.getDescription(), task.getDescriptionUrl(), task.getRequirements(), task.getInputFilesUrl(), stringify(task.getTags()), now, task.getId()
                 )
         );
+    }
+
+    private String stringify(Set<Tag> tags) {
+        if (tags == null) {
+            return null;
+        }
+        return tags.stream()
+                .map(Enum::name)
+                .map(String::toLowerCase)
+                .collect(Collectors.joining(","));
     }
 
     private class TaskRowMapper implements RowMapper<Task> {
         @Override
         public Task map(ResultSet rs, StatementContext ctx) throws SQLException {
             Task task = new Task();
+
+            Set<Tag> tags = Optional.ofNullable(rs.getString("tags"))
+                    .filter(t -> !t.isEmpty() && !t.isBlank())
+                    .map(String::toUpperCase)
+                    .map(s -> s.split(","))
+                    .map(t -> Arrays.stream(t).map(Tag::valueOf).collect(Collectors.toSet()))
+                    .orElse(new HashSet<>());
+
             task
                     .setDescription(rs.getString("description"))
                     .setDescriptionUrl(rs.getString("description_url"))
@@ -100,8 +119,8 @@ public class JdbiTaskRepository implements TaskRepository {
                     .setEnabled(rs.getBoolean("enabled"))
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")))
                     .setUpdated(Instant.ofEpochSecond(rs.getLong("updated")))
-                    .setTest(rs.getBoolean("test"));
-
+                    .setTest(rs.getBoolean("test"))
+                    .setTags(tags);
             return task;
         }
     }

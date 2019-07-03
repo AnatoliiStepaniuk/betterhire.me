@@ -54,6 +54,7 @@ public class TaskController {
         taskToUpdate.setShortDescription(request.getShortDescription());
         taskToUpdate.setRequirements(request.getRequirements());
         taskToUpdate.setInputFilesUrl(request.getInputFilesUrl());
+        taskToUpdate.setTags(request.getTags());
 
         tasks.update(taskToUpdate);
     }
