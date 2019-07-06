@@ -5,6 +5,7 @@ import com.sdehunt.commons.model.BestTaskResult;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.SolutionStatus;
 import com.sdehunt.commons.model.User;
+import com.sdehunt.commons.util.RepoUtils;
 import com.sdehunt.dto.SaveSolutionDTO;
 import com.sdehunt.dto.SolutionIdDTO;
 import com.sdehunt.exception.SolutionNotFoundException;
@@ -46,7 +47,7 @@ public class SolutionController {
     public SolutionIdDTO submit(@PathVariable String taskId, @RequestBody SaveSolutionDTO req, @CurrentUser UserPrincipal currentUser) {
         String userId = Optional.ofNullable(currentUser).map(UserPrincipal::getId).orElseThrow(UserNotFoundException::new);
         User user = userRepository.get(userId).orElseThrow(UserNotFoundException::new);
-        String repo = user.getGithubLogin() + "/" + req.getRepo();
+        String repo = user.getGithubLogin() + "/" + RepoUtils.trimRepo(req.getRepo());
         Solution solution = new Solution()
                 .setUserId(userId)
                 .setRepo(repo)

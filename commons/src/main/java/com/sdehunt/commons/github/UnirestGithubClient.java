@@ -21,8 +21,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.http.HttpRequest;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -156,16 +154,6 @@ public class UnirestGithubClient implements GithubClient {
                 .map(BranchResponse::getName)
                 .collect(Collectors.toList());
 
-    }
-
-    private HttpRequest buildRequest(URI uri, String userId) {// TODO remove
-        String token = accessTokens.find(userId, OAuthProvider.GITHUB).map(AccessToken::getToken)
-                .orElseGet(() -> params.get(ACCESS_TOKEN));
-        logger.debug("Using access token: " + token);
-        return HttpRequest.newBuilder()
-                .header("Authorization", "token " + token)
-                .uri(uri)
-                .build();
     }
 
     private String getToken(String userId) {

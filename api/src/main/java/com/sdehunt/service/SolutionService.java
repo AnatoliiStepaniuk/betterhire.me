@@ -9,7 +9,6 @@ import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.SolutionStatus;
 import com.sdehunt.commons.model.User;
 import com.sdehunt.commons.params.ParameterService;
-import com.sdehunt.commons.util.RepoUtils;
 import com.sdehunt.exception.CommitNotFoundException;
 import com.sdehunt.exception.SolutionIsPresentException;
 import com.sdehunt.exception.TooManyRequestsException;
@@ -56,7 +55,6 @@ public class SolutionService {
      * Returns assigned solutionId and performs solution counting/status update in separate thread.
      */
     public String process(Solution solution) {
-        solution.setRepo(RepoUtils.trimRepo(solution.getRepo()));
         if (isBranch(solution.getUserId(), solution.getRepo(), solution.getCommit())) {
             String commit = githubClient.getCommit(solution.getUserId(), solution.getRepo(), solution.getCommit());
             solution.setCommit(commit);
