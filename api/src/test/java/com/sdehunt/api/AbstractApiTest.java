@@ -12,6 +12,10 @@ public abstract class AbstractApiTest {
     protected final static int NOT_FOUND = 404;
 
     protected RequestSpecification host() {
-        return given().baseUri(BASE_URI).port(PORT).log().ifValidationFails();
+        RequestSpecification spec = given().baseUri(BASE_URI).log().ifValidationFails();
+        if (PORT > 0) {
+            spec = spec.port(PORT);
+        }
+        return spec;
     }
 }
