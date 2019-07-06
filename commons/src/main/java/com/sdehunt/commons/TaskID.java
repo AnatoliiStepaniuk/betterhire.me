@@ -10,6 +10,7 @@ public enum TaskID {
     BALLOONS,
     DATACENTER,
     PIZZA,
+    LETTERS,
     SLIDES_TEST;
 
     public static TaskID of(String taskId) {
