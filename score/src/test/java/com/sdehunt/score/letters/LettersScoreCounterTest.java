@@ -3,7 +3,7 @@ package com.sdehunt.score.letters;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,8 +22,14 @@ public class LettersScoreCounterTest {
         inputLetters.put('h', 2);
         inputLetters.put('i', 2);
         inputLetters.put('m', 2);
-        List<String> inputWords = Arrays.asList("better", "hire", "me");
-        List<String> solutionWords = Arrays.asList("hire", "me");
+        List<String> inputWords = new ArrayList<>();
+        inputWords.add("better");
+        inputWords.add("hire");
+        inputWords.add("me");
+
+        List<String> solutionWords = new ArrayList<>();
+        solutionWords.add("hire");
+        solutionWords.add("me");
 
         long count = lettersScoreCounter.count(inputLetters, inputWords, solutionWords);
         Assert.assertEquals(6, count);

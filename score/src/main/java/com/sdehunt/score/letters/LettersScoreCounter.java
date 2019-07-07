@@ -18,7 +18,7 @@ public class LettersScoreCounter {
     }
 
     private void checkWordPresent(List<String> words, String word) {
-        if (!words.contains(word)) {
+        if (!words.remove(word)) {
             throw new InvalidSolutionException();
         }
     }
