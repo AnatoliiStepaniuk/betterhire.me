@@ -44,7 +44,7 @@ public class JdbiTaskRepository implements TaskRepository {
     private String getAllQuery(boolean test) {
         String query = format("SELECT * FROM %s", TABLE);
         final String testClause = " WHERE test = false";
-        if (test) {
+        if (!test) {
             query += testClause;
         }
         query += " ORDER BY `updated` DESC";
