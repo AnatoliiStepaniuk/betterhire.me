@@ -16,7 +16,7 @@ public class User {
     private String linkedinId;
     private String userName; // This field is not saved in DB actually
     private Instant lastSubmit;
-    private int solved;
+    private Integer solved;
     private Integer avgRank;
     private Instant created;
     private Instant updated;

@@ -5,6 +5,7 @@ import com.sdehunt.commons.model.BestSolution;
 import com.sdehunt.commons.model.BestTaskResult;
 import com.sdehunt.commons.model.BestUserResult;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -14,7 +15,7 @@ public interface BestSolutionRepository {
 
     List<BestSolution> getForUser(String userId, boolean test);
 
-    void save(List<BestSolution> bestSolutions);
+    void save(Collection<BestSolution> bestSolutions);
 
     default void save(BestSolution bestSolution) {
         save(Collections.singletonList(bestSolution));

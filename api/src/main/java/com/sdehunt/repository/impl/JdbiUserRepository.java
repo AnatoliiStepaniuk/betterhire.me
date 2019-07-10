@@ -90,6 +90,9 @@ public class JdbiUserRepository implements UserRepository {
         Optional.ofNullable(u.getGithubLogin()).ifPresent(existing::setGithubLogin);
         Optional.ofNullable(u.getLinkedinId()).ifPresent(existing::setLinkedinId);
         Optional.ofNullable(u.getUserName()).ifPresent(existing::setUserName);
+        Optional.ofNullable(u.getLastSubmit()).ifPresent(existing::setLastSubmit);
+        Optional.ofNullable(u.getSolved()).ifPresent(existing::setSolved);
+        Optional.ofNullable(u.getAvgRank()).ifPresent(existing::setAvgRank);
     }
 
     @Override

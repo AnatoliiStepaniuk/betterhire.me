@@ -7,10 +7,7 @@ import com.sdehunt.repository.BestSolutionRepository;
 import com.sdehunt.repository.UserRepository;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class BestSolutionService {
@@ -34,7 +31,7 @@ public class BestSolutionService {
         // Sorting by score to define new order
         solutions.sort(Comparator.comparingLong(BestSolution::getScore).reversed());
         // Updating rank based on new order and getting entries with changed rank or score(for updating)
-        List<BestSolution> solutionsToUpdate = updateRank(solutions);
+        Set<BestSolution> solutionsToUpdate = updateRank(solutions);
         solutionsToUpdate.add(betterSolution.get()); // Adding better solution manually because method updateRank returns only solutions with rank changed (although rank can be the same even if score increased).
         // Updating entries with changed rank
         bestSolutions.save(solutionsToUpdate);
@@ -72,8 +69,8 @@ public class BestSolutionService {
     /*
         Updates rank and returns solutions whose rank was changed.
      */
-    private List<BestSolution> updateRank(List<BestSolution> solutions) {
-        List<BestSolution> toUpdate = new ArrayList<>();
+    private Set<BestSolution> updateRank(List<BestSolution> solutions) {
+        Set<BestSolution> toUpdate = new HashSet<>();
         for (int i = 0; i < solutions.size(); i++) {
             int rank = getRank(i, solutions.size());
             if (rank != solutions.get(i).getRank()) {

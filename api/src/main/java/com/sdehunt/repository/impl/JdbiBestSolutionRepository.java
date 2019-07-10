@@ -13,6 +13,7 @@ import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static java.lang.String.format;
@@ -46,14 +47,15 @@ public class JdbiBestSolutionRepository implements BestSolutionRepository {
     }
 
     @Override
-    public void save(List<BestSolution> bestSolutions) {
+    public void save(Collection<BestSolution> bestSolutions) {
         if (bestSolutions.isEmpty()) {
             return;
         }
         StringBuilder sql = new StringBuilder(format("INSERT INTO %s (`user`, `task`, `solution`, `rank`, `score`, `test`) VALUES ", TABLE));
         List<String> args = new ArrayList<>();
-        for (int i = 0; i < bestSolutions.size(); i++) {
-            BestSolution bs = bestSolutions.get(i);
+        List<BestSolution> bestSolutionsList = new ArrayList<>(bestSolutions);
+        for (int i = 0; i < bestSolutionsList.size(); i++) {
+            BestSolution bs = bestSolutionsList.get(i);
             args.add(bs.getUserId());
             args.add(bs.getTaskID().name().toLowerCase());
             args.add(bs.getSolutionId());
@@ -61,7 +63,7 @@ public class JdbiBestSolutionRepository implements BestSolutionRepository {
             args.add(String.valueOf(bs.getScore()));
             args.add(bs.isTest() ? "1" : "0");
             sql.append("(?, ?, ?, ?, ?, ?)");
-            if (i != bestSolutions.size() - 1) {
+            if (i != bestSolutionsList.size() - 1) {
                 sql.append(", ");
             }
         }
