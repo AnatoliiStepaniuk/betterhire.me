@@ -39,7 +39,7 @@ public interface UserRepository {
 
     Optional<User> byLinkedinId(String linkedinId);
 
-    User update(User user); // TODO make sure existing data is not lost!
+    User update(User user);
 
     void delete(String userId);
 

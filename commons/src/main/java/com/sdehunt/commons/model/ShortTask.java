@@ -13,9 +13,9 @@ public class ShortTask {
     private String name;
     private String imageUrl;
     private String shortDescription;
-    private Integer participants; // TODO add to tests
-    private Integer offers;// TODO add to tests
-    private Integer bestOffer;// TODO add to tests
+    private Integer participants;
+    private Integer offers;
+    private Integer bestOffer;
     private Set<Tag> tags;
     private Instant created;
     private Instant updated;

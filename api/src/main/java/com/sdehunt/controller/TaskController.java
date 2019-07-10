@@ -33,7 +33,7 @@ public class TaskController {
 
     @RequestMapping(method = GET, path = "/{taskId}", produces = APPLICATION_JSON_VALUE)
     public Task get(@PathVariable("taskId") String taskId) {
-        return tasks.get(taskId).orElseThrow(TaskNotFoundException::new);
+        return tasks.get(TaskID.of(taskId)).orElseThrow(TaskNotFoundException::new);
     }
 
     @RequestMapping(method = GET, path = "/{taskId}/short", produces = APPLICATION_JSON_VALUE)
@@ -55,6 +55,9 @@ public class TaskController {
         taskToUpdate.setRequirements(request.getRequirements());
         taskToUpdate.setInputFilesUrl(request.getInputFilesUrl());
         taskToUpdate.setTags(request.getTags());
+        taskToUpdate.setParticipants(request.getParticipants());
+        taskToUpdate.setOffers(request.getOffers());
+        taskToUpdate.setBestOffer(request.getBestOffer());
 
         tasks.update(taskToUpdate);
     }

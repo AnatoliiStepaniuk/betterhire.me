@@ -14,7 +14,7 @@ public class User {
     private String email;
     private String githubLogin;
     private String linkedinId;
-    private String userName;
+    private String userName; // This field is not saved in DB actually
     private Instant lastSubmit;
     private int solved;
     private Integer avgRank;

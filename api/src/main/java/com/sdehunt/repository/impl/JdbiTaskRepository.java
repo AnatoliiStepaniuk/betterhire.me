@@ -52,7 +52,7 @@ public class JdbiTaskRepository implements TaskRepository {
     }
 
     @Override
-    public Optional<Task> get(String id) {
+    public Optional<Task> get(TaskID id) {
         return jdbi.withHandle(
                 db -> db.select(format("SELECT * FROM %s WHERE id = ?", TABLE), id)
                         .map(new TaskRowMapper()).findFirst()
@@ -75,14 +75,31 @@ public class JdbiTaskRepository implements TaskRepository {
     }
 
     @Override
-    public void update(Task task) {
+    public void update(Task updateRequest) {
+        Task t = get(updateRequest.getId()).orElseThrow();
+        setFields(t, updateRequest);
         long now = Instant.now().getEpochSecond();
         jdbi.withHandle(
                 db -> db.execute(
-                        format("UPDATE %s SET name = ?, short_description = ?, description = ?, description_url = ?, requirements = ?, input = ?, tags = ?, updated = ? WHERE id = ?", TABLE),
-                        task.getName(), task.getShortDescription(), task.getDescription(), task.getDescriptionUrl(), task.getRequirements(), task.getInputFilesUrl(), stringify(task.getTags()), now, task.getId()
+                        format("UPDATE %s SET name = ?, short_description = ?, description = ?, description_url = ?, requirements = ?, input = ?, tags = ?, participants = ?, offers = ?, bestOffer = ?, updated = ? WHERE id = ?", TABLE),
+                        t.getName(), t.getShortDescription(), t.getDescription(), t.getDescriptionUrl(), t.getRequirements(), t.getInputFilesUrl(), stringify(t.getTags()), t.getParticipants(), t.getOffers(), t.getBestOffer(), now, t.getId()
                 )
         );
+    }
+
+    private void setFields(Task task, Task t) {
+        Optional.ofNullable(t.getDescription()).ifPresent(task::setDescription);
+        Optional.ofNullable(t.getDescriptionUrl()).ifPresent(task::setDescriptionUrl);
+        Optional.ofNullable(t.getInputFilesUrl()).ifPresent(task::setInputFilesUrl);
+        Optional.ofNullable(t.getRequirements()).ifPresent(task::setRequirements);
+        Optional.ofNullable(t.getName()).ifPresent(task::setName);
+        Optional.ofNullable(t.getImageUrl()).ifPresent(task::setImageUrl);
+        Optional.ofNullable(t.getShortDescription()).ifPresent(task::setShortDescription);
+        Optional.ofNullable(t.getParticipants()).ifPresent(task::setParticipants);
+        Optional.ofNullable(t.getOffers()).ifPresent(task::setOffers);
+        Optional.ofNullable(t.getBestOffer()).ifPresent(task::setBestOffer);
+        Optional.ofNullable(t.getTags()).ifPresent(task::setTags);
+        Optional.ofNullable(t.getTags()).ifPresent(task::setTags);
     }
 
     private String stringify(Set<Tag> tags) {

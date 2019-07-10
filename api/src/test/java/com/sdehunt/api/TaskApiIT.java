@@ -19,6 +19,8 @@ public class TaskApiIT extends AbstractApiTest {
     private final static String TASKS = "/tasks";
     private final static String SHORT = "/short";
 
+    private final static Random random = new Random();
+
     @Test
     public void updateTaskTest() {
 
@@ -31,6 +33,9 @@ public class TaskApiIT extends AbstractApiTest {
         String inputFilesUrl = UUID.randomUUID().toString();
         Tag tag = Tag.values()[new Random().nextInt(Tag.values().length)];
         Set<Tag> tags = Collections.singleton(tag);
+        int participants = random.nextInt();
+        int offers = random.nextInt();
+        int bestOffer = random.nextInt();
 
         // Verify task is present
         host().contentType(APP_JSON)
@@ -48,7 +53,10 @@ public class TaskApiIT extends AbstractApiTest {
                 .setName(name)
                 .setRequirements(requirements)
                 .setInputFilesUrl(inputFilesUrl)
-                .setTags(tags);
+                .setTags(tags)
+                .setParticipants(participants)
+                .setOffers(offers)
+                .setBestOffer(bestOffer);
 
         // Updating task
         host()
@@ -73,7 +81,10 @@ public class TaskApiIT extends AbstractApiTest {
                 .body("requirements", is(requirements))
                 .body("inputFilesUrl", is(inputFilesUrl))
                 .body("test", is(true))
-                .body("tags", contains(tag.name()));
+                .body("tags", contains(tag.name()))
+                .body("participants", is(participants))
+                .body("offers", is(offers))
+                .body("bestOffer", is(bestOffer));
 
         // Verify updated
         host().contentType(APP_JSON)
@@ -87,7 +98,10 @@ public class TaskApiIT extends AbstractApiTest {
                 .body("shortDescription", is(shortDescription))
                 .body("name", is(name))
                 .body("test", is(true))
-                .body("tags", contains(tag.name()));
+                .body("tags", contains(tag.name()))
+                .body("participants", is(participants))
+                .body("offers", is(offers))
+                .body("bestOffer", is(bestOffer));
 
         // Getting all tasks
         Task[] tasks = host().get(TASKS + "?test=true")
@@ -102,6 +116,9 @@ public class TaskApiIT extends AbstractApiTest {
         Assert.assertEquals(requirements, foundTask.getRequirements());
         Assert.assertEquals(inputFilesUrl, foundTask.getInputFilesUrl());
         Assert.assertEquals(tags, foundTask.getTags());
+        Assert.assertEquals(participants, (int) foundTask.getParticipants());
+        Assert.assertEquals(offers, (int) foundTask.getOffers());
+        Assert.assertEquals(bestOffer, (int) foundTask.getBestOffer());
 
         ShortTask[] shortTasks = host().get(TASKS + SHORT + "?test=true")
                 .as(ShortTask[].class);

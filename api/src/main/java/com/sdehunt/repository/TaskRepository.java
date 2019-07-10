@@ -1,5 +1,6 @@
 package com.sdehunt.repository;
 
+import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.ShortTask;
 import com.sdehunt.commons.model.Task;
 
@@ -32,7 +33,7 @@ public interface TaskRepository {
     /**
      * Returns task for provided id if found
      */
-    Optional<Task> get(String id);
+    Optional<Task> get(TaskID id);
 
     /**
      * Returns short task version for provided id if found

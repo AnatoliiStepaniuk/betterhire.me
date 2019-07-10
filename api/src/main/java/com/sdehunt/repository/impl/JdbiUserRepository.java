@@ -69,14 +69,27 @@ public class JdbiUserRepository implements UserRepository {
     }
 
     @Override
-    public User update(User u) {
+    public User update(User updateRequest) {
+        User user = get(updateRequest.getId()).orElseThrow();
+        setFields(user, updateRequest);
+
         jdbi.withHandle(
                 db -> db.execute(
                         format("UPDATE %s SET name = ?, nickname = ?, email = ?, github_login = ?, linkedin_id = ?, image_url = ?, updated = ?, solved = ?, avg_rank = ?, last_submit = ? WHERE id = ?", TABLE),
-                        u.getName(), u.getNickname(), u.getEmail(), u.getGithubLogin(), u.getLinkedinId(), u.getImageUrl(), Instant.now().getEpochSecond(), u.getSolved(), u.getAvgRank(), Optional.ofNullable(u.getLastSubmit()).map(Instant::getEpochSecond).orElse(null), u.getId())
+                        user.getName(), user.getNickname(), user.getEmail(), user.getGithubLogin(), user.getLinkedinId(), user.getImageUrl(), Instant.now().getEpochSecond(), user.getSolved(), user.getAvgRank(), Optional.ofNullable(user.getLastSubmit()).map(Instant::getEpochSecond).orElse(null), user.getId())
         );
 
-        return get(u.getId()).orElseThrow();
+        return get(user.getId()).orElseThrow();
+    }
+
+    private void setFields(User existing, User u) {
+        Optional.ofNullable(u.getName()).ifPresent(existing::setName);
+        Optional.ofNullable(u.getNickname()).ifPresent(existing::setNickname);
+        Optional.ofNullable(u.getImageUrl()).ifPresent(existing::setImageUrl);
+        Optional.ofNullable(u.getEmail()).ifPresent(existing::setEmail);
+        Optional.ofNullable(u.getGithubLogin()).ifPresent(existing::setGithubLogin);
+        Optional.ofNullable(u.getLinkedinId()).ifPresent(existing::setLinkedinId);
+        Optional.ofNullable(u.getUserName()).ifPresent(existing::setUserName);
     }
 
     @Override
