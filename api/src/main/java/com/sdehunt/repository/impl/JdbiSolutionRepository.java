@@ -94,7 +94,7 @@ public class JdbiSolutionRepository implements SolutionRepository {
             sql += " WHERE " + String.join(" AND ", conditions);
         }
 
-        String finalSql = sql;
+        String finalSql = sql + " ORDER BY `created` DESC";
         return jdbi.withHandle(
                 handle -> handle.select(finalSql, params.toArray()).map(new SolutionRowMapper()).list()
         );
