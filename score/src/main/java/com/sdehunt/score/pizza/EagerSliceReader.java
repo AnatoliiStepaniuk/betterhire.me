@@ -16,7 +16,8 @@ public class EagerSliceReader implements SliceReader {
         List<Slice> slices = new ArrayList<>();
         List<String> lines = Files.readAllLines(Paths.get(fileName));
         if (lines.size() - 1 != Integer.valueOf(lines.get(0))) {
-            throw new InvalidSolutionException();
+            String cause = "The number of lines in a file did not match integer in first line. Check requirements for output files.";
+            throw new InvalidSolutionException(cause);
         }
         for (int i = 1; i < lines.size(); i++) {
             slices.add(new Slice(lines.get(i)));

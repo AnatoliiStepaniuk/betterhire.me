@@ -23,13 +23,15 @@ public class TripsReader {
             while (line != null) {
                 String[] sp = line.split(" ");
                 if (Integer.valueOf(sp[0]) != sp.length - 1) {
-                    throw new InvalidSolutionException();
+                    String cause = "Each line should start with integer corresponding to number of rides assigned to vehicle.";
+                    throw new InvalidSolutionException(cause);
                 }
-                List<Ride> tripRides = new ArrayList();
+                List<Ride> tripRides = new ArrayList<>();
                 for (int i = 1; i < sp.length; i++) {
                     Integer rideIndex = Integer.valueOf(sp[i]);
                     if (isUsed.get(rideIndex)) {
-                        throw new InvalidSolutionException(); // Trips was already used.
+                        String cause = "Some trips were used more than once (Trip number " + rideIndex + " )";
+                        throw new InvalidSolutionException(cause);
                     }
                     tripRides.add(rides.get(rideIndex));
                     isUsed.put(rideIndex, true); // To avoid using same trip several times
@@ -41,7 +43,8 @@ public class TripsReader {
         }
 
         if (trips.size() > vehicles) {
-            throw new InvalidSolutionException();
+            String cause = "Number of trips is bigger than number of vehicles";
+            throw new InvalidSolutionException(cause);
         }
 
         return trips;

@@ -20,8 +20,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.equalToIgnoringCase;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 
 public class SolutionApiIT extends AbstractApiTest {
@@ -215,6 +214,11 @@ public class SolutionApiIT extends AbstractApiTest {
                 .as(SolutionIdDTO.class).getId();
 
         verifySolutionStatus(invalidSolutionId, SolutionStatus.INVALID_SOLUTION);
+
+        host().get("/solutions/{solutionId}", invalidSolutionId)
+                .then()
+                .body("cause", not(isEmptyOrNullString()));
+
         // Delete
         host().delete("/solutions/{id}", invalidSolutionId)
                 .then().log().ifValidationFails()

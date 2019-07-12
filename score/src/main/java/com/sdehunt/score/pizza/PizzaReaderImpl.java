@@ -19,7 +19,8 @@ public class PizzaReaderImpl implements PizzaReader {
         int minOfEach = Integer.valueOf(info[2]);
         int maxSliceArea = Integer.valueOf(info[3]);
         if (lines.size() - 1 != rows) {
-            throw new InvalidSolutionException();
+            String cause = "The number of lines in a file did not match integer in first line. Check requirements for output files.";
+            throw new InvalidSolutionException(cause);
         }
 
         Ingredient[][] slots = new Ingredient[rows][cols];

@@ -37,8 +37,8 @@ public class JdbiSolutionRepository implements SolutionRepository {
 
         jdbi.withHandle(
                 db -> db.execute(
-                        format("INSERT INTO %s (`id`, `task`, `user`, `repo`, `commit`, `score`, `test`, `created`) values (?, ?, ?, ?, ?, ?, ?, ?)", TABLE),
-                        id, s.getTaskId(), s.getUserId(), s.getRepo(), s.getCommit(), s.getScore(), s.isTest(), Instant.now().getEpochSecond()
+                        format("INSERT INTO %s (`id`, `task`, `user`, `repo`, `commit`, `score`, `cause`, `test`, `created`) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", TABLE),
+                        id, s.getTaskId(), s.getUserId(), s.getRepo(), s.getCommit(), s.getScore(), s.getCause(), s.isTest(), Instant.now().getEpochSecond()
                 )
         );
 
@@ -49,8 +49,8 @@ public class JdbiSolutionRepository implements SolutionRepository {
     public void update(Solution s) {
         jdbi.withHandle(
                 db -> db.execute(
-                        format("UPDATE %s SET `task` = ?, `user` = ?, `repo` = ?, `commit` = ?, `score` = ?, `status` = ? WHERE `id` = ?", TABLE),
-                        s.getTaskId(), s.getUserId(), s.getRepo(), s.getCommit(), s.getScore(), s.getStatus(), s.getId()
+                        format("UPDATE %s SET `task` = ?, `user` = ?, `repo` = ?, `commit` = ?, `score` = ?, `cause` = ?, `status` = ? WHERE `id` = ?", TABLE),
+                        s.getTaskId(), s.getUserId(), s.getRepo(), s.getCommit(), s.getScore(), s.getCause(), s.getStatus(), s.getId()
                 )
         );
     }
@@ -119,6 +119,7 @@ public class JdbiSolutionRepository implements SolutionRepository {
                     .setRepo(rs.getString("repo"))
                     .setCommit(rs.getString("commit"))
                     .setScore(Long.valueOf(rs.getString("score")))
+                    .setCause(rs.getString("cause"))
                     .setStatus(SolutionStatus.valueOf(rs.getString("status").toUpperCase()))
                     .setTest(rs.getBoolean("test"))
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")));

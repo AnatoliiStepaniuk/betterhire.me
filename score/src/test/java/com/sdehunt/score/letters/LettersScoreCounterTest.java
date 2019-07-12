@@ -3,10 +3,7 @@ package com.sdehunt.score.letters;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class LettersScoreCounterTest {
 
@@ -31,7 +28,7 @@ public class LettersScoreCounterTest {
         solutionWords.add("hire");
         solutionWords.add("me");
 
-        long count = lettersScoreCounter.count(inputLetters, inputWords, solutionWords);
+        long count = lettersScoreCounter.count(UUID.randomUUID().toString(), inputLetters, inputWords, solutionWords);
         Assert.assertEquals(6, count);
     }
 }

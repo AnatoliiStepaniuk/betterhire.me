@@ -57,7 +57,8 @@ public class SlidesScoreCounter implements TaskScoreCounter {
             try {
                 List<String> lines = Files.readAllLines(Paths.get(FileUtils.fileName(solutionFiles.get(i))));
                 if (lines.isEmpty()) {
-                    throw new InvalidSolutionException();
+                    String cause = "Solution file " + FileUtils.fileName(solutionFiles.get(i)) + " was empty";
+                    throw new InvalidSolutionException(cause);
                 }
 
                 for (int l = 1; l < lines.size() - 1; l++) {

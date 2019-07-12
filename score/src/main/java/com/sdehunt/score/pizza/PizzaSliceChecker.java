@@ -13,7 +13,8 @@ public class PizzaSliceChecker {
 
     void checkFits(Pizza p, Slice s) {
         if (s.getStartRow() < 0 || s.getStartCol() < 0 || s.getEndRow() > p.rows() - 1 || s.getEndCol() > p.cols() - 1) {
-            throw new InvalidSolutionException();
+            String cause = "Some slices do not fit the pizza boundaries";
+            throw new InvalidSolutionException(cause);
         }
     }
 
@@ -34,13 +35,14 @@ public class PizzaSliceChecker {
                 }
             }
         }
-
-        throw new InvalidSolutionException();
+        String cause = "Some slices did not contain minimum number of each ingredient.";
+        throw new InvalidSolutionException(cause);
     }
 
     void checkMaxArea(Pizza pizza, Slice slice) {
         if (slice.area() > pizza.getMaxSliceArea()) {
-            throw new InvalidSolutionException();
+            String cause = "Some slices were bigger that allowed. Check maximum allowed area.";
+            throw new InvalidSolutionException(cause);
         }
     }
 
@@ -48,7 +50,8 @@ public class PizzaSliceChecker {
         for (int r = s.getStartRow(); r <= s.getEndRow(); r++) {
             for (int c = s.getStartCol(); c <= s.getEndCol(); c++) {
                 if (p.getSlots()[r][c] == Ingredient.EMPTY) {
-                    throw new InvalidSolutionException();
+                    String cause = "Some slices overlap with each other.";
+                    throw new InvalidSolutionException(cause);
                 }
             }
         }

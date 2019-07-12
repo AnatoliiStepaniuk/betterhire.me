@@ -1,6 +1,5 @@
 package com.sdehunt.score.letters;
 
-import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
 import com.sdehunt.commons.util.FileUtils;
 import com.sdehunt.score.GeneralFilesDownloader;
 import com.sdehunt.score.TaskScoreCounter;
@@ -48,7 +47,7 @@ public class GeneralLettersScoreCounter implements TaskScoreCounter {
 
     @SneakyThrows
     @Override
-    public long count(String userId, String repo, String commit) throws CommitOrFileNotFoundException {
+    public long count(String userId, String repo, String commit) {
 
         filesDownloader.downloadInputFiles(inputLettersFiles);
         filesDownloader.downloadInputFiles(inputWordsFiles);
@@ -56,14 +55,14 @@ public class GeneralLettersScoreCounter implements TaskScoreCounter {
 
         long count = 0;
         for (int i = 0; i < inputLettersFiles.size(); i++) {
-
+            String fileName = FileUtils.fileName(solutionFiles.get(i));
             Map<Character, Integer> inputLetters = lettersReader.readLetters(FileUtils.fileName(inputLettersFiles.get(i)));
             List<String> inputWords = Files.readAllLines(Paths.get(FileUtils.fileName(inputWordsFiles.get(i))))
                     .stream().filter(s -> !s.contains(" ")).collect(Collectors.toList());
-            List<String> solution = Files.readAllLines(Paths.get(FileUtils.fileName(solutionFiles.get(i))));
+            List<String> solution = Files.readAllLines(Paths.get(fileName));
             List<String> solutionWords = solution.subList(1, solution.size()); // Ignoring number of lines
 
-            count += lettersScoreCounter.count(inputLetters, inputWords, solutionWords);
+            count += lettersScoreCounter.count(fileName, inputLetters, inputWords, solutionWords);
         }
 
         return count;

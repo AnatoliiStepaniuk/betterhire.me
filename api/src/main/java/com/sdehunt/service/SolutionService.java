@@ -78,16 +78,21 @@ public class SolutionService {
             } catch (InterruptedException | TimeoutException e) {
                 future.cancel(true);
                 logger.error("Solution " + solutionId + " finished with timeout exception", e);
-                solutionRepository.update(solution.setStatus(SolutionStatus.TIMEOUT));
+                String cause = "Solution verification took too long to verify and was aborted before finished. Are your files too big?";
+                solutionRepository.update(solution.setStatus(SolutionStatus.TIMEOUT).setCause(cause));
             } catch (ExecutionException e) {
-                if (e.getCause() instanceof CommitOrFileNotFoundException
-                        || e.getCause() instanceof com.sdehunt.exception.RepositoryNotFoundException) {
-                    solutionRepository.update(solution.setStatus(SolutionStatus.INVALID_FILES));
+                if (e.getCause() instanceof CommitOrFileNotFoundException) {
+                    String cause = "Commit or solution file not found. Please check that commit/branch you specified exist. Do your files have correct naming and directory?";
+                    solutionRepository.update(solution.setStatus(SolutionStatus.INVALID_FILES).setCause(cause));
+                } else if (e.getCause() instanceof com.sdehunt.exception.RepositoryNotFoundException) {
+                    String cause = "Repository not found. Please check that repository you've specified is the one you own.";
+                    solutionRepository.update(solution.setStatus(SolutionStatus.INVALID_FILES).setCause(cause));
                 } else if (e.getCause() instanceof InvalidSolutionException) {
-                    solutionRepository.update(solution.setStatus(SolutionStatus.INVALID_SOLUTION));
+                    String cause = ((InvalidSolutionException) e.getCause()).getDescription();
+                    solutionRepository.update(solution.setStatus(SolutionStatus.INVALID_SOLUTION).setCause(cause));
                 } else {
                     logger.error("Solution " + solutionId + " finished with error: ", e);
-                    solutionRepository.update(solution.setStatus(SolutionStatus.ERROR));
+                    solutionRepository.update(solution.setStatus(SolutionStatus.ERROR).setCause(e.getMessage()));
                 }
             }
         });
