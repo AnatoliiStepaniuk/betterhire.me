@@ -37,8 +37,8 @@ spring:
               - repo
           linkedin:
             provider: linkedin
-            clientId: 77xfd7snfz01vi
-            clientSecret: VUVoq9Kt3rCs809O
+            clientId: ${LINKEDIN_CLIENT_ID}
+            clientSecret: ${LINKEDIN_CLIENT_SECRET}
             redirectUriTemplate: "{baseUrl}/oauth2/callback/{registrationId}"
             authorizationGrantType: authorization_code
             clientAuthenticationMethod: post
