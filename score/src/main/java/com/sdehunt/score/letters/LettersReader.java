@@ -2,8 +2,8 @@ package com.sdehunt.score.letters;
 
 import lombok.SneakyThrows;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,14 +16,9 @@ public class LettersReader {
 
         Map<Character, Integer> lettersMap = emptyLettersMap();
 
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        Integer number = Integer.valueOf(reader.readLine());
-        for (int i = 0; i < number; i++) {
-            char ch = (char) reader.read();
+        for (String c : Files.readAllLines(Path.of(file))) {
+            char ch = c.charAt(0);
             lettersMap.put(ch, lettersMap.get(ch) + 1);
-            if (i != number - 1) {
-                reader.read(); // newline
-            }
         }
 
         return lettersMap;

@@ -13,14 +13,14 @@ public class LettersScoreCounter {
             List<String> inputWords,
             List<String> solutionWords
     ) {
-        solutionWords.forEach(w -> checkWordPresent(inputWords, w));
+        solutionWords.forEach(w -> checkWordPresent(fileName, inputWords, w));
         solutionWords.forEach(w -> removeUsedLetters(fileName, inputLetters, w));
         return solutionWords.stream().mapToLong(String::length).sum();
     }
 
-    private void checkWordPresent(List<String> words, String word) {
+    private void checkWordPresent(String fileName, List<String> words, String word) {
         if (!words.remove(word)) {
-            String cause = "Word " + word + " is not present in input file.";
+            String cause = "Word " + word + " is not present in input file " + fileName;
             throw new InvalidSolutionException(cause);
         }
     }
