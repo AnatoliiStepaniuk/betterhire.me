@@ -5,4 +5,5 @@ scp -i "last-key-pair.pem" scripts/run.sh ec2-user@$host:/home/ec2-user/run.sh
 scp -i "last-key-pair.pem" scripts/clean.sh ec2-user@$host:/home/ec2-user/clean.sh
 scp -i "last-key-pair.pem" scripts/compose_restart.sh ec2-user@$host:/home/ec2-user/compose_restart.sh
 scp -i "last-key-pair.pem" docker-compose.yml ec2-user@$host:/home/ec2-user/docker-compose.yml
+scp -i "last-key-pair.pem" backend.env ec2-user@$host:/home/ec2-user/backend.env
 # .aws should not be copied. use # aws config on the instance
