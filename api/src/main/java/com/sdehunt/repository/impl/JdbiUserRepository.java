@@ -16,11 +16,12 @@ import java.util.*;
 import static java.lang.String.format;
 
 public class JdbiUserRepository implements UserRepository {
-    private final static String TABLE = "`sdehunt_db`.`user`";
+    private final String table;
     private Jdbi jdbi;
 
-    public JdbiUserRepository(DataSource dataSource) {
+    public JdbiUserRepository(DataSource dataSource, String db) {
         this.jdbi = Jdbi.create(dataSource);
+        this.table = "`" + db + "`.`user`";
     }
 
     @Override
@@ -29,7 +30,7 @@ public class JdbiUserRepository implements UserRepository {
         long now = Instant.now().getEpochSecond();
         jdbi.withHandle(
                 db -> db.execute(
-                        format("INSERT INTO %s (`id`, `name`, `nickname`, `email`, `github_login`, `linkedin_id`, `image_url`, `test`, `created`, `updated`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", TABLE),
+                        format("INSERT INTO %s (`id`, `name`, `nickname`, `email`, `github_login`, `linkedin_id`, `image_url`, `test`, `created`, `updated`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", table),
                         u.getId(), u.getName(), u.getNickname(), u.getEmail(), u.getGithubLogin(), u.getLinkedinId(), u.getImageUrl(), u.isTest(), now, now
                 ));
 
@@ -39,7 +40,7 @@ public class JdbiUserRepository implements UserRepository {
     @Override
     public Optional<User> get(String userId) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s WHERE id = ?", TABLE), userId)
+                db -> db.select(format("SELECT * FROM %s WHERE id = ?", table), userId)
                         .map(new UserRowMapper()).findFirst()
         );
     }
@@ -47,7 +48,7 @@ public class JdbiUserRepository implements UserRepository {
     @Override
     public Optional<User> byEmail(String email) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s WHERE email = ?", TABLE), email) // TODO make unique column?
+                db -> db.select(format("SELECT * FROM %s WHERE email = ?", table), email) // TODO make unique column?
                         .map(new UserRowMapper()).findFirst()
         );
     }
@@ -55,7 +56,7 @@ public class JdbiUserRepository implements UserRepository {
     @Override
     public Optional<User> byGithubLogin(String githubLogin) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s WHERE github_login = ?", TABLE), githubLogin)
+                db -> db.select(format("SELECT * FROM %s WHERE github_login = ?", table), githubLogin)
                         .map(new UserRowMapper()).findFirst()
         );
     }
@@ -63,7 +64,7 @@ public class JdbiUserRepository implements UserRepository {
     @Override
     public Optional<User> byLinkedinId(String linkedinId) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s WHERE linkedin_id = ?", TABLE), linkedinId)
+                db -> db.select(format("SELECT * FROM %s WHERE linkedin_id = ?", table), linkedinId)
                         .map(new UserRowMapper()).findFirst()
         );
     }
@@ -75,7 +76,7 @@ public class JdbiUserRepository implements UserRepository {
 
         jdbi.withHandle(
                 db -> db.execute(
-                        format("UPDATE %s SET name = ?, nickname = ?, email = ?, github_login = ?, linkedin_id = ?, image_url = ?, updated = ?, solved = ?, avg_rank = ?, last_submit = ? WHERE id = ?", TABLE),
+                        format("UPDATE %s SET name = ?, nickname = ?, email = ?, github_login = ?, linkedin_id = ?, image_url = ?, updated = ?, solved = ?, avg_rank = ?, last_submit = ? WHERE id = ?", table),
                         user.getName(), user.getNickname(), user.getEmail(), user.getGithubLogin(), user.getLinkedinId(), user.getImageUrl(), Instant.now().getEpochSecond(), user.getSolved(), user.getAvgRank(), Optional.ofNullable(user.getLastSubmit()).map(Instant::getEpochSecond).orElse(null), user.getId())
         );
 
@@ -98,7 +99,7 @@ public class JdbiUserRepository implements UserRepository {
     @Override
     public void delete(String userId) {
         jdbi.withHandle(
-                db -> db.execute(format("DELETE FROM %s WHERE id = ?", TABLE), userId)
+                db -> db.execute(format("DELETE FROM %s WHERE id = ?", table), userId)
         );
     }
 
@@ -112,7 +113,7 @@ public class JdbiUserRepository implements UserRepository {
 
     @Override
     public Collection<User> query(UserQuery query) {
-        String sql = format("SELECT * FROM %s", TABLE);
+        String sql = format("SELECT * FROM %s", table);
         List<String> conditions = new ArrayList<>();
         List<Object> params = new ArrayList<>();
         query.getNickname().ifPresent(nickname -> {
@@ -147,7 +148,7 @@ public class JdbiUserRepository implements UserRepository {
     }
 
     private String getAllQuery(boolean test) {
-        final String query = format("SELECT * FROM %s", TABLE);
+        final String query = format("SELECT * FROM %s", table);
         final String testClause = " WHERE test = false";
         return test ? query : query + testClause;
     }

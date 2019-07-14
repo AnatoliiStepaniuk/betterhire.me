@@ -15,26 +15,27 @@ import static java.lang.String.format;
 
 public class JdbiAccessTokenRepository implements AccessTokenRepository {
 
-    private static final String TABLE = "`sdehunt_db`.`user_access_token`";
+    private final String table;
 
     private Jdbi jdbi;
 
-    public JdbiAccessTokenRepository(DataSource dataSource) {
+    public JdbiAccessTokenRepository(DataSource dataSource, String db) {
         this.jdbi = Jdbi.create(dataSource);
+        this.table = "`" + db + "`.`user_access_token`";
     }
 
     @Override
     public void save(String userId, OAuthProvider provider, String token) {
         jdbi.withHandle(
                 db -> db.execute(format("INSERT INTO %s (`user`, `provider`, `token`) values (?, ?, ?) " +
-                        "ON DUPLICATE KEY UPDATE `token` = ?", TABLE), userId, provider.name().toLowerCase(), token, token)
+                        "ON DUPLICATE KEY UPDATE `token` = ?", table), userId, provider.name().toLowerCase(), token, token)
         );
     }
 
     @Override
     public Optional<AccessToken> find(String userId, OAuthProvider provider) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s WHERE user = ? AND provider = ?", TABLE), userId, provider.name().toLowerCase())
+                db -> db.select(format("SELECT * FROM %s WHERE user = ? AND provider = ?", table), userId, provider.name().toLowerCase())
                         .map(new AccessTokenRowMapper()).findFirst()
         );
     }

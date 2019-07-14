@@ -20,11 +20,12 @@ import static java.lang.String.format;
 
 public class JdbiTaskRepository implements TaskRepository {
 
-    private final static String TABLE = "`sdehunt_db`.`task`";
+    private final String table;
     private Jdbi jdbi;
 
-    public JdbiTaskRepository(DataSource dataSource) {
+    public JdbiTaskRepository(DataSource dataSource, String db) {
         this.jdbi = Jdbi.create(dataSource);
+        this.table = "`" + db + "`.`task`";
     }
 
     @Override
@@ -42,7 +43,7 @@ public class JdbiTaskRepository implements TaskRepository {
     }
 
     private String getAllQuery(boolean test) {
-        String query = format("SELECT * FROM %s WHERE enabled = true", TABLE);
+        String query = format("SELECT * FROM %s WHERE enabled = true", table);
         final String testClause = " AND test = false";
         if (!test) {
             query += testClause;
@@ -54,7 +55,7 @@ public class JdbiTaskRepository implements TaskRepository {
     @Override
     public Optional<Task> get(TaskID id) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s WHERE task = ? AND enabled = true", TABLE), id)
+                db -> db.select(format("SELECT * FROM %s WHERE task = ? AND enabled = true", table), id)
                         .map(new TaskRowMapper()).findOne()
         );
     }
@@ -62,7 +63,7 @@ public class JdbiTaskRepository implements TaskRepository {
     @Override
     public Optional<ShortTask> getShort(String id) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s WHERE task = ? AND enabled = true", TABLE), id) // TODO do not read full description from DB.
+                db -> db.select(format("SELECT * FROM %s WHERE task = ? AND enabled = true", table), id) // TODO do not read full description from DB.
                         .map(new ShortTaskRowMapper()).findOne()
         );
     }
@@ -70,7 +71,7 @@ public class JdbiTaskRepository implements TaskRepository {
     @Override
     public void delete(String id) {
         jdbi.withHandle(
-                db -> db.execute(format("UPDATE %s SET enabled = false WHERE task = ? AND enabled = true", TABLE), id)
+                db -> db.execute(format("UPDATE %s SET enabled = false WHERE task = ? AND enabled = true", table), id)
         );
     }
 
@@ -79,12 +80,12 @@ public class JdbiTaskRepository implements TaskRepository {
         Task t = get(updateRequest.getId()).orElseThrow();
         setFields(t, updateRequest);
         // Disabling old entry
-        jdbi.withHandle(db -> db.execute(format("UPDATE %s SET enabled = false WHERE task = ? AND enabled = true", TABLE), t.getId()));
+        jdbi.withHandle(db -> db.execute(format("UPDATE %s SET enabled = false WHERE task = ? AND enabled = true", table), t.getId()));
         // Creating new entry
         long now = Instant.now().getEpochSecond();
         jdbi.withHandle(
                 db -> db.execute(
-                        format("INSERT INTO %s (task, name, image_url, short_description, description, description_url, requirements, input, tags, participants, offers, bestOffer, created, submittable, test, enabled) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, true)", TABLE),
+                        format("INSERT INTO %s (task, name, image_url, short_description, description, description_url, requirements, input, tags, participants, offers, bestOffer, created, submittable, test, enabled) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, true)", table),
                         t.getId(), t.getName(), t.getImageUrl(), t.getShortDescription(), t.getDescription(), t.getDescriptionUrl(), t.getRequirements(), t.getInputFilesUrl(), stringify(t.getTags()), t.getParticipants(), t.getOffers(), t.getBestOffer(), now, t.isSubmittable(), t.isTest()
                 )
         );
@@ -93,7 +94,7 @@ public class JdbiTaskRepository implements TaskRepository {
     @Override
     public List<Task> getHistory(TaskID taskID) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s WHERE task = ? ORDER BY id DESC", TABLE), taskID)
+                db -> db.select(format("SELECT * FROM %s WHERE task = ? ORDER BY id DESC", table), taskID)
                         .map(new TaskRowMapper()).list()
         );
     }

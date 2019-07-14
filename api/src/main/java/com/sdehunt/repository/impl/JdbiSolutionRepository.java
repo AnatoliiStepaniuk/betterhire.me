@@ -22,12 +22,13 @@ import static java.lang.String.format;
 
 public class JdbiSolutionRepository implements SolutionRepository {
 
-    private static final String TABLE = "`sdehunt_db`.`solution`";
+    private final String table;
 
     private Jdbi jdbi;
 
-    public JdbiSolutionRepository(DataSource dataSource) {
+    public JdbiSolutionRepository(DataSource dataSource, String db) {
         this.jdbi = Jdbi.create(dataSource);
+        this.table = "`" + db + "`.`solution`";
     }
 
     @Override
@@ -37,7 +38,7 @@ public class JdbiSolutionRepository implements SolutionRepository {
 
         jdbi.withHandle(
                 db -> db.execute(
-                        format("INSERT INTO %s (`id`, `task`, `user`, `repo`, `commit`, `score`, `cause`, `test`, `created`) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", TABLE),
+                        format("INSERT INTO %s (`id`, `task`, `user`, `repo`, `commit`, `score`, `cause`, `test`, `created`) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", table),
                         id, s.getTaskId(), s.getUserId(), s.getRepo(), s.getCommit(), s.getScore(), s.getCause(), s.isTest(), Instant.now().getEpochSecond()
                 )
         );
@@ -49,7 +50,7 @@ public class JdbiSolutionRepository implements SolutionRepository {
     public void update(Solution s) {
         jdbi.withHandle(
                 db -> db.execute(
-                        format("UPDATE %s SET `task` = ?, `user` = ?, `repo` = ?, `commit` = ?, `score` = ?, `cause` = ?, `status` = ? WHERE `id` = ?", TABLE),
+                        format("UPDATE %s SET `task` = ?, `user` = ?, `repo` = ?, `commit` = ?, `score` = ?, `cause` = ?, `status` = ? WHERE `id` = ?", table),
                         s.getTaskId(), s.getUserId(), s.getRepo(), s.getCommit(), s.getScore(), s.getCause(), s.getStatus(), s.getId()
                 )
         );
@@ -58,19 +59,19 @@ public class JdbiSolutionRepository implements SolutionRepository {
     @Override
     public Optional<Solution> get(String id) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s WHERE id = ?", TABLE), id)
+                db -> db.select(format("SELECT * FROM %s WHERE id = ?", table), id)
                         .map(new SolutionRowMapper()).findFirst()
         );
     }
 
     @Override
     public void delete(String id) {
-        jdbi.withHandle(db -> db.execute(format("DELETE FROM %s WHERE id = ?", TABLE), id));
+        jdbi.withHandle(db -> db.execute(format("DELETE FROM %s WHERE id = ?", table), id));
     }
 
     @Override
     public List<Solution> query(SolutionQuery request) {
-        String sql = format("SELECT * FROM %s", TABLE);
+        String sql = format("SELECT * FROM %s", table);
         List<String> conditions = new ArrayList<>();
         List<Object> params = new ArrayList<>();
         request.getTask().ifPresent(taskId -> {
@@ -103,7 +104,7 @@ public class JdbiSolutionRepository implements SolutionRepository {
     @Override
     public boolean isPresentForUser(Solution solution) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s  WHERE `user`= ? AND `repo` = ? AND `commit` = ?", TABLE),
+                db -> db.select(format("SELECT * FROM %s  WHERE `user`= ? AND `repo` = ? AND `commit` = ?", table),
                         solution.getUserId(), solution.getRepo(), solution.getCommit())
                         .map(new SolutionRowMapper()).findFirst().isPresent()
         );

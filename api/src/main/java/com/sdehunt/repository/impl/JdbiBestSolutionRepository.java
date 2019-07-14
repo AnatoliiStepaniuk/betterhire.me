@@ -20,20 +20,21 @@ import static java.lang.String.format;
 
 public class JdbiBestSolutionRepository implements BestSolutionRepository {
 
-    private static final String TABLE = "`sdehunt_db`.`best_solution`";
-    private static final String BEST_SOLUTION_TABLE = "`sdehunt_db`.`best_solution`";
-    private static final String USER_TABLE = "`sdehunt_db`.`user`";
+    private final String table;
+    private final String userTable;
 
     private Jdbi jdbi;
 
-    public JdbiBestSolutionRepository(DataSource dataSource) {
+    public JdbiBestSolutionRepository(DataSource dataSource, String db) {
         this.jdbi = Jdbi.create(dataSource);
+        this.table = "`" + db + "`.`best_solution`";
+        this.userTable = "`" + db + "`.`user`";
     }
 
     @Override
     public List<BestSolution> getForTask(TaskID taskID, boolean test) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s WHERE task = ? AND test = ? ORDER BY score DESC", TABLE), taskID, test)
+                db -> db.select(format("SELECT * FROM %s WHERE task = ? AND test = ? ORDER BY score DESC", table), taskID, test)
                         .map(new BestSolutionRowMapper()).list()
         );
     }
@@ -41,7 +42,7 @@ public class JdbiBestSolutionRepository implements BestSolutionRepository {
     @Override
     public List<BestSolution> getForUser(String userId, boolean test) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s WHERE user = ? AND test = ?", TABLE), userId, test)
+                db -> db.select(format("SELECT * FROM %s WHERE user = ? AND test = ?", table), userId, test)
                         .map(new BestSolutionRowMapper()).list()
         );
     }
@@ -51,7 +52,7 @@ public class JdbiBestSolutionRepository implements BestSolutionRepository {
         if (bestSolutions.isEmpty()) {
             return;
         }
-        StringBuilder sql = new StringBuilder(format("INSERT INTO %s (`user`, `task`, `solution`, `rank`, `score`, `test`) VALUES ", TABLE));
+        StringBuilder sql = new StringBuilder(format("INSERT INTO %s (`user`, `task`, `solution`, `rank`, `score`, `test`) VALUES ", table));
         List<String> args = new ArrayList<>();
         List<BestSolution> bestSolutionsList = new ArrayList<>(bestSolutions);
         for (int i = 0; i < bestSolutionsList.size(); i++) {
@@ -82,7 +83,7 @@ public class JdbiBestSolutionRepository implements BestSolutionRepository {
     public List<BestTaskResult> bestTaskResults(String taskId, boolean test) {
         return jdbi.withHandle(
                 db -> db.select(format("SELECT score, github_login, nickname FROM %s bs INNER JOIN %s u ON bs.`user` = u.`id`" +
-                        " WHERE `task` = ? AND bs.`test` = ? AND u.`test` = ? ORDER BY score DESC", BEST_SOLUTION_TABLE, USER_TABLE), taskId, test, test)
+                        " WHERE `task` = ? AND bs.`test` = ? AND u.`test` = ? ORDER BY score DESC", table, userTable), taskId, test, test)
                         .map(new BestTaskResultRowMapper()).list()
         );
     }
@@ -90,7 +91,7 @@ public class JdbiBestSolutionRepository implements BestSolutionRepository {
     @Override
     public List<BestUserResult> bestUserResults(String userId, boolean test) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s WHERE `user` = ? AND `test` = ?", BEST_SOLUTION_TABLE), userId, test)
+                db -> db.select(format("SELECT * FROM %s WHERE `user` = ? AND `test` = ?", table), userId, test)
                         .map(new BestUserResultRowMapper()).list()
         );
     }

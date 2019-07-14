@@ -23,6 +23,7 @@ import com.sdehunt.security.AppProperties;
 import com.sdehunt.service.BestSolutionService;
 import com.sdehunt.service.SolutionService;
 import com.zaxxer.hikari.HikariDataSource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -39,6 +40,21 @@ import javax.sql.DataSource;
 @SpringBootApplication
 @EnableConfigurationProperties(AppProperties.class)
 public class Application implements WebMvcConfigurer {
+
+    @Value("${RDS_HOST}")
+    private String rdsHost;
+
+    @Value("${RDS_PORT}")
+    private int rdsPort;
+
+    @Value("${RDS_USER}")
+    private String rdsUser;
+
+    @Value("${RDS_PASSWORD}")
+    private String rdsPassword;
+
+    @Value("${RDS_DB}")
+    private String rdsDb;
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
@@ -60,27 +76,27 @@ public class Application implements WebMvcConfigurer {
 
     @Bean
     public TaskRepository taskRepository(DataSource dataSource) {
-        return new JdbiTaskRepository(dataSource);
+        return new JdbiTaskRepository(dataSource, rdsDb);
     }
 
     @Bean
     public SolutionRepository solutionRepository(DataSource dataSource) {
-        return new JdbiSolutionRepository(dataSource);
+        return new JdbiSolutionRepository(dataSource, rdsDb);
     }
 
     @Bean
     public UserRepository userRepository(DataSource dataSource) {
-        return new JdbiUserRepository(dataSource);
+        return new JdbiUserRepository(dataSource, rdsDb);
     }
 
     @Bean
     public AccessTokenRepository accessTokenRepository(DataSource dataSource) {
-        return new JdbiAccessTokenRepository(dataSource);
+        return new JdbiAccessTokenRepository(dataSource, rdsDb);
     }
 
     @Bean
     public BestSolutionRepository bestSolutionRepository(DataSource dataSource) {
-        return new JdbiBestSolutionRepository(dataSource);
+        return new JdbiBestSolutionRepository(dataSource, rdsDb);
     }
 
     @Bean
@@ -121,11 +137,11 @@ public class Application implements WebMvcConfigurer {
     }
 
     @Bean
-    public DataSource dataSource(ParameterService params) {
+    public DataSource dataSource() {
         HikariDataSource dataSource = new HikariDataSource();
-        dataSource.setJdbcUrl("jdbc:mysql://" + params.get("RDS_HOST") + ":" + params.get("RDS_PORT") + "?useSSL=true&verifyServerCertificate=true");
-        dataSource.setUsername(params.get("RDS_USER"));
-        dataSource.setPassword(params.get("RDS_PASSWORD"));
+        dataSource.setJdbcUrl("jdbc:mysql://" + rdsHost + ":" + rdsPort + "?useSSL=true&verifyServerCertificate=true");
+        dataSource.setUsername(rdsUser);
+        dataSource.setPassword(rdsPassword);
         return dataSource;
     }
 
