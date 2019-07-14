@@ -18,6 +18,7 @@ public class TaskApiIT extends AbstractApiTest {
 
     private final static String TASKS = "/tasks";
     private final static String SHORT = "/short";
+    private final static String HISTORY = "/history";
 
     private final static Random random = new Random();
 
@@ -102,6 +103,26 @@ public class TaskApiIT extends AbstractApiTest {
                 .body("participants", is(participants))
                 .body("offers", is(offers))
                 .body("bestOffer", is(bestOffer));
+
+        // Check history
+        host().contentType(APP_JSON)
+                .get(TASKS + "/" + taskId.name().toLowerCase() + HISTORY)
+                .then()
+                .log().ifValidationFails()
+                .statusCode(SUCCESS)
+                .body("[0].id", equalToIgnoringCase(taskId.name()))
+                .body("[0].description", is(description))
+                .body("[0].descriptionUrl", is(descriptionUrl))
+                .body("[0].shortDescription", is(shortDescription))
+                .body("[0].name", is(name))
+                .body("[0].requirements", is(requirements))
+                .body("[0].inputFilesUrl", is(inputFilesUrl))
+                .body("[0].test", is(true))
+                .body("[0].tags", contains(tag.name()))
+                .body("[0].participants", is(participants))
+                .body("[0].offers", is(offers))
+                .body("[0].bestOffer", is(bestOffer));
+
 
         // Getting all tasks
         Task[] tasks = host().get(TASKS + "?test=true")

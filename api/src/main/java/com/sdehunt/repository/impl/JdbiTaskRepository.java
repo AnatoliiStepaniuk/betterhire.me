@@ -90,6 +90,14 @@ public class JdbiTaskRepository implements TaskRepository {
         );
     }
 
+    @Override
+    public List<Task> getHistory(TaskID taskID) {
+        return jdbi.withHandle(
+                db -> db.select(format("SELECT * FROM %s WHERE task = ? ORDER BY id DESC", TABLE), taskID)
+                        .map(new TaskRowMapper()).list()
+        );
+    }
+
     private void setFields(Task task, Task t) {
         Optional.ofNullable(t.getDescription()).ifPresent(task::setDescription);
         Optional.ofNullable(t.getDescriptionUrl()).ifPresent(task::setDescriptionUrl);

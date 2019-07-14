@@ -41,6 +41,11 @@ public class TaskController {
         return tasks.getShort(taskId).orElseThrow(TaskNotFoundException::new);
     }
 
+    @RequestMapping(method = GET, path = "/{taskId}/history", produces = APPLICATION_JSON_VALUE)
+    public List<Task> getTaskHistory(@PathVariable("taskId") String taskId) {
+        return tasks.getHistory(TaskID.of(taskId));
+    }
+
     @RequestMapping(method = PUT, path = "/{taskId}", produces = APPLICATION_JSON_VALUE)
     public void update(@PathVariable("taskId") String taskId, @RequestBody UpdateTaskDTO request) {
         Task taskToUpdate = new Task();

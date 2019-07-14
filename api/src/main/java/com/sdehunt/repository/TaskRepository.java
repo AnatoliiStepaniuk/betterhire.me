@@ -50,4 +50,8 @@ public interface TaskRepository {
      */
     void update(Task task);
 
+    /**
+     * Returns history of task changes.
+     */
+    List<Task> getHistory(TaskID taskID);
 }
