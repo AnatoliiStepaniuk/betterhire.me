@@ -18,7 +18,6 @@ public class ShortTask {
     private Integer bestOffer;
     private Set<Tag> tags;
     private Instant created;
-    private Instant updated;
     private boolean enabled;
     private boolean submittable;
     private boolean test;

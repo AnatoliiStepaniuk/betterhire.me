@@ -42,35 +42,35 @@ public class JdbiTaskRepository implements TaskRepository {
     }
 
     private String getAllQuery(boolean test) {
-        String query = format("SELECT * FROM %s", TABLE);
-        final String testClause = " WHERE test = false";
+        String query = format("SELECT * FROM %s WHERE enabled = true", TABLE);
+        final String testClause = " AND test = false";
         if (!test) {
             query += testClause;
         }
-        query += " ORDER BY `updated` DESC";
+        query += " ORDER BY `created` DESC";
         return query;
     }
 
     @Override
     public Optional<Task> get(TaskID id) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s WHERE id = ?", TABLE), id)
-                        .map(new TaskRowMapper()).findFirst()
+                db -> db.select(format("SELECT * FROM %s WHERE task = ? AND enabled = true", TABLE), id)
+                        .map(new TaskRowMapper()).findOne()
         );
     }
 
     @Override
     public Optional<ShortTask> getShort(String id) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s WHERE id = ?", TABLE), id) // TODO do not read full description from DB.
-                        .map(new ShortTaskRowMapper()).findFirst()
+                db -> db.select(format("SELECT * FROM %s WHERE task = ? AND enabled = true", TABLE), id) // TODO do not read full description from DB.
+                        .map(new ShortTaskRowMapper()).findOne()
         );
     }
 
     @Override
     public void delete(String id) {
         jdbi.withHandle(
-                db -> db.execute(format("DELETE FROM %s WHERE id = ?", TABLE), id)
+                db -> db.execute(format("UPDATE %s SET enabled = false WHERE task = ? AND enabled = true", TABLE), id)
         );
     }
 
@@ -78,11 +78,14 @@ public class JdbiTaskRepository implements TaskRepository {
     public void update(Task updateRequest) {
         Task t = get(updateRequest.getId()).orElseThrow();
         setFields(t, updateRequest);
+        // Disabling old entry
+        jdbi.withHandle(db -> db.execute(format("UPDATE %s SET enabled = false WHERE task = ? AND enabled = true", TABLE), t.getId()));
+        // Creating new entry
         long now = Instant.now().getEpochSecond();
         jdbi.withHandle(
                 db -> db.execute(
-                        format("UPDATE %s SET name = ?, short_description = ?, description = ?, description_url = ?, requirements = ?, input = ?, tags = ?, participants = ?, offers = ?, bestOffer = ?, updated = ? WHERE id = ?", TABLE),
-                        t.getName(), t.getShortDescription(), t.getDescription(), t.getDescriptionUrl(), t.getRequirements(), t.getInputFilesUrl(), stringify(t.getTags()), t.getParticipants(), t.getOffers(), t.getBestOffer(), now, t.getId()
+                        format("INSERT INTO %s (task, name, image_url, short_description, description, description_url, requirements, input, tags, participants, offers, bestOffer, created, submittable, test, enabled) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, true)", TABLE),
+                        t.getId(), t.getName(), t.getImageUrl(), t.getShortDescription(), t.getDescription(), t.getDescriptionUrl(), t.getRequirements(), t.getInputFilesUrl(), stringify(t.getTags()), t.getParticipants(), t.getOffers(), t.getBestOffer(), now, t.isSubmittable(), t.isTest()
                 )
         );
     }
@@ -131,7 +134,7 @@ public class JdbiTaskRepository implements TaskRepository {
                     .setDescriptionUrl(rs.getString("description_url"))
                     .setInputFilesUrl(rs.getString("input"))
                     .setRequirements(rs.getString("requirements"))
-                    .setId(TaskID.of(rs.getString("id")))
+                    .setId(TaskID.of(rs.getString("task")))
                     .setName(rs.getString("name"))
                     .setShortDescription(rs.getString("short_description"))
                     .setImageUrl(rs.getString("image_url"))
@@ -141,7 +144,6 @@ public class JdbiTaskRepository implements TaskRepository {
                     .setSubmittable(rs.getBoolean("submittable"))
                     .setEnabled(rs.getBoolean("enabled"))
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")))
-                    .setUpdated(Instant.ofEpochSecond(rs.getLong("updated")))
                     .setTest(rs.getBoolean("test"))
                     .setTags(tagsFromString(rs.getString("tags")));
             return task;
@@ -152,7 +154,7 @@ public class JdbiTaskRepository implements TaskRepository {
         @Override
         public ShortTask map(ResultSet rs, StatementContext ctx) throws SQLException {
             return new ShortTask()
-                    .setId(TaskID.of(rs.getString("id")))
+                    .setId(TaskID.of(rs.getString("task")))
                     .setName(rs.getString("name"))
                     .setShortDescription(rs.getString("short_description"))
                     .setImageUrl(rs.getString("image_url"))
@@ -162,7 +164,6 @@ public class JdbiTaskRepository implements TaskRepository {
                     .setSubmittable(rs.getBoolean("submittable"))
                     .setEnabled(rs.getBoolean("enabled"))
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")))
-                    .setUpdated(Instant.ofEpochSecond(rs.getLong("updated")))
                     .setTest(rs.getBoolean("test"))
                     .setTags(tagsFromString(rs.getString("tags")));
 
