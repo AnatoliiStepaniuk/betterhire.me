@@ -54,12 +54,14 @@ public class GeneralLettersScoreCounter implements TaskScoreCounter {
 
         long count = 0;
         for (int i = 0; i < inputLettersFiles.size(); i++) {
-            String fileName = FileUtils.fileName(solutionFiles.get(i));
+            String inputWordsFile = FileUtils.fileName(inputWordsFiles.get(i));
+            String inputLettersFile = FileUtils.fileName(inputLettersFiles.get(i));
+            String solutionsFile = FileUtils.fileName(solutionFiles.get(i));
             Map<Character, Integer> inputLetters = lettersReader.readLetters(FileUtils.fileName(inputLettersFiles.get(i)));
             List<String> inputWords = Files.readAllLines(Paths.get(FileUtils.fileName(inputWordsFiles.get(i))));
-            List<String> solutionWords = Files.readAllLines(Paths.get(fileName));
+            List<String> solutionWords = Files.readAllLines(Paths.get(solutionsFile));
 
-            count += lettersScoreCounter.count(fileName, inputLetters, inputWords, solutionWords);
+            count += lettersScoreCounter.count(inputWordsFile, inputLettersFile, inputLetters, inputWords, solutionWords);
         }
 
         return count;
