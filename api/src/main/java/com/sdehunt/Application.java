@@ -120,8 +120,8 @@ public class Application implements WebMvcConfigurer {
     }
 
     @Bean
-    public BestSolutionService bestSolutionService(BestSolutionRepository bestSolutions, UserRepository users) {
-        return new BestSolutionService(bestSolutions, users);
+    public BestSolutionService bestSolutionService(BestSolutionRepository bestSolutions, UserRepository users, TaskRepository tasks) {
+        return new BestSolutionService(bestSolutions, users, tasks);
     }
 
     @Bean

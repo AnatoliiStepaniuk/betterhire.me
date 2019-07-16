@@ -85,8 +85,8 @@ public class JdbiTaskRepository implements TaskRepository {
         long now = Instant.now().getEpochSecond();
         jdbi.withHandle(
                 db -> db.execute(
-                        format("INSERT INTO %s (task, name, image_url, short_description, description, description_url, requirements, input, tags, participants, users, offers, bestOffer, created, lastSubmit, submittable, test, enabled) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, true)", table),
-                        t.getId(), t.getName(), t.getImageUrl(), t.getShortDescription(), t.getDescription(), t.getDescriptionUrl(), t.getRequirements(), t.getInputFilesUrl(), stringify(t.getTags()), t.getParticipants(), t.getUsers(), t.getOffers(), t.getBestOffer(), now, t.getLastSubmit(), t.isSubmittable(), t.isTest()
+                        format("INSERT INTO %s (task, name, image_url, short_description, description, description_url, requirements, input, tags, participants, users, offers, bestOffer, created, last_submit, submittable, test, enabled) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, true)", table),
+                        t.getId(), t.getName(), t.getImageUrl(), t.getShortDescription(), t.getDescription(), t.getDescriptionUrl(), t.getRequirements(), t.getInputFilesUrl(), stringify(t.getTags()), t.getParticipants(), t.getUsers(), t.getOffers(), t.getBestOffer(), now, t.getLastSubmit().getEpochSecond(), t.isSubmittable(), t.isTest()
                 )
         );
     }

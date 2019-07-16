@@ -1,11 +1,15 @@
 package com.sdehunt.service;
 
+import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.BestSolution;
 import com.sdehunt.commons.model.Solution;
+import com.sdehunt.commons.model.Task;
 import com.sdehunt.commons.model.User;
 import com.sdehunt.repository.BestSolutionRepository;
+import com.sdehunt.repository.TaskRepository;
 import com.sdehunt.repository.UserRepository;
 
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -13,10 +17,12 @@ public class BestSolutionService {
 
     private final BestSolutionRepository bestSolutions;
     private final UserRepository users;
+    private final TaskRepository tasks;
 
-    public BestSolutionService(BestSolutionRepository bestSolutions, UserRepository users) {
+    public BestSolutionService(BestSolutionRepository bestSolutions, UserRepository users, TaskRepository tasks) {
         this.bestSolutions = bestSolutions;
         this.users = users;
+        this.tasks = tasks;
     }
 
     public void updateIfNeeded(Solution s, long score) {
@@ -24,6 +30,9 @@ public class BestSolutionService {
         List<BestSolution> solutions = bestSolutions.getForTask(s.getTaskId(), s.isTest());
         // Updating score for user or adding new entry if it is his first attempt
         Optional<BestSolution> betterSolution = updateUserSolutionIfBetter(solutions, s, score);
+        // Updating number of users that solved this task
+        updateTask(s.getTaskId(), solutions);
+
         if (betterSolution.isEmpty()) {
             return;
         }
@@ -36,6 +45,15 @@ public class BestSolutionService {
         bestSolutions.save(solutionsToUpdate);
         // Updating average rank for users with changed rank for this task
         solutionsToUpdate.forEach(bs -> updateUser(bs.getUserId()));
+    }
+
+    private void updateTask(TaskID taskID, List<BestSolution> solutions) {
+        int usersCount = solutions.stream().collect(Collectors.groupingBy(BestSolution::getUserId)).size();
+        Task task = new Task();
+        task.setId(taskID);
+        task.setUsers(usersCount);
+        task.setLastSubmit(Instant.now());
+        tasks.update(task);
     }
 
     private int getRank(int position, int total) {
