@@ -85,8 +85,8 @@ public class JdbiTaskRepository implements TaskRepository {
         long now = Instant.now().getEpochSecond();
         jdbi.withHandle(
                 db -> db.execute(
-                        format("INSERT INTO %s (task, name, image_url, short_description, description, description_url, requirements, input, tags, participants, offers, bestOffer, created, submittable, test, enabled) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, true)", table),
-                        t.getId(), t.getName(), t.getImageUrl(), t.getShortDescription(), t.getDescription(), t.getDescriptionUrl(), t.getRequirements(), t.getInputFilesUrl(), stringify(t.getTags()), t.getParticipants(), t.getOffers(), t.getBestOffer(), now, t.isSubmittable(), t.isTest()
+                        format("INSERT INTO %s (task, name, image_url, short_description, description, description_url, requirements, input, tags, participants, users, offers, bestOffer, created, lastSubmit, submittable, test, enabled) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, true)", table),
+                        t.getId(), t.getName(), t.getImageUrl(), t.getShortDescription(), t.getDescription(), t.getDescriptionUrl(), t.getRequirements(), t.getInputFilesUrl(), stringify(t.getTags()), t.getParticipants(), t.getUsers(), t.getOffers(), t.getBestOffer(), now, t.getLastSubmit(), t.isSubmittable(), t.isTest()
                 )
         );
     }
@@ -108,9 +108,10 @@ public class JdbiTaskRepository implements TaskRepository {
         Optional.ofNullable(t.getImageUrl()).ifPresent(task::setImageUrl);
         Optional.ofNullable(t.getShortDescription()).ifPresent(task::setShortDescription);
         Optional.ofNullable(t.getParticipants()).ifPresent(task::setParticipants);
+        Optional.ofNullable(t.getUsers()).ifPresent(task::setUsers);
         Optional.ofNullable(t.getOffers()).ifPresent(task::setOffers);
         Optional.ofNullable(t.getBestOffer()).ifPresent(task::setBestOffer);
-        Optional.ofNullable(t.getTags()).ifPresent(task::setTags);
+        Optional.ofNullable(t.getLastSubmit()).ifPresent(task::setLastSubmit);
         Optional.ofNullable(t.getTags()).ifPresent(task::setTags);
     }
 
@@ -148,11 +149,13 @@ public class JdbiTaskRepository implements TaskRepository {
                     .setShortDescription(rs.getString("short_description"))
                     .setImageUrl(rs.getString("image_url"))
                     .setParticipants(rs.getInt("participants"))
+                    .setUsers(rs.getInt("users"))
                     .setOffers(rs.getInt("offers"))
                     .setBestOffer(rs.getInt("bestOffer"))
                     .setSubmittable(rs.getBoolean("submittable"))
                     .setEnabled(rs.getBoolean("enabled"))
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")))
+                    .setLastSubmit(Optional.ofNullable(rs.getString("last_submit")).map(Long::valueOf).map(Instant::ofEpochSecond).orElse(null))
                     .setTest(rs.getBoolean("test"))
                     .setTags(tagsFromString(rs.getString("tags")));
             return task;
@@ -168,11 +171,13 @@ public class JdbiTaskRepository implements TaskRepository {
                     .setShortDescription(rs.getString("short_description"))
                     .setImageUrl(rs.getString("image_url"))
                     .setParticipants(rs.getInt("participants"))
+                    .setUsers(rs.getInt("users"))
                     .setOffers(rs.getInt("offers"))
                     .setBestOffer(rs.getInt("bestOffer"))
                     .setSubmittable(rs.getBoolean("submittable"))
                     .setEnabled(rs.getBoolean("enabled"))
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")))
+                    .setLastSubmit(Optional.ofNullable(rs.getString("last_submit")).map(Long::valueOf).map(Instant::ofEpochSecond).orElse(null))
                     .setTest(rs.getBoolean("test"))
                     .setTags(tagsFromString(rs.getString("tags")));
 

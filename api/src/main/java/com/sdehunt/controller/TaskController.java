@@ -60,9 +60,6 @@ public class TaskController {
         taskToUpdate.setRequirements(request.getRequirements());
         taskToUpdate.setInputFilesUrl(request.getInputFilesUrl());
         taskToUpdate.setTags(request.getTags());
-        taskToUpdate.setParticipants(request.getParticipants());
-        taskToUpdate.setOffers(request.getOffers());
-        taskToUpdate.setBestOffer(request.getBestOffer());
 
         tasks.update(taskToUpdate);
     }

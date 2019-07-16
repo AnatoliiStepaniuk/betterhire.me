@@ -34,9 +34,6 @@ public class TaskApiIT extends AbstractApiTest {
         String inputFilesUrl = UUID.randomUUID().toString();
         Tag tag = Tag.values()[new Random().nextInt(Tag.values().length)];
         Set<Tag> tags = Collections.singleton(tag);
-        int participants = random.nextInt();
-        int offers = random.nextInt();
-        int bestOffer = random.nextInt();
 
         // Verify task is present
         host().contentType(APP_JSON)
@@ -54,10 +51,7 @@ public class TaskApiIT extends AbstractApiTest {
                 .setName(name)
                 .setRequirements(requirements)
                 .setInputFilesUrl(inputFilesUrl)
-                .setTags(tags)
-                .setParticipants(participants)
-                .setOffers(offers)
-                .setBestOffer(bestOffer);
+                .setTags(tags);
 
         // Updating task
         host()
@@ -82,10 +76,7 @@ public class TaskApiIT extends AbstractApiTest {
                 .body("requirements", is(requirements))
                 .body("inputFilesUrl", is(inputFilesUrl))
                 .body("test", is(true))
-                .body("tags", contains(tag.name()))
-                .body("participants", is(participants))
-                .body("offers", is(offers))
-                .body("bestOffer", is(bestOffer));
+                .body("tags", contains(tag.name()));
 
         // Verify updated
         host().contentType(APP_JSON)
@@ -99,10 +90,7 @@ public class TaskApiIT extends AbstractApiTest {
                 .body("shortDescription", is(shortDescription))
                 .body("name", is(name))
                 .body("test", is(true))
-                .body("tags", contains(tag.name()))
-                .body("participants", is(participants))
-                .body("offers", is(offers))
-                .body("bestOffer", is(bestOffer));
+                .body("tags", contains(tag.name()));
 
         // Check history
         host().contentType(APP_JSON)
@@ -118,10 +106,7 @@ public class TaskApiIT extends AbstractApiTest {
                 .body("[0].requirements", is(requirements))
                 .body("[0].inputFilesUrl", is(inputFilesUrl))
                 .body("[0].test", is(true))
-                .body("[0].tags", contains(tag.name()))
-                .body("[0].participants", is(participants))
-                .body("[0].offers", is(offers))
-                .body("[0].bestOffer", is(bestOffer));
+                .body("[0].tags", contains(tag.name()));
 
 
         // Getting all tasks
@@ -137,9 +122,6 @@ public class TaskApiIT extends AbstractApiTest {
         Assert.assertEquals(requirements, foundTask.getRequirements());
         Assert.assertEquals(inputFilesUrl, foundTask.getInputFilesUrl());
         Assert.assertEquals(tags, foundTask.getTags());
-        Assert.assertEquals(participants, (int) foundTask.getParticipants());
-        Assert.assertEquals(offers, (int) foundTask.getOffers());
-        Assert.assertEquals(bestOffer, (int) foundTask.getBestOffer());
 
         ShortTask[] shortTasks = host().get(TASKS + SHORT + "?test=true")
                 .as(ShortTask[].class);

@@ -1,0 +1,8 @@
+ALTER TABLE `task`
+    ADD COLUMN `users` INT(10) NOT NULL DEFAULT 0 AFTER `tags`;
+ALTER TABLE `task`
+    ADD COLUMN `last_submit` INT(10) NULL DEFAULT NULL AFTER `users`;
+ALTER TABLE `task`
+    CHANGE COLUMN `id` `id` INT(10) NOT NULL;
+ALTER TABLE `task`
+    CHANGE COLUMN `offers` `offers` INT(10) NOT NULL DEFAULT 0;

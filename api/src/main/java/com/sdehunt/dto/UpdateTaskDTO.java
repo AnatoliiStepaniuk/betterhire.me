@@ -17,7 +17,4 @@ public class UpdateTaskDTO {
     private Set<Tag> tags;
     private boolean enabled;
     private boolean submittable;
-    private Integer participants;
-    private Integer offers;
-    private Integer bestOffer;
 }
