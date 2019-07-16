@@ -28,7 +28,7 @@ public class LettersScoreCounterTest {
         solutionWords.add("hire");
         solutionWords.add("me");
 
-        long count = lettersScoreCounter.count(UUID.randomUUID().toString(), inputLetters, inputWords, solutionWords);
+        long count = lettersScoreCounter.count(UUID.randomUUID().toString(), UUID.randomUUID().toString(), inputLetters, inputWords, solutionWords);
         Assert.assertEquals(6, count);
     }
 }

@@ -70,5 +70,9 @@ app:
       - https://${FRONT_END_HOST}/oauth2/redirect
       - https://www.${FRONT_END_HOST}:${FRONT_END_PORT}/oauth2/redirect
       - https://www.${FRONT_END_HOST}/oauth2/redirect
+      - https://${FRONT_END_HOST}:${FRONT_END_PORT}/oauth2/redirect?page=/tasks
+      - https://${FRONT_END_HOST}/oauth2/redirect?page=/tasks
+      - https://www.${FRONT_END_HOST}:${FRONT_END_PORT}/oauth2/redirect?page=/tasks
+      - https://www.${FRONT_END_HOST}/oauth2/redirect?page=/tasks
 #      - myandroidapp://oauth2/redirect
 #      - myiosapp://oauth2/redirect
