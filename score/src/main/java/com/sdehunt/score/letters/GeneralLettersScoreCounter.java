@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class GeneralLettersScoreCounter implements TaskScoreCounter {
 
@@ -58,8 +59,8 @@ public class GeneralLettersScoreCounter implements TaskScoreCounter {
             String inputLettersFile = FileUtils.fileName(inputLettersFiles.get(i));
             String solutionsFile = FileUtils.fileName(solutionFiles.get(i));
             Map<Character, Integer> inputLetters = lettersReader.readLetters(FileUtils.fileName(inputLettersFiles.get(i)));
-            List<String> inputWords = Files.readAllLines(Paths.get(FileUtils.fileName(inputWordsFiles.get(i))));
-            List<String> solutionWords = Files.readAllLines(Paths.get(solutionsFile));
+            List<String> inputWords = Files.readAllLines(Paths.get(FileUtils.fileName(inputWordsFiles.get(i)))).stream().map(String::trim).collect(Collectors.toList());
+            List<String> solutionWords = Files.readAllLines(Paths.get(solutionsFile)).stream().map(String::trim).collect(Collectors.toList());
 
             count += lettersScoreCounter.count(inputWordsFile, inputLettersFile, inputLetters, inputWords, solutionWords);
         }
