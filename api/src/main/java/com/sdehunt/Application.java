@@ -9,10 +9,7 @@ import com.sdehunt.commons.params.ParameterService;
 import com.sdehunt.commons.params.SsmParameterService;
 import com.sdehunt.commons.repo.AccessTokenRepository;
 import com.sdehunt.commons.repo.JdbiAccessTokenRepository;
-import com.sdehunt.repository.BestSolutionRepository;
-import com.sdehunt.repository.SolutionRepository;
-import com.sdehunt.repository.TaskRepository;
-import com.sdehunt.repository.UserRepository;
+import com.sdehunt.repository.*;
 import com.sdehunt.repository.impl.JdbiBestSolutionRepository;
 import com.sdehunt.repository.impl.JdbiSolutionRepository;
 import com.sdehunt.repository.impl.JdbiTaskRepository;
@@ -21,6 +18,7 @@ import com.sdehunt.score.GeneralFilesDownloader;
 import com.sdehunt.score.GeneralScoreCounter;
 import com.sdehunt.security.AppProperties;
 import com.sdehunt.service.BestSolutionService;
+import com.sdehunt.service.SolutionRepoService;
 import com.sdehunt.service.SolutionService;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Value;
@@ -85,6 +83,16 @@ public class Application implements WebMvcConfigurer {
     }
 
     @Bean
+    public SolutionRepoRepository solutionRepoRepository(DataSource dataSource) {
+        return null; // TODO
+    }
+
+    @Bean
+    public TemplateRepository templateRepository(DataSource dataSource) {
+        return null; // TODO
+    }
+
+    @Bean
     public UserRepository userRepository(DataSource dataSource) {
         return new JdbiUserRepository(dataSource, rdsDb);
     }
@@ -122,6 +130,14 @@ public class Application implements WebMvcConfigurer {
     @Bean
     public BestSolutionService bestSolutionService(BestSolutionRepository bestSolutions, UserRepository users, TaskRepository tasks) {
         return new BestSolutionService(bestSolutions, users, tasks);
+    }
+
+    @Bean
+    public SolutionRepoService solutionRepoService(TemplateRepository templates,
+                                                   UserRepository users,
+                                                   GithubClient githubClient,
+                                                   SolutionRepoRepository solutionRepos) {
+        return new SolutionRepoService(templates, users, githubClient, solutionRepos);
     }
 
     @Bean

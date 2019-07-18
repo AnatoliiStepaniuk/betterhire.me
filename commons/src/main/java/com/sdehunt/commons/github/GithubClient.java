@@ -55,4 +55,22 @@ public interface GithubClient {
     default boolean isBranch(String userId, String repo, String input) throws RepositoryNotFoundException, GithubTimeoutException {
         return getBranches(userId, repo).contains(input);
     }
+
+    /**
+     * Creates a new repository from template repo.
+     */
+    void copyRepo(String template, String repoName);
+
+    /**
+     * Invites user to be a collaborator for the repo and returns invitation link.
+     */
+    String invite(String repo, String githubLogin);
+
+    /**
+     * Registers a push webhook for specified url
+     *
+     * @param repoName
+     */
+    void createWebhook(String repoName, String url, String secret);
+
 }
