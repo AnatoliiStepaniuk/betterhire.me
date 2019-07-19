@@ -9,6 +9,7 @@ import lombok.Data;
 @Data
 public class Template {
 
-    TaskID taskID;
-    String repo;
+    private TaskID taskID;
+    private String repo;
+
 }

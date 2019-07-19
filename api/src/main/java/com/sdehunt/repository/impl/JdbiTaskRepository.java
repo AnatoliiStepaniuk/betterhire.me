@@ -21,7 +21,7 @@ import static java.lang.String.format;
 public class JdbiTaskRepository implements TaskRepository {
 
     private final String table;
-    private Jdbi jdbi;
+    private final Jdbi jdbi;
 
     public JdbiTaskRepository(DataSource dataSource, String db) {
         this.jdbi = Jdbi.create(dataSource);

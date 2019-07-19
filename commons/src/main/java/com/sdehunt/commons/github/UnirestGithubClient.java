@@ -135,6 +135,22 @@ public class UnirestGithubClient implements GithubClient {
         throw new GithubTimeoutException();
     }
 
+    @Override
+    public void copyRepo(String template, String repoName) {
+        // TODO
+    }
+
+    @Override
+    public String invite(String repo, String githubLogin) {
+        return null; // TODO
+
+    }
+
+    @Override
+    public void createWebhook(String repoName, String url, String secret) {
+        // TODO
+    }
+
     @SneakyThrows({IOException.class, UnirestException.class})
     private Collection<String> getBranchesOnce(String userId, String repo) throws RepositoryNotFoundException {
         String url = API_DOMAIN + "/" + REPOS + "/" + repo + "/" + BRANCHES;

@@ -140,6 +140,21 @@ public class JavaGithubClient implements GithubClient {
         throw new GithubTimeoutException();
     }
 
+    @Override
+    public void copyRepo(String template, String repoName) {
+        throw new RuntimeException("Method not implemented;");
+    }
+
+    @Override
+    public String invite(String repo, String githubLogin) {
+        throw new RuntimeException("Method not implemented;");
+    }
+
+    @Override
+    public void createWebhook(String repoName, String url, String secret) {
+        throw new RuntimeException("Method not implemented;");
+    }
+
     @SneakyThrows({IOException.class, URISyntaxException.class, InterruptedException.class})
     private Collection<String> getBranchesOnce(String userId, String repo) throws RepositoryNotFoundException {
         URI uri = new URI(API_DOMAIN + "/" + REPOS + "/" + repo + "/" + BRANCHES);

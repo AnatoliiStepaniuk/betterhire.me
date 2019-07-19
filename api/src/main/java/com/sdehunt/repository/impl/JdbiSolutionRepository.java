@@ -24,7 +24,7 @@ public class JdbiSolutionRepository implements SolutionRepository {
 
     private final String table;
 
-    private Jdbi jdbi;
+    private final Jdbi jdbi;
 
     public JdbiSolutionRepository(DataSource dataSource, String db) {
         this.jdbi = Jdbi.create(dataSource);

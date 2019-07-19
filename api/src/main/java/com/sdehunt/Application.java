@@ -10,10 +10,7 @@ import com.sdehunt.commons.params.SsmParameterService;
 import com.sdehunt.commons.repo.AccessTokenRepository;
 import com.sdehunt.commons.repo.JdbiAccessTokenRepository;
 import com.sdehunt.repository.*;
-import com.sdehunt.repository.impl.JdbiBestSolutionRepository;
-import com.sdehunt.repository.impl.JdbiSolutionRepository;
-import com.sdehunt.repository.impl.JdbiTaskRepository;
-import com.sdehunt.repository.impl.JdbiUserRepository;
+import com.sdehunt.repository.impl.*;
 import com.sdehunt.score.GeneralFilesDownloader;
 import com.sdehunt.score.GeneralScoreCounter;
 import com.sdehunt.security.AppProperties;
@@ -84,12 +81,12 @@ public class Application implements WebMvcConfigurer {
 
     @Bean
     public SolutionRepoRepository solutionRepoRepository(DataSource dataSource) {
-        return null; // TODO
+        return new JdbiSolutionRepo(dataSource, rdsDb);
     }
 
     @Bean
     public TemplateRepository templateRepository(DataSource dataSource) {
-        return null; // TODO
+        return new JdbiTemplateRepository(dataSource, rdsDb);
     }
 
     @Bean
