@@ -15,3 +15,7 @@ CREATE TABLE `template`
     `repo` VARCHAR(140)                                               NOT NULL,
     PRIMARY KEY (`task`)
 );
+
+ALTER TABLE `betterhire_test`.`solution_repo`
+    ADD UNIQUE INDEX `repo_UNIQUE` (`repo` ASC);
+;

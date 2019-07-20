@@ -35,6 +35,14 @@ public class JdbiSolutionRepo implements SolutionRepoRepository {
     }
 
     @Override
+    public Optional<SolutionRepo> find(String repo) {
+        return jdbi.withHandle(
+                db -> db.select(format("SELECT * FROM %s WHERE repo = ?", table), repo)
+                        .map(new SolutionRepoRowMapper()).findFirst()
+        );
+    }
+
+    @Override
     public void save(TaskID taskId, String userId, String repo, String webhookSecret) {
         jdbi.withHandle(
                 db -> db.execute(format("INSERT INTO %s (`task`, `user`, `repo`, `webhook_secret`, `created`) VALUES (?, ?, ?, ?, ?)", table),

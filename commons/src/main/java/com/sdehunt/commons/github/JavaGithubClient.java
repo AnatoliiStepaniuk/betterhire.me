@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
 import com.sdehunt.commons.github.exceptions.GithubTimeoutException;
 import com.sdehunt.commons.github.exceptions.RepositoryNotFoundException;
+import com.sdehunt.commons.github.model.Permission;
 import com.sdehunt.commons.model.SimpleCommit;
 import com.sdehunt.commons.params.ParameterService;
 import com.sdehunt.commons.repo.AccessTokenRepository;
@@ -141,17 +142,17 @@ public class JavaGithubClient implements GithubClient {
     }
 
     @Override
-    public void copyRepo(String template, String repoName) {
+    public void copyRepo(String template, String owner, String repoName, String description, boolean isPrivate) {
         throw new RuntimeException("Method not implemented;");
     }
 
     @Override
-    public String invite(String repo, String githubLogin) {
+    public String invite(String repo, String githubLogin, Permission permission) {
         throw new RuntimeException("Method not implemented;");
     }
 
     @Override
-    public void createWebhook(String repoName, String url, String secret) {
+    public void createWebhook(String repo, String hookUrl, String secret) {
         throw new RuntimeException("Method not implemented;");
     }
 

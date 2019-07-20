@@ -21,7 +21,7 @@ public class LettersScoreCounter {
 
     private void checkWordPresent(String inputWordsFile, List<String> words, String word) {
         if (!words.remove(word)) {
-            String cause = "Word " + word + " is not present in input file " + inputWordsFile + " or present less times than used in output file.";
+            String cause = "Word '" + word + "' is not present in input file " + inputWordsFile + " or present less times than used in output file.";
             throw new InvalidSolutionException(cause);
         }
     }

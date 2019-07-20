@@ -5,7 +5,6 @@ import com.sdehunt.commons.github.GithubClient;
 import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
 import com.sdehunt.commons.util.FileUtils;
 
-import java.nio.file.Paths;
 import java.util.List;
 
 public class GeneralFilesDownloader {
@@ -22,7 +21,7 @@ public class GeneralFilesDownloader {
 
     public void downloadInputFiles(List<String> inputFiles) {
         for (String f : inputFiles) { // TODO it once CACHE IT SOMEHOW
-            fileDownloader.download(S3_PREFIX + f, Paths.get(FileUtils.fileName(f)));// TODO name files so that it does not clunch with files for other tasks
+            fileDownloader.download(S3_PREFIX + f, FileUtils.fileName(f));// TODO name files so that it does not clunch with files for other tasks
         }
     }
 

@@ -16,6 +16,11 @@ public interface SolutionRepoRepository {
     Optional<SolutionRepo> find(TaskID taskId, String userId);
 
     /**
+     * Returns repository by name
+     */
+    Optional<SolutionRepo> find(String repo);
+
+    /**
      * Creates new solution repo entry.
      */
     void save(TaskID taskID, String userId, String repo, String webhookSecret);

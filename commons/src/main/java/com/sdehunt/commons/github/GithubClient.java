@@ -3,6 +3,7 @@ package com.sdehunt.commons.github;
 import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
 import com.sdehunt.commons.github.exceptions.GithubTimeoutException;
 import com.sdehunt.commons.github.exceptions.RepositoryNotFoundException;
+import com.sdehunt.commons.github.model.Permission;
 
 import java.util.Collection;
 
@@ -58,19 +59,25 @@ public interface GithubClient {
 
     /**
      * Creates a new repository from template repo.
+     *
+     * @param template    Repository to create copy from
+     * @param owner       Owner of newly created repo
+     * @param repoName    New repo name
+     * @param description Description of new repo
+     * @param isPrivate   If new repository should be private
      */
-    void copyRepo(String template, String repoName);
+    void copyRepo(String template, String owner, String repoName, String description, boolean isPrivate);
 
     /**
      * Invites user to be a collaborator for the repo and returns invitation link.
      */
-    String invite(String repo, String githubLogin);
+    String invite(String repo, String githubLogin, Permission permission);
 
     /**
      * Registers a push webhook for specified url
      *
-     * @param repoName
+     * @param repo Username + reponame
      */
-    void createWebhook(String repoName, String url, String secret);
+    void createWebhook(String repo, String hookUrl, String secret);
 
 }
