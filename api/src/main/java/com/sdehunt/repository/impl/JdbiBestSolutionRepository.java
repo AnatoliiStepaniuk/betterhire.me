@@ -23,7 +23,7 @@ public class JdbiBestSolutionRepository implements BestSolutionRepository {
     private final String table;
     private final String userTable;
 
-    private Jdbi jdbi;
+    private final Jdbi jdbi;
 
     public JdbiBestSolutionRepository(DataSource dataSource, String db) {
         this.jdbi = Jdbi.create(dataSource);

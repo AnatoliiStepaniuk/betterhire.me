@@ -17,7 +17,7 @@ import static java.lang.String.format;
 
 public class JdbiUserRepository implements UserRepository {
     private final String table;
-    private Jdbi jdbi;
+    private final Jdbi jdbi;
 
     public JdbiUserRepository(DataSource dataSource, String db) {
         this.jdbi = Jdbi.create(dataSource);
