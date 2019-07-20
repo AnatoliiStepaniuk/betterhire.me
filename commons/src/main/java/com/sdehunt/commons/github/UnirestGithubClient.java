@@ -144,7 +144,6 @@ public class UnirestGithubClient implements GithubClient {
         throw new GithubTimeoutException();
     }
 
-    // TODO test
     @Override
     public void copyRepo(String template, String owner, String repoName, String description, boolean isPrivate) {
         String url = API_DOMAIN + "/" + REPOS + "/" + template + "/" + GENERATE;
@@ -167,7 +166,6 @@ public class UnirestGithubClient implements GithubClient {
         }
     }
 
-    // TODO test
     @Override
     @SneakyThrows({UnirestException.class})
     public String invite(String repo, String githubLogin, Permission permission) {
