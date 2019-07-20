@@ -1,6 +1,7 @@
 package com.sdehunt.service;
 
 import com.sdehunt.commons.TaskID;
+import com.sdehunt.commons.github.JavaGithubClient;
 import com.sdehunt.commons.model.BestSolution;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.Task;
@@ -8,6 +9,8 @@ import com.sdehunt.commons.model.User;
 import com.sdehunt.repository.BestSolutionRepository;
 import com.sdehunt.repository.TaskRepository;
 import com.sdehunt.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.util.*;
@@ -18,6 +21,8 @@ public class BestSolutionService {
     private final BestSolutionRepository bestSolutions;
     private final UserRepository users;
     private final TaskRepository tasks;
+
+    private final Logger logger = LoggerFactory.getLogger(JavaGithubClient.class);
 
     public BestSolutionService(BestSolutionRepository bestSolutions, UserRepository users, TaskRepository tasks) {
         this.bestSolutions = bestSolutions;
@@ -99,11 +104,18 @@ public class BestSolutionService {
     }
 
     private void updateUser(String userId) {
-        User user = users.get(userId).orElseThrow();
+        User user = users.get(userId).orElse(null);
+        if (user == null) {
+            logger.debug("User {} is not found", userId);
+            return;
+        }
+
         List<BestSolution> bestUserSolutions = bestSolutions.getForUser(userId);
         int avgRank = (int) (double) bestUserSolutions.stream().collect(Collectors.averagingInt(BestSolution::getRank));
         user.setAvgRank(avgRank).setSolved(bestUserSolutions.size());
         users.update(user);
+
+
     }
 
 }
