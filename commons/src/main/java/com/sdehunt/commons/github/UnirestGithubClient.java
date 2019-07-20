@@ -70,11 +70,14 @@ public class UnirestGithubClient implements GithubClient {
     }
 
     @Override
-    @SneakyThrows({UnirestException.class})
+    @SneakyThrows({UnirestException.class, IOException.class})
     public void download(String userId, String repo, String commit, String file) throws CommitOrFileNotFoundException {
         String path = RAW_DOMAIN + "/" + repo + "/" + commit + "/" + file;
 
         logger.debug(format("Downloading file %s of repo %s for commit %s", file, repo, commit));
+        if (Files.exists(Path.of(FileUtils.fileName(file)))) {
+            Files.delete(Path.of(FileUtils.fileName(file)));
+        }
         HttpResponse<File> response = Unirest.get(path)
                 .header("Authorization", "token " + getToken(userId))
                 .asFile(FileUtils.fileName(file));
@@ -147,7 +150,7 @@ public class UnirestGithubClient implements GithubClient {
     @Override
     public void copyRepo(String template, String owner, String repoName, String description, boolean isPrivate) {
         String url = API_DOMAIN + "/" + REPOS + "/" + template + "/" + GENERATE;
-
+        logger.debug("Creating repo name {} for owner {} from template {} with description {}", repoName, owner, template, description);
         CopyRepoDTO body = new CopyRepoDTO()
                 .setOwner(owner)
                 .setName(repoName)
@@ -161,7 +164,7 @@ public class UnirestGithubClient implements GithubClient {
                 .asEmpty();
 
         if (response.getStatus() != 201) {
-            logger.warn("Status code " + response.getStatus() + " for URL " + url);
+            logger.warn("Status code " + response.getStatus() + " for URL " + url + " body: " + response.getBody());
             throw new RuntimeException("Status code " + response.getStatus() + " for URL " + url);
         }
     }
