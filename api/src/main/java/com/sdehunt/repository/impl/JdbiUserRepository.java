@@ -148,9 +148,12 @@ public class JdbiUserRepository implements UserRepository {
     }
 
     private String getAllQuery(boolean test) {
-        final String query = format("SELECT * FROM %s", table);
+        String query = format("SELECT * FROM %s", table);
         final String testClause = " WHERE test = false";
-        return test ? query : query + testClause;
+        if (test) {
+            query += testClause;
+        }
+        return query + " ORDER BY avg_rank ASC";
     }
 
     private class UserRowMapper implements RowMapper<User> {
