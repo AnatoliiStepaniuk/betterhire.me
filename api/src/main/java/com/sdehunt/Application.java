@@ -51,6 +51,12 @@ public class Application implements WebMvcConfigurer {
     @Value("${RDS_DB}")
     private String rdsDb;
 
+    @Value("${GITHUB_LOGIN}")
+    private String githubLogin;
+
+    @Value("${GITHUB_ACCESS_TOKEN}")
+    private String githubAccessToken;
+
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
@@ -105,8 +111,8 @@ public class Application implements WebMvcConfigurer {
     }
 
     @Bean
-    public GithubClient githubClient(ParameterService params, AccessTokenRepository accessTokens) {
-        return new UnirestGithubClient(params, accessTokens);
+    public GithubClient githubClient(AccessTokenRepository accessTokens) {
+        return new UnirestGithubClient(githubAccessToken, accessTokens);
     }
 
     @Bean
@@ -134,7 +140,7 @@ public class Application implements WebMvcConfigurer {
                                                    UserRepository users,
                                                    GithubClient githubClient,
                                                    SolutionRepoRepository solutionRepos) {
-        return new SolutionRepoService(templates, users, githubClient, solutionRepos);
+        return new SolutionRepoService(githubLogin, templates, users, githubClient, solutionRepos);
     }
 
     @Bean

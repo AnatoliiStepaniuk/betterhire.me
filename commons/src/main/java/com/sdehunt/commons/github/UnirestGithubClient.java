@@ -11,7 +11,6 @@ import com.sdehunt.commons.github.model.CreateHookDTO;
 import com.sdehunt.commons.github.model.InvitationResponseDTO;
 import com.sdehunt.commons.github.model.Permission;
 import com.sdehunt.commons.model.SimpleCommit;
-import com.sdehunt.commons.params.ParameterService;
 import com.sdehunt.commons.repo.AccessTokenRepository;
 import com.sdehunt.commons.security.AccessToken;
 import com.sdehunt.commons.security.OAuthProvider;
@@ -49,21 +48,20 @@ public class UnirestGithubClient implements GithubClient {
     private final static String GENERATE = "generate";
     private final static String COLLABORATORS = "collaborators";
     private final static String HOOKS = "hooks";
-    private static final String ACCESS_TOKEN = "GITHUB_ACCESS_TOKEN";
+    private final String systemAccessToken;
     private final static int TIMEOUT_ATTEMPTS = 3;
     private final static int TIMEOUT_MILLIS = 3000;
-    private final ParameterService params;
     private final AccessTokenRepository accessTokens;
     private final ObjectMapper objectMapper;
     private final Logger logger;
     private final ExecutorService executor;
 
-    public UnirestGithubClient(ParameterService params, AccessTokenRepository accessTokens) {
+    public UnirestGithubClient(String systemAccessToken, AccessTokenRepository accessTokens) {
         this.accessTokens = accessTokens;
+        this.systemAccessToken = systemAccessToken;
         this.objectMapper = new ObjectMapper()
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         Unirest.config().setObjectMapper(new JacksonObjectMapper(objectMapper));
-        this.params = params;
         this.logger = LoggerFactory.getLogger(UnirestGithubClient.class);
         this.executor = Executors.newSingleThreadExecutor();
 
@@ -158,7 +156,7 @@ public class UnirestGithubClient implements GithubClient {
                 .setPrivate(isPrivate);
 
         HttpResponse response = Unirest.post(url)
-                .header("Authorization", "token " + getSystemToken())
+                .header("Authorization", "token " + systemAccessToken)
                 .header("Accept", "application/vnd.github.baptiste-preview+json")
                 .body(body)
                 .asEmpty();
@@ -174,7 +172,7 @@ public class UnirestGithubClient implements GithubClient {
     public String invite(String repo, String githubLogin, Permission permission) {
         String url = API_DOMAIN + "/" + REPOS + "/" + repo + "/" + COLLABORATORS + "/" + githubLogin;
         HttpResponse<InvitationResponseDTO> response = Unirest.put(url)
-                .header("Authorization", "token " + getSystemToken())
+                .header("Authorization", "token " + systemAccessToken)
                 .body(Collections.singletonMap("permission", permission.name().toLowerCase()))
                 .asObject(InvitationResponseDTO.class);
 
@@ -201,7 +199,7 @@ public class UnirestGithubClient implements GithubClient {
                 )
                 .setEvents(Collections.singletonList("push"));
         HttpResponse<JsonNode> response = Unirest.post(url)
-                .header("Authorization", "token " + getSystemToken())
+                .header("Authorization", "token " + systemAccessToken)
                 .body(body)
                 .asJson();
         if (response.getStatus() != 201) {
@@ -233,11 +231,7 @@ public class UnirestGithubClient implements GithubClient {
 
     private String getToken(String userId) {
         return accessTokens.find(userId, OAuthProvider.GITHUB).map(AccessToken::getToken)
-                .orElseGet(this::getSystemToken);
-    }
-
-    private String getSystemToken() {
-        return params.get(ACCESS_TOKEN);
+                .orElse(systemAccessToken);
     }
 
     private Path createFile(String file) throws IOException {

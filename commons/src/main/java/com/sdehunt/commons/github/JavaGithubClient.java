@@ -7,7 +7,6 @@ import com.sdehunt.commons.github.exceptions.GithubTimeoutException;
 import com.sdehunt.commons.github.exceptions.RepositoryNotFoundException;
 import com.sdehunt.commons.github.model.Permission;
 import com.sdehunt.commons.model.SimpleCommit;
-import com.sdehunt.commons.params.ParameterService;
 import com.sdehunt.commons.repo.AccessTokenRepository;
 import com.sdehunt.commons.security.AccessToken;
 import com.sdehunt.commons.security.OAuthProvider;
@@ -42,8 +41,7 @@ public class JavaGithubClient implements GithubClient {
     private final static String REPOS = "repos";
     private final static String COMMITS = "commits";
     private final static String BRANCHES = "branches";
-    private static final String ACCESS_TOKEN = "GITHUB_ACCESS_TOKEN";
-    private final ParameterService params;
+    private final String systemAccessToken;
     private final HttpClient client;
     private final AccessTokenRepository accessTokens;
     private final ObjectMapper objectMapper;
@@ -52,12 +50,12 @@ public class JavaGithubClient implements GithubClient {
     private final static int TIMEOUT_MILLIS = 3000;
     private final ExecutorService executor;
 
-    public JavaGithubClient(ParameterService params, AccessTokenRepository accessTokens) {
+    public JavaGithubClient(String systemAccessToken, AccessTokenRepository accessTokens) {
         this.client = HttpClient.newHttpClient();
+        this.systemAccessToken = systemAccessToken;
         this.accessTokens = accessTokens;
         this.objectMapper = new ObjectMapper()
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        this.params = params;
         this.logger = LoggerFactory.getLogger(JavaGithubClient.class);
         this.executor = Executors.newSingleThreadExecutor();
 
@@ -178,7 +176,7 @@ public class JavaGithubClient implements GithubClient {
 
     private HttpRequest buildRequest(URI uri, String userId) {
         String token = accessTokens.find(userId, OAuthProvider.GITHUB).map(AccessToken::getToken)
-                .orElseGet(() -> params.get(ACCESS_TOKEN));
+                .orElse(systemAccessToken);
         logger.debug("Using access token: " + token);
         return HttpRequest.newBuilder()
                 .header("Authorization", "token " + token)

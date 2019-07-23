@@ -11,19 +11,20 @@ import com.sdehunt.repository.UserRepository;
 
 public class SolutionRepoService {
 
-    private final static String SOLUTIONS_REPO_OWNER = "BetterHireMe";
-
+    private final String githubLogin;
     private final TemplateRepository templates;
     private final UserRepository users;
     private final GithubClient githubClient;
     private final SolutionRepoRepository solutionRepos;
 
     public SolutionRepoService(
+            String githubLogin,
             TemplateRepository templates,
             UserRepository users,
             GithubClient githubClient,
             SolutionRepoRepository solutionRepos
     ) {
+        this.githubLogin = githubLogin;
         this.templates = templates;
         this.users = users;
         this.githubClient = githubClient;
@@ -37,8 +38,8 @@ public class SolutionRepoService {
         String repoName = template.getRepo() + "_" + user.getGithubLogin();
 
         githubClient.copyRepo(
-                SOLUTIONS_REPO_OWNER + "/" + template.getRepo(),
-                SOLUTIONS_REPO_OWNER,
+                githubLogin + "/" + template.getRepo(),
+                githubLogin,
                 repoName,
                 getDescription(user.getGithubLogin(), taskID),
                 true
@@ -46,11 +47,11 @@ public class SolutionRepoService {
         // TODO readme personalization
 
         String webhookSecret = null;
-        githubClient.createWebhook(SOLUTIONS_REPO_OWNER + "/" + repoName, webhookUrl, webhookSecret);
+        githubClient.createWebhook(githubLogin + "/" + repoName, webhookUrl, webhookSecret);
 
-        solutionRepos.save(taskID, userId, SOLUTIONS_REPO_OWNER + "/" + repoName, webhookSecret);
+        solutionRepos.save(taskID, userId, githubLogin + "/" + repoName, webhookSecret);
 
-        return githubClient.invite(SOLUTIONS_REPO_OWNER + "/" + repoName, user.getGithubLogin(), Permission.PUSH);
+        return githubClient.invite(githubLogin + "/" + repoName, user.getGithubLogin(), Permission.PUSH);
     }
 
     private String getDescription(String githubLogin, TaskID taskID) {
