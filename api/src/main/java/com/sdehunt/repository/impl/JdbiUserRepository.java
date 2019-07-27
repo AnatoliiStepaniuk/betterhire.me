@@ -150,7 +150,7 @@ public class JdbiUserRepository implements UserRepository {
     private String getAllQuery(boolean test) {
         String query = format("SELECT * FROM %s", table);
         final String testClause = " WHERE test = false";
-        if (test) {
+        if (!test) {
             query += testClause;
         }
         return query + " ORDER BY avg_rank ASC";
