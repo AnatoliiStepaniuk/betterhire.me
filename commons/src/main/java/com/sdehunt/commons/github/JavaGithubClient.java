@@ -8,8 +8,6 @@ import com.sdehunt.commons.github.exceptions.RepositoryNotFoundException;
 import com.sdehunt.commons.github.model.Permission;
 import com.sdehunt.commons.model.SimpleCommit;
 import com.sdehunt.commons.repo.AccessTokenRepository;
-import com.sdehunt.commons.security.AccessToken;
-import com.sdehunt.commons.security.OAuthProvider;
 import com.sdehunt.commons.util.FileUtils;
 import lombok.Data;
 import lombok.SneakyThrows;
@@ -67,11 +65,11 @@ public class JavaGithubClient implements GithubClient {
         URI uri = new URI(RAW_DOMAIN + "/" + repo + "/" + commit + "/" + file);
 
         logger.debug(String.format("Downloading file %s of repo %s for commit %s", file, repo, commit));
-        HttpResponse<Path> response = client.send(buildRequest(uri, userId), HttpResponse.BodyHandlers.ofFile(createFile(file)));
+        HttpResponse<Path> response = client.send(buildRequest(uri), HttpResponse.BodyHandlers.ofFile(createFile(file)));
 
         if (response.statusCode() == 503) { // Rarely reproduced issue of returning 503 status code
             logger.warn(String.format("Second attempt to download file %s of repo %s for commit %s", file, repo, commit));
-            response = client.send(buildRequest(uri, userId), HttpResponse.BodyHandlers.ofFile(createFile(file)));
+            response = client.send(buildRequest(uri), HttpResponse.BodyHandlers.ofFile(createFile(file)));
         }
 
         if (response.statusCode() == 404) {
@@ -91,7 +89,7 @@ public class JavaGithubClient implements GithubClient {
     public String getCommit(String userId, String repo, String branch) {
         URI uri = new URI(API_DOMAIN + "/" + REPOS + "/" + repo + "/" + COMMITS + "/" + branch);
         logger.debug(String.format("Fetching commits for repo %s and branch %s", repo, branch));
-        HttpResponse<byte[]> response = client.send(buildRequest(uri, userId), HttpResponse.BodyHandlers.ofByteArray());
+        HttpResponse<byte[]> response = client.send(buildRequest(uri), HttpResponse.BodyHandlers.ofByteArray());
         logger.debug(String.format("Received response %d for commits request for repo %s and branch %s", response.statusCode(), repo, branch));
 
         if (response.statusCode() != 200) {
@@ -107,7 +105,7 @@ public class JavaGithubClient implements GithubClient {
         URI uri = new URI(API_DOMAIN + "/" + REPOS + "/" + repo + "/" + GIT + "/" + COMMITS + "/" + commit);
 
         logger.debug(String.format("Checking commit %s for repo %s", commit, repo));
-        HttpResponse<byte[]> response = client.send(buildRequest(uri, userId), HttpResponse.BodyHandlers.ofByteArray());
+        HttpResponse<byte[]> response = client.send(buildRequest(uri), HttpResponse.BodyHandlers.ofByteArray());
         logger.debug(String.format("Checked commit %s for repo %s", commit, repo));
 
         if (response.statusCode() == 200) {
@@ -159,7 +157,7 @@ public class JavaGithubClient implements GithubClient {
         URI uri = new URI(API_DOMAIN + "/" + REPOS + "/" + repo + "/" + BRANCHES);
 
         logger.debug(String.format("Fetching branches for repo %s", repo)); // TODO timeouts happen here...
-        HttpResponse<byte[]> response = client.send(buildRequest(uri, userId), HttpResponse.BodyHandlers.ofByteArray());
+        HttpResponse<byte[]> response = client.send(buildRequest(uri), HttpResponse.BodyHandlers.ofByteArray());
         logger.debug(String.format("Received response %d for branches request for repo %s", response.statusCode(), repo));
         if (response.statusCode() == 404) {
             throw new RepositoryNotFoundException(repo);
@@ -174,12 +172,9 @@ public class JavaGithubClient implements GithubClient {
 
     }
 
-    private HttpRequest buildRequest(URI uri, String userId) {
-        String token = accessTokens.find(userId, OAuthProvider.GITHUB).map(AccessToken::getToken)
-                .orElse(systemAccessToken);
-        logger.debug("Using access token: " + token);
+    private HttpRequest buildRequest(URI uri) {
         return HttpRequest.newBuilder()
-                .header("Authorization", "token " + token)
+                .header("Authorization", "token " + systemAccessToken)
                 .uri(uri)
                 .build();
     }

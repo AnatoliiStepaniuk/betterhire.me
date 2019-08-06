@@ -34,7 +34,6 @@ spring:
             scope:
               - user:email
               - read:user
-              - repo
           linkedin:
             provider: linkedin
             clientId: ${LINKEDIN_CLIENT_ID}

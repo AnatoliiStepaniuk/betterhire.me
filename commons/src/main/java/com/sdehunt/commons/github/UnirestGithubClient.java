@@ -12,8 +12,6 @@ import com.sdehunt.commons.github.model.InvitationResponseDTO;
 import com.sdehunt.commons.github.model.Permission;
 import com.sdehunt.commons.model.SimpleCommit;
 import com.sdehunt.commons.repo.AccessTokenRepository;
-import com.sdehunt.commons.security.AccessToken;
-import com.sdehunt.commons.security.OAuthProvider;
 import com.sdehunt.commons.util.FileUtils;
 import kong.unirest.*;
 import lombok.Data;
@@ -77,7 +75,7 @@ public class UnirestGithubClient implements GithubClient {
             Files.delete(Path.of(FileUtils.fileName(file)));
         }
         HttpResponse<File> response = Unirest.get(path)
-                .header("Authorization", "token " + getToken(userId))
+                .header("Authorization", "token " + systemAccessToken)
                 .asFile(FileUtils.fileName(file));
 
         if (response.getStatus() == 404) {
@@ -98,7 +96,7 @@ public class UnirestGithubClient implements GithubClient {
     public String getCommit(String userId, String repo, String branch) {
         String url = API_DOMAIN + "/" + REPOS + "/" + repo + "/" + COMMITS + "/" + branch;
         logger.debug(format("Fetching commits for repo %s and branch %s", repo, branch));
-        HttpResponse<String> response = Unirest.get(url).header("Authorization", "token " + getToken(userId)).asString();
+        HttpResponse<String> response = Unirest.get(url).header("Authorization", "token " + systemAccessToken).asString();
         logger.debug(format("Received response %d for commits request for repo %s and branch %s", response.getStatus(), repo, branch));
         if (response.getStatus() != 200) {
             logger.warn("Status code " + response.getStatus() + " for URL " + url);
@@ -113,7 +111,7 @@ public class UnirestGithubClient implements GithubClient {
         String url = API_DOMAIN + "/" + REPOS + "/" + repo + "/" + GIT + "/" + COMMITS + "/" + commit;
 
         logger.debug(format("Checking commit %s for repo %s", commit, repo));
-        HttpResponse<String> response = Unirest.get(url).header("Authorization", "token " + getToken(userId)).asString();
+        HttpResponse<String> response = Unirest.get(url).header("Authorization", "token " + systemAccessToken).asString();
 
         logger.debug(format("Checked commit %s for repo %s", commit, repo));
 
@@ -213,7 +211,7 @@ public class UnirestGithubClient implements GithubClient {
         String url = API_DOMAIN + "/" + REPOS + "/" + repo + "/" + BRANCHES;
 
         logger.debug(format("Fetching branches for repo %s", repo));
-        HttpResponse<String> response = Unirest.get(url).header("Authorization", "token " + getToken(userId)).asString();
+        HttpResponse<String> response = Unirest.get(url).header("Authorization", "token " + systemAccessToken).asString();
 
         logger.debug(format("Received response %d for branches request for repo %s", response.getStatus(), repo));
         if (response.getStatus() == 404) {
@@ -227,11 +225,6 @@ public class UnirestGithubClient implements GithubClient {
                 .map(BranchResponse::getName)
                 .collect(Collectors.toList());
 
-    }
-
-    private String getToken(String userId) {
-        return accessTokens.find(userId, OAuthProvider.GITHUB).map(AccessToken::getToken)
-                .orElse(systemAccessToken);
     }
 
     private Path createFile(String file) throws IOException {
