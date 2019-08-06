@@ -3,6 +3,7 @@ package com.sdehunt.service;
 import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.github.GithubClient;
 import com.sdehunt.commons.github.model.Permission;
+import com.sdehunt.commons.model.Language;
 import com.sdehunt.commons.model.Template;
 import com.sdehunt.commons.model.User;
 import com.sdehunt.repository.SolutionRepoRepository;
@@ -31,9 +32,9 @@ public class SolutionRepoService {
         this.solutionRepos = solutionRepos;
     }
 
-    public String createSolutionRepo(TaskID taskID, String userId, String webhookUrl) {
+    public String createSolutionRepo(TaskID taskID, Language language, String userId, String webhookUrl) {
 
-        Template template = templates.find(taskID).orElseThrow();
+        Template template = templates.find(taskID, language).orElseThrow();
         User user = users.get(userId).orElseThrow();
         String repoName = template.getRepo() + "_" + user.getGithubLogin();
 
@@ -44,7 +45,6 @@ public class SolutionRepoService {
                 getDescription(user.getGithubLogin(), taskID),
                 true
         );
-        // TODO readme personalization
 
         String webhookSecret = null;
         githubClient.createWebhook(githubLogin + "/" + repoName, webhookUrl, webhookSecret);

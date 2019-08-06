@@ -43,7 +43,7 @@ public class RepoController {
 
         String repoUrl = solutionRepos.find(taskID, userId)
                 .map(r -> GITHUB_DOMAIN + r.getRepo())
-                .orElseGet(() -> solutionRepoService.createSolutionRepo(taskID, userId, webhookUrl));
+                .orElseGet(() -> solutionRepoService.createSolutionRepo(taskID, language, userId, webhookUrl));
 
         return new RepoResponseDTO().setRepoUrl(repoUrl);
     }

@@ -1,6 +1,7 @@
 package com.sdehunt.repository.impl;
 
 import com.sdehunt.commons.TaskID;
+import com.sdehunt.commons.model.Language;
 import com.sdehunt.commons.model.Template;
 import com.sdehunt.repository.TemplateRepository;
 import org.jdbi.v3.core.Jdbi;
@@ -26,9 +27,9 @@ public class JdbiTemplateRepository implements TemplateRepository {
     }
 
     @Override
-    public Optional<Template> find(TaskID taskId) {
+    public Optional<Template> find(TaskID taskId, Language language) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s WHERE task = ?", table), taskId)
+                db -> db.select(format("SELECT * FROM %s WHERE task = ? AND language = ?", table), taskId, language)
                         .map(new TemplateRowMapper()).findOne()
         );
     }
