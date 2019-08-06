@@ -1,6 +1,7 @@
 package com.sdehunt.api;
 
 import com.sdehunt.commons.TaskID;
+import com.sdehunt.commons.model.Language;
 import com.sdehunt.commons.model.ShortTask;
 import com.sdehunt.commons.model.Tag;
 import com.sdehunt.commons.model.Task;
@@ -32,8 +33,10 @@ public class TaskApiIT extends AbstractApiTest {
         String name = UUID.randomUUID().toString();
         String requirements = UUID.randomUUID().toString();
         String inputFilesUrl = UUID.randomUUID().toString();
-        Tag tag = Tag.values()[new Random().nextInt(Tag.values().length)];
+        Tag tag = Tag.values()[random.nextInt(Tag.values().length)];
+        Language language = Language.values()[random.nextInt(Tag.values().length)];
         Set<Tag> tags = Collections.singleton(tag);
+        Set<Language> languages = Collections.singleton(language);
 
         // Verify task is present
         host().contentType(APP_JSON)
@@ -51,7 +54,8 @@ public class TaskApiIT extends AbstractApiTest {
                 .setName(name)
                 .setRequirements(requirements)
                 .setInputFilesUrl(inputFilesUrl)
-                .setTags(tags);
+                .setTags(tags)
+                .setLanguages(languages);
 
         // Updating task
         host()

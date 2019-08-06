@@ -1,6 +1,7 @@
 package com.sdehunt.controller;
 
 import com.sdehunt.commons.TaskID;
+import com.sdehunt.commons.model.Language;
 import com.sdehunt.dto.RepoResponseDTO;
 import com.sdehunt.exception.UserNotFoundException;
 import com.sdehunt.repository.SolutionRepoRepository;
@@ -9,10 +10,7 @@ import com.sdehunt.security.UserPrincipal;
 import com.sdehunt.service.SolutionRepoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -34,7 +32,11 @@ public class RepoController {
     private final String GITHUB_DOMAIN = "https://github.com/";
 
     @RequestMapping(method = RequestMethod.GET, path = "/tasks/{taskId}/repo")
-    public RepoResponseDTO getRepoForUserTask(@PathVariable("taskId") String taskIdRaw, @CurrentUser UserPrincipal currentUser) {
+    public RepoResponseDTO getRepoForUserTask(
+            @PathVariable("taskId") String taskIdRaw,
+            @CurrentUser UserPrincipal currentUser,
+            @RequestParam("lang") Language language
+    ) {
         TaskID taskID = TaskID.of(taskIdRaw);
         String userId = Optional.ofNullable(currentUser).map(UserPrincipal::getId).orElseThrow(UserNotFoundException::new);
         String webhookUrl = host + ":" + port + GITHUB_HOOK_PATH;

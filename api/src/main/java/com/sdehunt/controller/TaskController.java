@@ -60,6 +60,7 @@ public class TaskController {
         taskToUpdate.setRequirements(request.getRequirements());
         taskToUpdate.setInputFilesUrl(request.getInputFilesUrl());
         taskToUpdate.setTags(request.getTags());
+        taskToUpdate.setLanguages(request.getLanguages());
 
         tasks.update(taskToUpdate);
     }

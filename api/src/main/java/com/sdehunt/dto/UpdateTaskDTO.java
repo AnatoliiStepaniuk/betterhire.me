@@ -1,5 +1,6 @@
 package com.sdehunt.dto;
 
+import com.sdehunt.commons.model.Language;
 import com.sdehunt.commons.model.Tag;
 import lombok.Data;
 
@@ -15,6 +16,7 @@ public class UpdateTaskDTO {
     private String requirements;
     private String inputFilesUrl;
     private Set<Tag> tags;
+    private Set<Language> languages;
     private boolean enabled;
     private boolean submittable;
 }
