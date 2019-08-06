@@ -3,3 +3,8 @@ ALTER TABLE `task`
 
 ALTER TABLE `template`
     ADD COLUMN `language` ENUM ('js', 'java', 'other') NOT NULL DEFAULT 'other' AFTER `task`;
+
+ALTER TABLE `template`
+    DROP PRIMARY KEY,
+    ADD PRIMARY KEY (`task`, `language`);
+;
