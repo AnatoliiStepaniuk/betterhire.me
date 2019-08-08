@@ -1,6 +1,7 @@
 package com.sdehunt.repository;
 
 import com.sdehunt.commons.TaskID;
+import com.sdehunt.commons.model.Language;
 import com.sdehunt.commons.model.SolutionRepo;
 
 import java.util.Optional;
@@ -11,9 +12,9 @@ import java.util.Optional;
 public interface SolutionRepoRepository {
 
     /**
-     * Returns repository for task and userId if present
+     * Returns repository for task and userId and language if present
      */
-    Optional<SolutionRepo> find(TaskID taskId, String userId);
+    Optional<SolutionRepo> find(TaskID taskId, String userId, Language language);
 
     /**
      * Returns repository by name

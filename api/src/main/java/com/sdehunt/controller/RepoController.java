@@ -41,7 +41,7 @@ public class RepoController {
         String userId = Optional.ofNullable(currentUser).map(UserPrincipal::getId).orElseThrow(UserNotFoundException::new);
         String webhookUrl = host + ":" + port + GITHUB_HOOK_PATH;
 
-        String repoUrl = solutionRepos.find(taskID, userId)
+        String repoUrl = solutionRepos.find(taskID, userId, language)
                 .map(r -> GITHUB_DOMAIN + r.getRepo())
                 .orElseGet(() -> solutionRepoService.createSolutionRepo(taskID, language, userId, webhookUrl));
 

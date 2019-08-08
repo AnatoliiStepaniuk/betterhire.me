@@ -8,3 +8,6 @@ ALTER TABLE `template`
     DROP PRIMARY KEY,
     ADD PRIMARY KEY (`task`, `language`);
 ;
+
+ALTER TABLE `solution_repo`
+    ADD COLUMN `language` ENUM ('js', 'java', 'other') NOT NULL DEFAULT 'other' AFTER `task`;

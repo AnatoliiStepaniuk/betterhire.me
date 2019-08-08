@@ -1,6 +1,7 @@
 package com.sdehunt.repository.impl;
 
 import com.sdehunt.commons.TaskID;
+import com.sdehunt.commons.model.Language;
 import com.sdehunt.commons.model.SolutionRepo;
 import com.sdehunt.repository.SolutionRepoRepository;
 import org.jdbi.v3.core.Jdbi;
@@ -27,9 +28,9 @@ public class JdbiSolutionRepo implements SolutionRepoRepository {
     }
 
     @Override
-    public Optional<SolutionRepo> find(TaskID taskId, String userId) {
+    public Optional<SolutionRepo> find(TaskID taskId, String userId, Language language) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s WHERE task = ? AND user = ? ORDER BY id DESC", table), taskId, userId)
+                db -> db.select(format("SELECT * FROM %s WHERE task = ? AND user = ? AND language = ? ORDER BY id DESC", table), taskId, userId, language)
                         .map(new SolutionRepoRowMapper()).findFirst()
         );
     }
