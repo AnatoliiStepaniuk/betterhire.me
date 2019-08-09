@@ -49,7 +49,7 @@ public class SolutionRepoService {
         String webhookSecret = null;
         githubClient.createWebhook(githubLogin + "/" + repoName, webhookUrl, webhookSecret);
 
-        solutionRepos.save(taskID, userId, githubLogin + "/" + repoName, webhookSecret);
+        solutionRepos.save(taskID, userId, language, githubLogin + "/" + repoName, webhookSecret);
 
         return githubClient.invite(githubLogin + "/" + repoName, user.getGithubLogin(), Permission.PUSH);
     }

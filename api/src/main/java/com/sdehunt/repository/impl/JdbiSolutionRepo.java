@@ -44,10 +44,10 @@ public class JdbiSolutionRepo implements SolutionRepoRepository {
     }
 
     @Override
-    public void save(TaskID taskId, String userId, String repo, String webhookSecret) {
+    public void save(TaskID taskId, String userId, Language language, String repo, String webhookSecret) {
         jdbi.withHandle(
-                db -> db.execute(format("INSERT INTO %s (`task`, `user`, `repo`, `webhook_secret`, `created`) VALUES (?, ?, ?, ?, ?)", table),
-                        taskId, userId, repo, webhookSecret, Instant.now().getEpochSecond())
+                db -> db.execute(format("INSERT INTO %s (`task`, `user`, `language`, `repo`, `webhook_secret`, `created`) VALUES (?, ?, ?, ?, ?, ?)", table),
+                        taskId, userId, language, repo, webhookSecret, Instant.now().getEpochSecond())
         );
     }
 

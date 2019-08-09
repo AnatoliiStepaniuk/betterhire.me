@@ -24,6 +24,6 @@ public interface SolutionRepoRepository {
     /**
      * Creates new solution repo entry.
      */
-    void save(TaskID taskID, String userId, String repo, String webhookSecret);
+    void save(TaskID taskID, String userId, Language language, String repo, String webhookSecret);
 
 }
