@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CitiesScoreCounter implements TaskScoreCounter {
 
@@ -30,8 +31,14 @@ public class CitiesScoreCounter implements TaskScoreCounter {
         filesDownloader.downloadSolutionFile(userId, repo, commit, solutionFile);
 
         String inputFile = FileUtils.fileName(inputFileS3);
-        List<String> availableCities = Files.readAllLines(Paths.get(inputFile));
-        List<String> citiesList = Files.readAllLines(Paths.get(solutionFile));
+        List<String> availableCities = Files.readAllLines(Paths.get(inputFile)).stream()
+                .filter(l -> !l.isBlank())
+                .filter(l -> !l.isEmpty())
+                .collect(Collectors.toList());
+        List<String> citiesList = Files.readAllLines(Paths.get(solutionFile)).stream()
+                .filter(l -> !l.isBlank())
+                .filter(l -> !l.isEmpty())
+                .collect(Collectors.toList());
 
         return checkAndCountScore(citiesList, availableCities);
     }
