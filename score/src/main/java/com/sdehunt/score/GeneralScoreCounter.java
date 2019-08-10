@@ -4,6 +4,7 @@ import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.score.cars.CarsScoreCounter;
+import com.sdehunt.score.cities.CitiesScoreCounter;
 import com.sdehunt.score.letters.GeneralLettersScoreCounter;
 import com.sdehunt.score.pizza.PizzaScoreCounter;
 import com.sdehunt.score.slides.SlidesScoreCounter;
@@ -24,6 +25,7 @@ public class GeneralScoreCounter {
         taskCounters.put(TaskID.PIZZA, new PizzaScoreCounter(filesDownloader));
         taskCounters.put(TaskID.CARS, new CarsScoreCounter(filesDownloader));
         taskCounters.put(TaskID.LETTERS, new GeneralLettersScoreCounter(filesDownloader));
+        taskCounters.put(TaskID.CITIES, new CitiesScoreCounter(filesDownloader));
     }
 
     public long count(Solution solution) throws CommitOrFileNotFoundException {
