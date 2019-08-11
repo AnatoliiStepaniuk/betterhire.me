@@ -3,6 +3,7 @@ package com.sdehunt.repository;
 import com.sdehunt.commons.model.User;
 import org.springframework.util.StringUtils;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -46,4 +47,15 @@ public interface UserRepository {
     Collection<User> getAll(boolean test);
 
     Collection<User> query(UserQuery userQuery);
+
+    /**
+     * @return Total number of users that solved at least one task successfully
+     */
+    long getTotalUsers();
+
+    /**
+     * @return Number of Active users in specified time range.
+     * Active - those who solved at least on task successfully.
+     */
+    long getActiveUsersInRange(Instant from, Instant to);
 }

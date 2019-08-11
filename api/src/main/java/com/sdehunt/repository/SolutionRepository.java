@@ -42,6 +42,11 @@ public interface SolutionRepository {
     boolean isPresentForUser(Solution solution);
 
     /**
+     * @return Total number of successful solutions
+     */
+    long getTotalSolutions();
+
+    /**
      * Returns Solutions of specified user
      */
     default List<Solution> forUser(String userId) {

@@ -110,6 +110,14 @@ public class JdbiSolutionRepository implements SolutionRepository {
         );
     }
 
+    @Override
+    public long getTotalSolutions() {
+        return jdbi.withHandle(
+                db -> db.select(format("SELECT count(*) FROM %s WHERE status = 'accepted' AND test = false", table))
+                        .mapTo(Long.class).first()
+        );
+    }
+
     private class SolutionRowMapper implements RowMapper<Solution> {
         @Override
         public Solution map(ResultSet rs, StatementContext ctx) throws SQLException {

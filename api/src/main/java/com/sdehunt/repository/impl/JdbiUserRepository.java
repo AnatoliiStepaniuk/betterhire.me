@@ -16,12 +16,16 @@ import java.util.*;
 import static java.lang.String.format;
 
 public class JdbiUserRepository implements UserRepository {
-    private final String table;
+    private final String userTable;
+    private final String solutionTable;
+    private final String bestSolutionTable;
     private final Jdbi jdbi;
 
     public JdbiUserRepository(DataSource dataSource, String db) {
         this.jdbi = Jdbi.create(dataSource);
-        this.table = "`" + db + "`.`user`";
+        this.userTable = "`" + db + "`.`user`";
+        this.solutionTable = "`" + db + "`.`solution`";
+        this.bestSolutionTable = "`" + db + "`.`best_solution`";
     }
 
     @Override
@@ -30,7 +34,7 @@ public class JdbiUserRepository implements UserRepository {
         long now = Instant.now().getEpochSecond();
         jdbi.withHandle(
                 db -> db.execute(
-                        format("INSERT INTO %s (`id`, `name`, `nickname`, `email`, `github_login`, `linkedin_id`, `image_url`, `test`, `created`, `updated`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", table),
+                        format("INSERT INTO %s (`id`, `name`, `nickname`, `email`, `github_login`, `linkedin_id`, `image_url`, `test`, `created`, `updated`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", userTable),
                         u.getId(), u.getName(), u.getNickname(), u.getEmail(), u.getGithubLogin(), u.getLinkedinId(), u.getImageUrl(), u.isTest(), now, now
                 ));
 
@@ -40,7 +44,7 @@ public class JdbiUserRepository implements UserRepository {
     @Override
     public Optional<User> get(String userId) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s WHERE id = ?", table), userId)
+                db -> db.select(format("SELECT * FROM %s WHERE id = ?", userTable), userId)
                         .map(new UserRowMapper()).findFirst()
         );
     }
@@ -48,7 +52,7 @@ public class JdbiUserRepository implements UserRepository {
     @Override
     public Optional<User> byEmail(String email) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s WHERE email = ?", table), email) // TODO make unique column?
+                db -> db.select(format("SELECT * FROM %s WHERE email = ?", userTable), email) // TODO make unique column?
                         .map(new UserRowMapper()).findFirst()
         );
     }
@@ -56,7 +60,7 @@ public class JdbiUserRepository implements UserRepository {
     @Override
     public Optional<User> byGithubLogin(String githubLogin) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s WHERE github_login = ?", table), githubLogin)
+                db -> db.select(format("SELECT * FROM %s WHERE github_login = ?", userTable), githubLogin)
                         .map(new UserRowMapper()).findFirst()
         );
     }
@@ -64,7 +68,7 @@ public class JdbiUserRepository implements UserRepository {
     @Override
     public Optional<User> byLinkedinId(String linkedinId) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s WHERE linkedin_id = ?", table), linkedinId)
+                db -> db.select(format("SELECT * FROM %s WHERE linkedin_id = ?", userTable), linkedinId)
                         .map(new UserRowMapper()).findFirst()
         );
     }
@@ -76,7 +80,7 @@ public class JdbiUserRepository implements UserRepository {
 
         jdbi.withHandle(
                 db -> db.execute(
-                        format("UPDATE %s SET name = ?, nickname = ?, email = ?, github_login = ?, linkedin_id = ?, image_url = ?, updated = ?, solved = ?, avg_rank = ?, last_submit = ? WHERE id = ?", table),
+                        format("UPDATE %s SET name = ?, nickname = ?, email = ?, github_login = ?, linkedin_id = ?, image_url = ?, updated = ?, solved = ?, avg_rank = ?, last_submit = ? WHERE id = ?", userTable),
                         user.getName(), user.getNickname(), user.getEmail(), user.getGithubLogin(), user.getLinkedinId(), user.getImageUrl(), Instant.now().getEpochSecond(), user.getSolved(), user.getAvgRank(), Optional.ofNullable(user.getLastSubmit()).map(Instant::getEpochSecond).orElse(null), user.getId())
         );
 
@@ -99,7 +103,7 @@ public class JdbiUserRepository implements UserRepository {
     @Override
     public void delete(String userId) {
         jdbi.withHandle(
-                db -> db.execute(format("DELETE FROM %s WHERE id = ?", table), userId)
+                db -> db.execute(format("DELETE FROM %s WHERE id = ?", userTable), userId)
         );
     }
 
@@ -113,7 +117,7 @@ public class JdbiUserRepository implements UserRepository {
 
     @Override
     public Collection<User> query(UserQuery query) {
-        String sql = format("SELECT * FROM %s", table);
+        String sql = format("SELECT * FROM %s", userTable);
         List<String> conditions = new ArrayList<>();
         List<Object> params = new ArrayList<>();
         query.getNickname().ifPresent(nickname -> {
@@ -147,8 +151,22 @@ public class JdbiUserRepository implements UserRepository {
         );
     }
 
+    @Override
+    public long getTotalUsers() {
+        return jdbi.withHandle(db -> db.select(format("SELECT count(distinct user) FROM %s WHERE test = false", bestSolutionTable))
+                .mapTo(Long.class).first());
+    }
+
+    @Override
+    public long getActiveUsersInRange(Instant from, Instant to) {
+        return jdbi.withHandle(db -> db.select(format(
+                "SELECT count(distinct user) FROM %s WHERE created >= %d AND created <= %d AND status = 'accepted' AND test = false",
+                solutionTable, from.getEpochSecond(), to.getEpochSecond()
+        )).mapTo(Long.class).first());
+    }
+
     private String getAllQuery(boolean test) {
-        String query = format("SELECT * FROM %s", table);
+        String query = format("SELECT * FROM %s", userTable);
         final String testClause = " WHERE test = false";
         if (!test) {
             query += testClause;
