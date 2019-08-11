@@ -10,6 +10,8 @@ import com.sdehunt.commons.params.SsmParameterService;
 import com.sdehunt.commons.repo.AccessTokenRepository;
 import com.sdehunt.commons.repo.JdbiAccessTokenRepository;
 import com.sdehunt.repository.*;
+import com.sdehunt.repository.cache.CachingSolutionRepository;
+import com.sdehunt.repository.cache.CachingUserRepository;
 import com.sdehunt.repository.impl.*;
 import com.sdehunt.score.GeneralFilesDownloader;
 import com.sdehunt.score.GeneralScoreCounter;
@@ -82,7 +84,7 @@ public class Application implements WebMvcConfigurer {
 
     @Bean
     public SolutionRepository solutionRepository(DataSource dataSource) {
-        return new JdbiSolutionRepository(dataSource, rdsDb);
+        return new CachingSolutionRepository(new JdbiSolutionRepository(dataSource, rdsDb));
     }
 
     @Bean
@@ -97,7 +99,7 @@ public class Application implements WebMvcConfigurer {
 
     @Bean
     public UserRepository userRepository(DataSource dataSource) {
-        return new JdbiUserRepository(dataSource, rdsDb);
+        return new CachingUserRepository(new JdbiUserRepository(dataSource, rdsDb));
     }
 
     @Bean
