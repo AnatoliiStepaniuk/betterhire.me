@@ -1,6 +1,7 @@
 package com.sdehunt.repository.impl;
 
 import com.sdehunt.commons.TaskID;
+import com.sdehunt.commons.github.JavaGithubClient;
 import com.sdehunt.commons.model.Language;
 import com.sdehunt.commons.model.ShortTask;
 import com.sdehunt.commons.model.Tag;
@@ -9,6 +10,8 @@ import com.sdehunt.repository.TaskRepository;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
@@ -23,10 +26,12 @@ public class JdbiTaskRepository implements TaskRepository {
 
     private final String table;
     private final Jdbi jdbi;
+    private final Logger logger;
 
     public JdbiTaskRepository(DataSource dataSource, String db) {
         this.jdbi = Jdbi.create(dataSource);
         this.table = "`" + db + "`.`task`";
+        this.logger = LoggerFactory.getLogger(JavaGithubClient.class);
     }
 
     @Override
@@ -84,10 +89,11 @@ public class JdbiTaskRepository implements TaskRepository {
         jdbi.withHandle(db -> db.execute(format("UPDATE %s SET enabled = false WHERE task = ? AND enabled = true", table), t.getId()));
         // Creating new entry
         long now = Instant.now().getEpochSecond();
+        logger.debug("Saving task " + t.toString());
         jdbi.withHandle(
                 db -> db.execute(
                         format("INSERT INTO %s (task, name, image_url, short_description, description, description_url, requirements, input, tags, languages, participants, users, offers, bestOffer, created, last_submit, submittable, test, enabled) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, true)", table),
-                        t.getId(), t.getName(), t.getImageUrl(), t.getShortDescription(), t.getDescription(), t.getDescriptionUrl(), t.getRequirements(), t.getInputFilesUrl(), stringify(t.getTags()), stringify(t.getLanguages()), t.getParticipants(), t.getUsers(), t.getOffers(), t.getBestOffer(), now, t.getLastSubmit().getEpochSecond(), t.isSubmittable(), t.isTest()
+                        t.getId(), t.getName(), t.getImageUrl(), t.getShortDescription(), t.getDescription(), t.getDescriptionUrl(), t.getRequirements(), t.getInputFilesUrl(), stringify(t.getTags()), stringify(t.getLanguages()), t.getParticipants(), t.getUsers(), t.getOffers(), t.getBestOffer(), now, Optional.ofNullable(t.getLastSubmit()).map(Instant::getEpochSecond).orElse(null), t.isSubmittable(), t.isTest()
                 )
         );
     }
