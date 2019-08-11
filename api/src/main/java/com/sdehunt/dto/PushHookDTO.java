@@ -8,6 +8,8 @@ import java.util.List;
 @Data
 public class PushHookDTO {
 
+    private String before;
+
     private Repository repository;
 
     private List<Commit> commits;

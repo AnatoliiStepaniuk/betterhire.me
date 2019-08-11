@@ -1,7 +1,5 @@
 package com.sdehunt.controller;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.SolutionRepo;
 import com.sdehunt.dto.PushHookDTO;
@@ -18,20 +16,19 @@ public class WebhookController {
 
     public final static String GITHUB_HOOK_PATH = "/hooks/github/solution/push";
 
+    private final static String EMPTY_COMMIT_HASH = "0000000000000000000000000000000000000000";
+
     @Autowired
     private SolutionRepoRepository solutionRepos;
 
     @Autowired
     private SolutionService solutionService;
 
-    private final ObjectMapper mapper = new ObjectMapper()
-            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-
     @RequestMapping(method = RequestMethod.POST, path = GITHUB_HOOK_PATH)
     public void userSolutionPush(@RequestBody PushHookDTO hook) {
         // TODO check secret key if present
         String repo = hook.getRepository().getFullName();
-        if (hook.getCommits() == null) {
+        if (hook.getCommits() == null || hook.getBefore().equals(EMPTY_COMMIT_HASH)) {
             return; // Ignoring non push events
         }
         String commit = hook.getCommits().get(hook.getCommits().size() - 1).getId();
