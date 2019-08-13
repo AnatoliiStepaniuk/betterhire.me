@@ -48,7 +48,7 @@ public class CitiesScoreCounter implements TaskScoreCounter {
         if (!availableCitiesSet.remove(citiesList.get(0))) {
             throw new InvalidSolutionException("City \"" + citiesList.get(0) + "\" is not present in list of available cities");
         }
-        long count = availableCities.get(0).length();
+        long count = citiesList.get(0).length();
 
         for (int i = 1; i < citiesList.size(); i++) {
             String prev = citiesList.get(i - 1);

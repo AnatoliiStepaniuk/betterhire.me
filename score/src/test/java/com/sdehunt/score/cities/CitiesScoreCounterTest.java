@@ -13,9 +13,9 @@ public class CitiesScoreCounterTest {
 
     @Test
     public void happyFlowTest() {
-        List<String> citiesList = Arrays.asList("Kyiv", "Vilnius", "Stockholm");
-        List<String> availableCities = Arrays.asList("Kyiv", "Vilnius", "Stockholm");
-        long expectedScore = 20;
+        List<String> citiesList = Arrays.asList("Paris", "Stockholm", "Milan");
+        List<String> availableCities = Arrays.asList("Paris", "Stockholm", "Milan");
+        long expectedScore = 19;
         long actualScore = scoreCounter.checkAndCountScore(citiesList, availableCities);
 
         Assert.assertEquals(expectedScore, actualScore);
