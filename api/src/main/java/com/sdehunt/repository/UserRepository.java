@@ -55,7 +55,7 @@ public interface UserRepository {
 
     /**
      * @return Number of Active users in specified time range.
-     * Active - those who solved at least on task successfully.
+     * Active - those who solved at least one task (successfully or not).
      */
     long getActiveUsersInRange(Instant from, Instant to);
 }

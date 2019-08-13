@@ -160,7 +160,7 @@ public class JdbiUserRepository implements UserRepository {
     @Override
     public long getActiveUsersInRange(Instant from, Instant to) {
         return jdbi.withHandle(db -> db.select(format(
-                "SELECT count(distinct user) FROM %s WHERE created >= %d AND created <= %d AND status = 'accepted' AND test = false",
+                "SELECT count(distinct user) FROM %s WHERE created >= %d AND created <= %d AND test = false",
                 solutionTable, from.getEpochSecond(), to.getEpochSecond()
         )).mapTo(Long.class).first());
     }
