@@ -89,7 +89,6 @@ public class JdbiTaskRepository implements TaskRepository {
         jdbi.withHandle(db -> db.execute(format("UPDATE %s SET enabled = false WHERE task = ? AND enabled = true", table), t.getId()));
         // Creating new entry
         long now = Instant.now().getEpochSecond();
-        logger.debug("Saving task " + t.toString());
         jdbi.withHandle(
                 db -> db.execute(
                         format("INSERT INTO %s (task, name, image_url, short_description, description, description_url, requirements, input, tags, languages, participants, users, offers, bestOffer, created, last_submit, submittable, test, enabled) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, true)", table),
