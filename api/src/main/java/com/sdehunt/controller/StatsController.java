@@ -25,9 +25,9 @@ public class StatsController {
     public StatsDTO getStats() {
         Instant now = Instant.now();
         return new StatsDTO()
-                .setUsers(userRepository.getTotalUsers()) // TODO should be cached
-                .setSolutions(solutionRepository.getTotalSolutions())// TODO should be cached
-                .setWau(userRepository.getActiveUsersInRange(now.minus(7, DAYS), now));// TODO should be cached
+                .setUsers(userRepository.getTotalUsers())
+                .setSolutions(solutionRepository.getTotalSolutions())
+                .setWau(userRepository.getActiveUsersInRange(now.minus(7, DAYS), now));
     }
 
 }
