@@ -53,7 +53,7 @@ public class SolutionController {
                 .setRepo(repo)
                 .setCommit(req.getCommit())
                 .setTaskId(TaskID.of(taskId))
-                .setTest(req.isTest());
+                .setTest(user.isTest());
 
         return new SolutionIdDTO().setId(solutionService.process(solution));
     }
