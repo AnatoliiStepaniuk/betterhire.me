@@ -84,12 +84,11 @@ public class SolutionController {
     public List<Solution> getMySolutionsForTask(
             @PathVariable String taskId,
             @RequestParam(value = "status", required = false) SolutionStatus status,
-            @RequestParam(value = "test", required = false) boolean test,
             @CurrentUser UserPrincipal user
     ) {
         String userId = Optional.ofNullable(user).map(UserPrincipal::getId).orElseThrow(UserNotFoundException::new);
         return solutions.query(
-                new SolutionQueryImpl().task(taskId).user(userId).status(status).test(test)
+                new SolutionQueryImpl().task(taskId).user(userId).status(status).test(true)
         );
     }
 
