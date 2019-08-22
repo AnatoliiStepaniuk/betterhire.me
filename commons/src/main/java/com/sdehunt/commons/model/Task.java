@@ -12,4 +12,8 @@ public class Task extends ShortTask {
     private String inputFilesUrl;
 
     private String requirements;
+
+    private String job;
+
+    private String jobUrl;
 }

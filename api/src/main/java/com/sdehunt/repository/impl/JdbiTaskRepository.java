@@ -91,8 +91,28 @@ public class JdbiTaskRepository implements TaskRepository {
         long now = Instant.now().getEpochSecond();
         jdbi.withHandle(
                 db -> db.execute(
-                        format("INSERT INTO %s (task, name, image_url, short_description, description, description_url, requirements, input, tags, languages, participants, users, offers, bestOffer, created, last_submit, submittable, test, enabled) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, true)", table),
-                        t.getId(), t.getName(), t.getImageUrl(), t.getShortDescription(), t.getDescription(), t.getDescriptionUrl(), t.getRequirements(), t.getInputFilesUrl(), stringify(t.getTags()), stringify(t.getLanguages()), t.getParticipants(), t.getUsers(), t.getOffers(), t.getBestOffer(), now, Optional.ofNullable(t.getLastSubmit()).map(Instant::getEpochSecond).orElse(null), t.isSubmittable(), t.isTest()
+                        format("INSERT INTO %s (task, name, image_url, short_description, description, description_url, requirements, input, tags, languages, participants, users, offers, bestOffer, created, last_submit, submittable, test, enabled, company, job, job_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, true, ?, ?, ?)", table),
+                        t.getId(),
+                        t.getName(),
+                        t.getImageUrl(),
+                        t.getShortDescription(),
+                        t.getDescription(),
+                        t.getDescriptionUrl(),
+                        t.getRequirements(),
+                        t.getInputFilesUrl(),
+                        stringify(t.getTags()),
+                        stringify(t.getLanguages()),
+                        t.getParticipants(),
+                        t.getUsers(),
+                        t.getOffers(),
+                        t.getBestOffer(),
+                        now,
+                        Optional.ofNullable(t.getLastSubmit()).map(Instant::getEpochSecond).orElse(null),
+                        t.isSubmittable(),
+                        t.isTest(),
+                        t.getCompany(),
+                        t.getJob(),
+                        t.getJobUrl()
                 )
         );
     }
@@ -120,6 +140,9 @@ public class JdbiTaskRepository implements TaskRepository {
         Optional.ofNullable(t.getLastSubmit()).ifPresent(task::setLastSubmit);
         Optional.ofNullable(t.getTags()).ifPresent(task::setTags);
         Optional.ofNullable(t.getLanguages()).ifPresent(task::setLanguages);
+        Optional.ofNullable(t.getCompany()).ifPresent(task::setCompany);
+        Optional.ofNullable(t.getJob()).ifPresent(task::setJob);
+        Optional.ofNullable(t.getJobUrl()).ifPresent(task::setJobUrl);
     }
 
     private String stringify(Set<? extends Enum> tags) {
@@ -160,6 +183,9 @@ public class JdbiTaskRepository implements TaskRepository {
                     .setDescriptionUrl(rs.getString("description_url"))
                     .setInputFilesUrl(rs.getString("input"))
                     .setRequirements(rs.getString("requirements"))
+                    .setJob(rs.getString("job"))
+                    .setJobUrl(rs.getString("job_url"))
+                    .setCompany(rs.getString("company"))
                     .setLanguages(langsFromString(rs.getString("languages")))
                     .setId(TaskID.of(rs.getString("task")))
                     .setName(rs.getString("name"))
@@ -197,8 +223,8 @@ public class JdbiTaskRepository implements TaskRepository {
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")))
                     .setLastSubmit(Optional.ofNullable(rs.getString("last_submit")).map(Long::valueOf).map(Instant::ofEpochSecond).orElse(null))
                     .setTest(rs.getBoolean("test"))
-                    .setTags(tagsFromString(rs.getString("tags")));
-
+                    .setTags(tagsFromString(rs.getString("tags")))
+                    .setCompany(rs.getString("company"));
         }
     }
 }

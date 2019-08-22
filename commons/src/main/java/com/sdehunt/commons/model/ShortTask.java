@@ -13,6 +13,7 @@ public class ShortTask {
     private String name;
     private String imageUrl;
     private String shortDescription;
+    private String company;
     private Integer participants;// TODO remove it is called users now
     private Integer users;
     private Integer offers;

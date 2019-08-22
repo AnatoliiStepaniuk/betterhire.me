@@ -33,6 +33,9 @@ public class TaskApiIT extends AbstractApiTest {
         String name = UUID.randomUUID().toString();
         String requirements = UUID.randomUUID().toString();
         String inputFilesUrl = UUID.randomUUID().toString();
+        String company = UUID.randomUUID().toString();
+        String job = UUID.randomUUID().toString();
+        String jobUrl = UUID.randomUUID().toString();
         Tag tag = Tag.values()[random.nextInt(Tag.values().length)];
         Language language = Language.values()[random.nextInt(Tag.values().length)];
         Set<Tag> tags = Collections.singleton(tag);
@@ -55,7 +58,10 @@ public class TaskApiIT extends AbstractApiTest {
                 .setRequirements(requirements)
                 .setInputFilesUrl(inputFilesUrl)
                 .setTags(tags)
-                .setLanguages(languages);
+                .setLanguages(languages)
+                .setCompany(company)
+                .setJob(job)
+                .setJobUrl(jobUrl);
 
         // Updating task
         host()
@@ -79,6 +85,9 @@ public class TaskApiIT extends AbstractApiTest {
                 .body("name", is(name))
                 .body("requirements", is(requirements))
                 .body("inputFilesUrl", is(inputFilesUrl))
+                .body("company", is(company))
+                .body("job", is(job))
+                .body("jobUrl", is(jobUrl))
                 .body("test", is(true))
                 .body("tags", contains(tag.name()));
 
@@ -92,6 +101,7 @@ public class TaskApiIT extends AbstractApiTest {
                 .body("description", isEmptyOrNullString())
                 .body("descriptionUrl", isEmptyOrNullString())
                 .body("shortDescription", is(shortDescription))
+                .body("company", is(company))
                 .body("name", is(name))
                 .body("test", is(true))
                 .body("tags", contains(tag.name()));
@@ -109,9 +119,11 @@ public class TaskApiIT extends AbstractApiTest {
                 .body("[0].name", is(name))
                 .body("[0].requirements", is(requirements))
                 .body("[0].inputFilesUrl", is(inputFilesUrl))
+                .body("[0].company", is(company))
+                .body("[0].job", is(job))
+                .body("[0].jobUrl", is(jobUrl))
                 .body("[0].test", is(true))
                 .body("[0].tags", contains(tag.name()));
-
 
         // Getting all tasks
         Task[] tasks = host().get(TASKS + "?test=true")
@@ -126,6 +138,9 @@ public class TaskApiIT extends AbstractApiTest {
         Assert.assertEquals(requirements, foundTask.getRequirements());
         Assert.assertEquals(inputFilesUrl, foundTask.getInputFilesUrl());
         Assert.assertEquals(tags, foundTask.getTags());
+        Assert.assertEquals(company, foundTask.getCompany());
+        Assert.assertEquals(job, foundTask.getJob());
+        Assert.assertEquals(jobUrl, foundTask.getJobUrl());
 
         ShortTask[] shortTasks = host().get(TASKS + SHORT + "?test=true")
                 .as(ShortTask[].class);

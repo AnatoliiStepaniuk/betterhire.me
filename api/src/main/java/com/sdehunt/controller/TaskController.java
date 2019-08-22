@@ -61,6 +61,9 @@ public class TaskController {
         taskToUpdate.setInputFilesUrl(request.getInputFilesUrl());
         taskToUpdate.setTags(request.getTags());
         taskToUpdate.setLanguages(request.getLanguages());
+        taskToUpdate.setCompany(request.getCompany());
+        taskToUpdate.setJob(request.getJob());
+        taskToUpdate.setJobUrl(request.getJobUrl());
 
         tasks.update(taskToUpdate);
     }
