@@ -26,6 +26,8 @@ public class GeneralScoreCounter {
         taskCounters.put(TaskID.CARS, new CarsScoreCounter(filesDownloader));
         taskCounters.put(TaskID.LETTERS, new GeneralLettersScoreCounter(filesDownloader));
         taskCounters.put(TaskID.CITIES, new CitiesScoreCounter(filesDownloader));
+        taskCounters.put(TaskID.LETTER, new GeneralLettersScoreCounter(filesDownloader));
+        taskCounters.put(TaskID.CITY, new CitiesScoreCounter(filesDownloader));
     }
 
     public long count(Solution solution) throws CommitOrFileNotFoundException {

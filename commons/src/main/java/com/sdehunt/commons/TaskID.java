@@ -12,6 +12,8 @@ public enum TaskID {
     PIZZA,
     LETTERS,
     CITIES,
+    LETTER,
+    CITY,
     SLIDES_TEST;
 
     public static TaskID of(String taskId) {
