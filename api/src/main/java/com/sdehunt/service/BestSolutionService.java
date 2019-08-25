@@ -32,7 +32,7 @@ public class BestSolutionService {
 
     public void updateIfNeeded(Solution s, long score) {
         // Getting all best solutions for task
-        List<BestSolution> solutions = bestSolutions.getForTask(s.getTaskId(), s.isTest());
+        List<BestSolution> solutions = bestSolutions.getForTask(s.getTaskId(), false);
         // Updating score for user or adding new entry if it is his first attempt
         Optional<BestSolution> betterSolution = updateUserSolutionIfBetter(solutions, s, score);
         // Updating number of users that solved this task
@@ -53,7 +53,7 @@ public class BestSolutionService {
     }
 
     private void updateTask(TaskID taskID, List<BestSolution> solutions) {
-        int usersCount = solutions.stream().collect(Collectors.groupingBy(BestSolution::getUserId)).size();
+        int usersCount = solutions.stream().filter(s -> !s.isTest()).collect(Collectors.groupingBy(BestSolution::getUserId)).size();
         Task task = new Task();
         task.setId(taskID);
         task.setUsers(usersCount);
