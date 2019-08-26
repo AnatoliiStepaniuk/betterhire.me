@@ -17,6 +17,7 @@ import com.sdehunt.score.GeneralFilesDownloader;
 import com.sdehunt.score.GeneralScoreCounter;
 import com.sdehunt.security.AppProperties;
 import com.sdehunt.service.BestSolutionService;
+import com.sdehunt.service.CvService;
 import com.sdehunt.service.SolutionRepoService;
 import com.sdehunt.service.SolutionService;
 import com.zaxxer.hikari.HikariDataSource;
@@ -155,6 +156,11 @@ public class Application implements WebMvcConfigurer {
             BestSolutionService bestSolutionService
     ) {
         return new SolutionService(scoreCounter, solutionRepository, userRepository, githubClient, params, bestSolutionService);
+    }
+
+    @Bean
+    public CvService cvService() {
+        return new CvService();
     }
 
     @Bean
