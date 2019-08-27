@@ -34,8 +34,8 @@ public class JdbiUserRepository implements UserRepository {
         long now = Instant.now().getEpochSecond();
         jdbi.withHandle(
                 db -> db.execute(
-                        format("INSERT INTO %s (`id`, `name`, `nickname`, `email`, `github_login`, `linkedin_id`, `image_url`, `test`, `created`, `updated`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", userTable),
-                        u.getId(), u.getName(), u.getNickname(), u.getEmail(), u.getGithubLogin(), u.getLinkedinId(), u.getImageUrl(), u.isTest(), now, now
+                        format("INSERT INTO %s (`id`, `name`, `nickname`, `email`, `cv`, `phone`, `github_login`, `linkedin_id`, `image_url`, `test`, `created`, `updated`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", userTable),
+                        u.getId(), u.getName(), u.getNickname(), u.getEmail(), u.getCv(), u.getPhone(), u.getGithubLogin(), u.getLinkedinId(), u.getImageUrl(), u.isTest(), now, now
                 ));
 
         return get(u.getId()).orElse(null);
@@ -80,8 +80,8 @@ public class JdbiUserRepository implements UserRepository {
 
         jdbi.withHandle(
                 db -> db.execute(
-                        format("UPDATE %s SET name = ?, nickname = ?, email = ?, github_login = ?, linkedin_id = ?, image_url = ?, updated = ?, solved = ?, avg_rank = ?, last_submit = ? WHERE id = ?", userTable),
-                        user.getName(), user.getNickname(), user.getEmail(), user.getGithubLogin(), user.getLinkedinId(), user.getImageUrl(), Instant.now().getEpochSecond(), user.getSolved(), user.getAvgRank(), Optional.ofNullable(user.getLastSubmit()).map(Instant::getEpochSecond).orElse(null), user.getId())
+                        format("UPDATE %s SET name = ?, nickname = ?, email = ?, cv = ?, phone = ?, github_login = ?, linkedin_id = ?, image_url = ?, updated = ?, solved = ?, avg_rank = ?, last_submit = ? WHERE id = ?", userTable),
+                        user.getName(), user.getNickname(), user.getEmail(), user.getCv(), user.getPhone(), user.getGithubLogin(), user.getLinkedinId(), user.getImageUrl(), Instant.now().getEpochSecond(), user.getSolved(), user.getAvgRank(), Optional.ofNullable(user.getLastSubmit()).map(Instant::getEpochSecond).orElse(null), user.getId())
         );
 
         return get(user.getId()).orElseThrow();
@@ -98,6 +98,8 @@ public class JdbiUserRepository implements UserRepository {
         Optional.ofNullable(u.getLastSubmit()).ifPresent(existing::setLastSubmit);
         Optional.ofNullable(u.getSolved()).ifPresent(existing::setSolved);
         Optional.ofNullable(u.getAvgRank()).ifPresent(existing::setAvgRank);
+        Optional.ofNullable(u.getCv()).ifPresent(existing::setCv);
+        Optional.ofNullable(u.getPhone()).ifPresent(existing::setPhone);
     }
 
     @Override
@@ -116,7 +118,7 @@ public class JdbiUserRepository implements UserRepository {
     }
 
     @Override
-    public Collection<User> query(UserQuery query) {
+    public Collection<User> query(UserQuery query) { // TODO add phone
         String sql = format("SELECT * FROM %s", userTable);
         List<String> conditions = new ArrayList<>();
         List<Object> params = new ArrayList<>();
@@ -186,6 +188,8 @@ public class JdbiUserRepository implements UserRepository {
                     .setName(rs.getString("name"))
                     .setNickname(rs.getString("nickname"))
                     .setEmail(rs.getString("email"))
+                    .setCv(rs.getString("cv"))
+                    .setPhone(rs.getString("phone"))
                     .setGithubLogin(rs.getString("github_login"))
                     .setLinkedinId(rs.getString("linkedin_id"))
                     .setImageUrl(rs.getString("image_url"))

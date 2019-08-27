@@ -23,6 +23,8 @@ public class UserApiIT extends AbstractApiTest {
         String nickname = "NN" + UUID.randomUUID().toString();
         String imageUrl = "IMG" + UUID.randomUUID().toString();
         String name = "NAME" + UUID.randomUUID().toString();
+        String cv = "CV" + UUID.randomUUID().toString();
+        String phone = "phone" + UUID.randomUUID().toString().substring(0, 10);
 
         int usersCountBefore = host().get("/users?test=true").as(Collection.class).size();
 
@@ -33,6 +35,8 @@ public class UserApiIT extends AbstractApiTest {
                 .setNickname(nickname)
                 .setImageUrl(imageUrl)
                 .setName(name)
+                .setPhone(phone)
+                .setCv(cv)
                 .setTest(true);
 
         Response response = host()
@@ -48,6 +52,8 @@ public class UserApiIT extends AbstractApiTest {
                 .body("nickname", is(nickname))
                 .body("imageUrl", is(imageUrl))
                 .body("userName", is(nickname))
+                .body("cv", is(cv))
+                .body("phone", is(phone))
                 .body("solved", is(0))
                 .body("avgRank", equalTo(null))
                 .body("test", is(true));
@@ -64,6 +70,8 @@ public class UserApiIT extends AbstractApiTest {
                 .body("nickname", is(user.getNickname()))
                 .body("imageUrl", is(user.getImageUrl()))
                 .body("userName", is(nickname))
+                .body("cv", is(cv))
+                .body("phone", is(phone))
                 .body("solved", is(0))
                 .body("avgRank", equalTo(null))
                 .body("created", notNullValue())
@@ -86,6 +94,8 @@ public class UserApiIT extends AbstractApiTest {
                 .body("[0].githubLogin", is(user.getGithubLogin()))
                 .body("[0].linkedinId", is(user.getLinkedinId()))
                 .body("[0].nickname", is(user.getNickname()))
+                .body("[0].cv", is(user.getCv()))
+                .body("[0].phone", is(user.getPhone()))
                 .body("[0].imageUrl", is(user.getImageUrl()))
                 .body("[0].userName", is(nickname))
                 .body("[0].solved", is(0))
@@ -102,7 +112,9 @@ public class UserApiIT extends AbstractApiTest {
                 .setGithubLogin(user.getGithubLogin() + "2")
                 .setLinkedinId(user.getLinkedinId() + "2")
                 .setNickname(user.getNickname() + "2")
-                .setImageUrl(user.getImageUrl() + "2");
+                .setImageUrl(user.getImageUrl() + "2")
+                .setPhone(user.getPhone() + "2")
+                .setCv(user.getCv() + "2");
 
         host().contentType(APP_JSON)
                 .body(updateRequest)
@@ -115,6 +127,8 @@ public class UserApiIT extends AbstractApiTest {
                 .body("linkedinId", is(updateRequest.getLinkedinId()))
                 .body("nickname", is(updateRequest.getNickname()))
                 .body("imageUrl", is(updateRequest.getImageUrl()))
+                .body("cv", is(updateRequest.getCv()))
+                .body("phone", is(updateRequest.getPhone()))
                 .body("userName", is(updateRequest.getNickname()))
                 .body("solved", is(0))
                 .body("avgRank", equalTo(null))
@@ -132,6 +146,8 @@ public class UserApiIT extends AbstractApiTest {
                 .body("nickname", is(updateRequest.getNickname()))
                 .body("imageUrl", is(updateRequest.getImageUrl()))
                 .body("userName", is(updateRequest.getNickname()))
+                .body("cv", is(updateRequest.getCv()))
+                .body("phone", is(updateRequest.getPhone()))
                 .body("solved", is(0))
                 .body("avgRank", equalTo(null))
                 .body("updated", notNullValue())

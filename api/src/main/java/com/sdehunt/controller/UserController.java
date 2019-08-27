@@ -57,6 +57,8 @@ public class UserController {
                 .setLinkedinId(req.getLinkedinId())
                 .setNickname(req.getNickname())
                 .setImageUrl(req.getImageUrl())
+                .setCv(req.getCv())
+                .setPhone(req.getPhone())
                 .setTest(req.isTest());
 
         return users.create(user);
@@ -68,14 +70,16 @@ public class UserController {
     }
 
     @RequestMapping(path = "/{userId}", method = RequestMethod.PUT)
-    public User update(@PathVariable("userId") String userId, @RequestBody CreateUserDTO updateUserRequest) {
+    public User update(@PathVariable("userId") String userId, @RequestBody CreateUserDTO req) {
         User user = new User()
                 .setId(userId)
-                .setEmail(updateUserRequest.getEmail())
-                .setGithubLogin(updateUserRequest.getGithubLogin())
-                .setLinkedinId(updateUserRequest.getLinkedinId())
-                .setNickname(updateUserRequest.getNickname())
-                .setImageUrl(updateUserRequest.getImageUrl());
+                .setEmail(req.getEmail())
+                .setGithubLogin(req.getGithubLogin())
+                .setLinkedinId(req.getLinkedinId())
+                .setNickname(req.getNickname())
+                .setImageUrl(req.getImageUrl())
+                .setCv(req.getCv())
+                .setPhone(req.getPhone());
 
         return users.update(user);
     }

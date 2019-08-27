@@ -12,6 +12,8 @@ public class User {
     private String nickname;
     private String imageUrl;
     private String email;
+    private String cv;
+    private String phone;
     private String githubLogin;
     private String linkedinId;
     private String userName; // This field is not saved in DB actually
