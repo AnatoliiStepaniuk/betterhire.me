@@ -1,12 +1,13 @@
 package com.sdehunt.service;
 
-import java.time.Instant;
-import java.util.Date;
-
 import com.amazonaws.HttpMethod;
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
+
+import java.time.Instant;
+import java.util.Date;
 
 public class CvService {
 
@@ -15,7 +16,10 @@ public class CvService {
     private AmazonS3 s3Client;
 
     public CvService() {
-        s3Client = AmazonS3ClientBuilder.defaultClient();
+        s3Client = AmazonS3ClientBuilder.standard()
+                .withCredentials(new ProfileCredentialsProvider(".aws/credentials", null))
+                .withRegion("eu-central-1")
+                .build();
     }
 
     public String uploadUrl(String userId, String fileName) {
