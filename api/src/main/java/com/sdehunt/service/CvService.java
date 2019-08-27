@@ -1,27 +1,21 @@
 package com.sdehunt.service;
 
+import java.time.Instant;
+import java.util.Date;
+
 import com.amazonaws.HttpMethod;
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
-
-import java.time.Instant;
-import java.util.Date;
 
 public class CvService {
 
     private final String bucketName = "betterhire-cv";
     private final long ttlMillis = 60 * 1000; // TODO unhardcode
-    private Regions clientRegion = Regions.EU_CENTRAL_1;
     private AmazonS3 s3Client;
 
     public CvService() {
-        s3Client = AmazonS3ClientBuilder.standard()
-                .withCredentials(new ProfileCredentialsProvider())
-                .withRegion(clientRegion)
-                .build();
+        s3Client = AmazonS3ClientBuilder.defaultClient();
     }
 
     public String uploadUrl(String userId, String fileName) {
