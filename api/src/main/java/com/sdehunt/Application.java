@@ -90,12 +90,17 @@ public class Application implements WebMvcConfigurer {
 
     @Bean
     public SolutionRepoRepository solutionRepoRepository(DataSource dataSource) {
-        return new JdbiSolutionRepo(dataSource, rdsDb);
+        return new JdbiSolutionRepoRepository(dataSource, rdsDb);
     }
 
     @Bean
     public TemplateRepository templateRepository(DataSource dataSource) {
         return new JdbiTemplateRepository(dataSource, rdsDb);
+    }
+
+    @Bean
+    public ReviewRepository reviewRepository(DataSource dataSource) {
+        return new JdbiReviewRepository(dataSource, rdsDb);
     }
 
     @Bean

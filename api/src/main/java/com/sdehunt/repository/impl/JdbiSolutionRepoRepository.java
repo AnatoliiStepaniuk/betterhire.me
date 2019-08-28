@@ -16,13 +16,13 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 
-public class JdbiSolutionRepo implements SolutionRepoRepository {
+public class JdbiSolutionRepoRepository implements SolutionRepoRepository {
 
     private final String table;
 
     private final Jdbi jdbi;
 
-    public JdbiSolutionRepo(DataSource dataSource, String db) {
+    public JdbiSolutionRepoRepository(DataSource dataSource, String db) {
         this.jdbi = Jdbi.create(dataSource);
         this.table = "`" + db + "`.`solution_repo`";
     }
