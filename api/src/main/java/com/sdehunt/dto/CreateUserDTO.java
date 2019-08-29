@@ -1,6 +1,9 @@
 package com.sdehunt.dto;
 
+import com.sdehunt.commons.model.Language;
 import lombok.Data;
+
+import java.util.Set;
 
 @Data
 public class CreateUserDTO {
@@ -12,5 +15,7 @@ public class CreateUserDTO {
     private String imageUrl;
     private String cv;
     private String phone;
+    private String city;
+    private Set<Language> languages;
     private boolean test;
 }

@@ -6,6 +6,7 @@ import com.sdehunt.commons.model.Language;
 import com.sdehunt.commons.model.ShortTask;
 import com.sdehunt.commons.model.Tag;
 import com.sdehunt.commons.model.Task;
+import com.sdehunt.commons.util.EnumUtils;
 import com.sdehunt.repository.TaskRepository;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.RowMapper;
@@ -100,8 +101,8 @@ public class JdbiTaskRepository implements TaskRepository {
                         t.getDescriptionUrl(),
                         t.getRequirements(),
                         t.getInputFilesUrl(),
-                        stringify(t.getTags()),
-                        stringify(t.getLanguages()),
+                        EnumUtils.stringify(t.getTags()),
+                        EnumUtils.stringify(t.getLanguages()),
                         t.getParticipants(),
                         t.getUsers(),
                         t.getOffers(),
@@ -143,16 +144,6 @@ public class JdbiTaskRepository implements TaskRepository {
         Optional.ofNullable(t.getCompany()).ifPresent(task::setCompany);
         Optional.ofNullable(t.getJob()).ifPresent(task::setJob);
         Optional.ofNullable(t.getJobUrl()).ifPresent(task::setJobUrl);
-    }
-
-    private String stringify(Set<? extends Enum> tags) {
-        if (tags == null) {
-            return null;
-        }
-        return tags.stream()
-                .map(Enum::name)
-                .map(String::toLowerCase)
-                .collect(Collectors.joining(","));
     }
 
     private Set<Tag> tagsFromString(String tags) { // TODO make one generic method

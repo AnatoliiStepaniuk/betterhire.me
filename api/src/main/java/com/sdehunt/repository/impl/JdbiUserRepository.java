@@ -1,17 +1,21 @@
 package com.sdehunt.repository.impl;
 
+import com.sdehunt.commons.model.Language;
 import com.sdehunt.commons.model.User;
+import com.sdehunt.commons.util.EnumUtils;
 import com.sdehunt.repository.UserQuery;
 import com.sdehunt.repository.UserRepository;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -34,11 +38,20 @@ public class JdbiUserRepository implements UserRepository {
         long now = Instant.now().getEpochSecond();
         jdbi.withHandle(
                 db -> db.execute(
-                        format("INSERT INTO %s (`id`, `name`, `nickname`, `email`, `cv`, `phone`, `github_login`, `linkedin_id`, `image_url`, `test`, `created`, `updated`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", userTable),
-                        u.getId(), u.getName(), u.getNickname(), u.getEmail(), u.getCv(), u.getPhone(), u.getGithubLogin(), u.getLinkedinId(), u.getImageUrl(), u.isTest(), now, now
+                        format("INSERT INTO %s (`id`, `name`, `nickname`, `email`, `cv`, `city`, `languages`, `phone`, `github_login`, `linkedin_id`, `image_url`, `test`, `created`, `updated`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", userTable),
+                        u.getId(), u.getName(), u.getNickname(), u.getEmail(), u.getCv(), u.getCity(), EnumUtils.stringify(u.getLanguages()), u.getPhone(), u.getGithubLogin(), u.getLinkedinId(), u.getImageUrl(), u.isTest(), now, now
                 ));
 
         return get(u.getId()).orElse(null);
+    }
+
+    private Set<Language> langsFromString(String langs) { // TODO duplicate
+        return Optional.ofNullable(langs)
+                .filter(t -> !t.isEmpty() && !t.isBlank())
+                .map(String::toUpperCase)
+                .map(s -> s.split(","))
+                .map(t -> Arrays.stream(t).map(Language::valueOf).collect(Collectors.toSet()))
+                .orElse(new HashSet<>());
     }
 
     @Override
@@ -78,10 +91,11 @@ public class JdbiUserRepository implements UserRepository {
         User user = get(updateRequest.getId()).orElseThrow();
         setFields(user, updateRequest);
 
+        LoggerFactory.getLogger(getClass()).warn(EnumUtils.stringify(user.getLanguages())); // TODO
         jdbi.withHandle(
                 db -> db.execute(
-                        format("UPDATE %s SET name = ?, nickname = ?, email = ?, cv = ?, phone = ?, github_login = ?, linkedin_id = ?, image_url = ?, updated = ?, solved = ?, avg_rank = ?, last_submit = ? WHERE id = ?", userTable),
-                        user.getName(), user.getNickname(), user.getEmail(), user.getCv(), user.getPhone(), user.getGithubLogin(), user.getLinkedinId(), user.getImageUrl(), Instant.now().getEpochSecond(), user.getSolved(), user.getAvgRank(), Optional.ofNullable(user.getLastSubmit()).map(Instant::getEpochSecond).orElse(null), user.getId())
+                        format("UPDATE %s SET name = ?, nickname = ?, email = ?, cv = ?, city = ?, languages = ?, phone = ?, github_login = ?, linkedin_id = ?, image_url = ?, updated = ?, solved = ?, avg_rank = ?, last_submit = ? WHERE id = ?", userTable),
+                        user.getName(), user.getNickname(), user.getEmail(), user.getCv(), user.getCity(), EnumUtils.stringify(user.getLanguages()), user.getPhone(), user.getGithubLogin(), user.getLinkedinId(), user.getImageUrl(), Instant.now().getEpochSecond(), user.getSolved(), user.getAvgRank(), Optional.ofNullable(user.getLastSubmit()).map(Instant::getEpochSecond).orElse(null), user.getId())
         );
 
         return get(user.getId()).orElseThrow();
@@ -100,6 +114,8 @@ public class JdbiUserRepository implements UserRepository {
         Optional.ofNullable(u.getAvgRank()).ifPresent(existing::setAvgRank);
         Optional.ofNullable(u.getCv()).ifPresent(existing::setCv);
         Optional.ofNullable(u.getPhone()).ifPresent(existing::setPhone);
+        Optional.ofNullable(u.getCity()).ifPresent(existing::setCity);
+        Optional.ofNullable(u.getLanguages()).ifPresent(existing::setLanguages);
     }
 
     @Override
@@ -189,6 +205,8 @@ public class JdbiUserRepository implements UserRepository {
                     .setNickname(rs.getString("nickname"))
                     .setEmail(rs.getString("email"))
                     .setCv(rs.getString("cv"))
+                    .setCity(rs.getString("city"))
+                    .setLanguages(langsFromString(rs.getString("languages")))
                     .setPhone(rs.getString("phone"))
                     .setGithubLogin(rs.getString("github_login"))
                     .setLinkedinId(rs.getString("linkedin_id"))

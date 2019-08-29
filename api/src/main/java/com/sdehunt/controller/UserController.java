@@ -59,6 +59,8 @@ public class UserController {
                 .setImageUrl(req.getImageUrl())
                 .setCv(req.getCv())
                 .setPhone(req.getPhone())
+                .setCity(req.getCity())
+                .setLanguages(req.getLanguages())
                 .setTest(req.isTest());
 
         return users.create(user);
@@ -79,6 +81,8 @@ public class UserController {
                 .setNickname(req.getNickname())
                 .setImageUrl(req.getImageUrl())
                 .setCv(req.getCv())
+                .setCity(req.getCity())
+                .setLanguages(req.getLanguages())
                 .setPhone(req.getPhone());
 
         return users.update(user);

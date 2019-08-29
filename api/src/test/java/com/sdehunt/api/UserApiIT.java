@@ -1,5 +1,6 @@
 package com.sdehunt.api;
 
+import com.sdehunt.commons.model.Language;
 import com.sdehunt.commons.model.User;
 import com.sdehunt.dto.CreateUserDTO;
 import com.sdehunt.repository.UserQuery;
@@ -7,8 +8,7 @@ import io.restassured.response.Response;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Collection;
-import java.util.UUID;
+import java.util.*;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
@@ -25,6 +25,9 @@ public class UserApiIT extends AbstractApiTest {
         String name = "NAME" + UUID.randomUUID().toString();
         String cv = "CV" + UUID.randomUUID().toString();
         String phone = "phone" + UUID.randomUUID().toString().substring(0, 10);
+        String city = "CITY" + UUID.randomUUID().toString();
+        Language language = Language.values()[new Random().nextInt(Language.values().length)];
+        Set<Language> languages = Collections.singleton(language);
 
         int usersCountBefore = host().get("/users?test=true").as(Collection.class).size();
 
@@ -37,6 +40,8 @@ public class UserApiIT extends AbstractApiTest {
                 .setName(name)
                 .setPhone(phone)
                 .setCv(cv)
+                .setCity(city)
+                .setLanguages(languages)
                 .setTest(true);
 
         Response response = host()
@@ -53,6 +58,8 @@ public class UserApiIT extends AbstractApiTest {
                 .body("imageUrl", is(imageUrl))
                 .body("userName", is(nickname))
                 .body("cv", is(cv))
+                .body("city", is(city))
+                .body("languages", contains(language.name()))
                 .body("phone", is(phone))
                 .body("solved", is(0))
                 .body("avgRank", equalTo(null))
@@ -71,6 +78,8 @@ public class UserApiIT extends AbstractApiTest {
                 .body("imageUrl", is(user.getImageUrl()))
                 .body("userName", is(nickname))
                 .body("cv", is(cv))
+                .body("city", is(city))
+                .body("languages", contains(language.name()))
                 .body("phone", is(phone))
                 .body("solved", is(0))
                 .body("avgRank", equalTo(null))
@@ -95,6 +104,8 @@ public class UserApiIT extends AbstractApiTest {
                 .body("[0].linkedinId", is(user.getLinkedinId()))
                 .body("[0].nickname", is(user.getNickname()))
                 .body("[0].cv", is(user.getCv()))
+                .body("[0].languages", contains(language.name()))
+                .body("[0].city", is(user.getCity()))
                 .body("[0].phone", is(user.getPhone()))
                 .body("[0].imageUrl", is(user.getImageUrl()))
                 .body("[0].userName", is(nickname))
@@ -107,6 +118,8 @@ public class UserApiIT extends AbstractApiTest {
         int usersCountAfter = host().get("/users?test=true").as(Collection.class).size();
         Assert.assertEquals(usersCountBefore + 1, usersCountAfter);
 
+        Language updatedLanguage = Language.values()[new Random().nextInt(Language.values().length)];
+        Set<Language> newLanguages = Collections.singleton(updatedLanguage);
         CreateUserDTO updateRequest = new CreateUserDTO()
                 .setEmail(user.getEmail() + "2")
                 .setGithubLogin(user.getGithubLogin() + "2")
@@ -114,7 +127,9 @@ public class UserApiIT extends AbstractApiTest {
                 .setNickname(user.getNickname() + "2")
                 .setImageUrl(user.getImageUrl() + "2")
                 .setPhone(user.getPhone() + "2")
-                .setCv(user.getCv() + "2");
+                .setCv(user.getCv() + "2")
+                .setCity(user.getCity() + "2")
+                .setLanguages(newLanguages);
 
         host().contentType(APP_JSON)
                 .body(updateRequest)
@@ -128,6 +143,8 @@ public class UserApiIT extends AbstractApiTest {
                 .body("nickname", is(updateRequest.getNickname()))
                 .body("imageUrl", is(updateRequest.getImageUrl()))
                 .body("cv", is(updateRequest.getCv()))
+                .body("city", is(updateRequest.getCity()))
+                .body("languages", contains(updatedLanguage.name()))
                 .body("phone", is(updateRequest.getPhone()))
                 .body("userName", is(updateRequest.getNickname()))
                 .body("solved", is(0))
@@ -147,6 +164,8 @@ public class UserApiIT extends AbstractApiTest {
                 .body("imageUrl", is(updateRequest.getImageUrl()))
                 .body("userName", is(updateRequest.getNickname()))
                 .body("cv", is(updateRequest.getCv()))
+                .body("city", is(updateRequest.getCity()))
+                .body("languages", contains(updatedLanguage.name()))
                 .body("phone", is(updateRequest.getPhone()))
                 .body("solved", is(0))
                 .body("avgRank", equalTo(null))
