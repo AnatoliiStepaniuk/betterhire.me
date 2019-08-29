@@ -8,7 +8,6 @@ import com.sdehunt.repository.UserRepository;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;
-import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
@@ -91,7 +90,6 @@ public class JdbiUserRepository implements UserRepository {
         User user = get(updateRequest.getId()).orElseThrow();
         setFields(user, updateRequest);
 
-        LoggerFactory.getLogger(getClass()).warn(EnumUtils.stringify(user.getLanguages())); // TODO
         jdbi.withHandle(
                 db -> db.execute(
                         format("UPDATE %s SET name = ?, nickname = ?, email = ?, cv = ?, city = ?, languages = ?, phone = ?, github_login = ?, linkedin_id = ?, image_url = ?, updated = ?, solved = ?, avg_rank = ?, last_submit = ? WHERE id = ?", userTable),

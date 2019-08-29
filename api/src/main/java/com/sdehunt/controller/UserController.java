@@ -1,14 +1,9 @@
 package com.sdehunt.controller;
 
-import com.sdehunt.commons.model.BestUserResult;
-import com.sdehunt.commons.model.Solution;
-import com.sdehunt.commons.model.User;
+import com.sdehunt.commons.model.*;
 import com.sdehunt.dto.CreateUserDTO;
 import com.sdehunt.exception.UserNotFoundException;
-import com.sdehunt.repository.BestSolutionRepository;
-import com.sdehunt.repository.SolutionRepository;
-import com.sdehunt.repository.UserQuery;
-import com.sdehunt.repository.UserRepository;
+import com.sdehunt.repository.*;
 import com.sdehunt.security.CurrentUser;
 import com.sdehunt.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController()
 @RequestMapping("/users")
@@ -30,27 +28,38 @@ public class UserController {
     private BestSolutionRepository bestSolutions;
 
     @Autowired
-    private UserRepository users;
+    private UserRepository usersRepo;
+
+    @Autowired
+    private ReviewRepository reviewsRepo;
 
     @GetMapping("/me")
     @PreAuthorize("hasRole('USER')")
     public User getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
-        return users.get(userPrincipal.getId())
+        return usersRepo.get(userPrincipal.getId())
                 .orElseThrow(() -> new RuntimeException("User id " + userPrincipal.getId() + " is not found"));
     }
 
     @RequestMapping(path = "", method = RequestMethod.GET)
     public Collection<User> getAll(@RequestParam(required = false) boolean test) {
-        return users.getAll(test);
+        return usersRepo.getAll(test);
+    }
+
+    @RequestMapping(path = "/reviews", method = RequestMethod.GET)
+    public List<UserWithReviews> getAllUsersWithReviews(@RequestParam(required = false) boolean test) {
+        Collection<User> users = usersRepo.getAll(test);
+        Set<String> userIds = users.stream().map(User::getId).collect(Collectors.toSet());
+        Map<String, List<Review>> reviews = reviewsRepo.forUsers(userIds);
+        return users.stream().map(u -> new UserWithReviews(u, reviews.get(u.getId()))).collect(Collectors.toList());
     }
 
     @RequestMapping(path = "/query", method = RequestMethod.POST)
     public Collection<User> query(@RequestBody UserQuery query) { // TODO create tests for all combinations
-        return users.query(query);
+        return usersRepo.query(query);
     }
 
     @RequestMapping(path = "", method = RequestMethod.POST)
-    public User create(@RequestBody CreateUserDTO req) { // TODO maybe use user instead of DTO?
+    public User create(@RequestBody CreateUserDTO req) {
         User user = new User()
                 .setEmail(req.getEmail())
                 .setGithubLogin(req.getGithubLogin())
@@ -63,12 +72,12 @@ public class UserController {
                 .setLanguages(req.getLanguages())
                 .setTest(req.isTest());
 
-        return users.create(user);
+        return usersRepo.create(user);
     }
 
     @RequestMapping(path = "/{userId}", method = RequestMethod.GET)
     public User get(@PathVariable("userId") String userId) {
-        return users.get(userId).orElseThrow(UserNotFoundException::new);
+        return usersRepo.get(userId).orElseThrow(UserNotFoundException::new);
     }
 
     @RequestMapping(path = "/{userId}", method = RequestMethod.PUT)
@@ -85,12 +94,12 @@ public class UserController {
                 .setLanguages(req.getLanguages())
                 .setPhone(req.getPhone());
 
-        return users.update(user);
+        return usersRepo.update(user);
     }
 
     @RequestMapping(path = "/{userId}", method = RequestMethod.DELETE)
     public void delete(@PathVariable("userId") String userId) {
-        users.delete(userId);
+        usersRepo.delete(userId);
     }
 
     @RequestMapping(path = "/{userId}/solutions", method = RequestMethod.GET)

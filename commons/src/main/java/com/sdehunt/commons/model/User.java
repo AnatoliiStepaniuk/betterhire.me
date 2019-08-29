@@ -27,4 +27,27 @@ public class User {
     private Instant updated;
     private boolean test;
 
+    public User() {
+    }
+
+    public User(User u) {
+        this.id = u.getId();
+        this.name = u.getName();
+        this.nickname = u.getNickname();
+        this.imageUrl = u.getImageUrl();
+        this.email = u.getEmail();
+        this.cv = u.getCv();
+        this.phone = u.getPhone();
+        this.githubLogin = u.getGithubLogin();
+        this.linkedinId = u.getLinkedinId();
+        this.userName = u.getUserName();
+        this.city = u.getCity();
+        this.languages = u.getLanguages();
+        this.lastSubmit = u.getLastSubmit();
+        this.solved = u.getSolved();
+        this.avgRank = u.getAvgRank();
+        this.created = u.getCreated();
+        this.updated = u.getUpdated();
+        this.test = u.isTest();
+    }
 }

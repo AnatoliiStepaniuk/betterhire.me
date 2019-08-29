@@ -11,9 +11,9 @@ import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -42,6 +42,26 @@ public class JdbiReviewRepository implements ReviewRepository {
         return jdbi.withHandle(
                 db -> db.select(format("SELECT * FROM %s WHERE user = ? ORDER BY created DESC", table), userId)
                         .map(new ReviewRowMapper()).list()
+        );
+    }
+
+    static <T> Collector<T, ?, List<T>> toSortedList(Comparator<? super T> c) {
+        return Collectors.collectingAndThen(
+                Collectors.toCollection(() -> new TreeSet<>(c)), ArrayList::new);
+    }
+
+    @Override
+    public Map<String, List<Review>> forUsers(Set<String> userIds) { // TODO test
+        if (userIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        String userIdsString = userIds.stream().map(s -> "'" + s + "'").collect(Collectors.joining(","));
+        return jdbi.withHandle(
+                db -> db.select(format("SELECT * FROM %s WHERE user IN (%s)", table, userIdsString))
+                        .map(new ReviewRowMapper())
+                        .stream()
+                        .collect(Collectors.groupingBy(Review::getUserId))
         );
     }
 
