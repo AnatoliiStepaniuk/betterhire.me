@@ -51,7 +51,7 @@ public class JdbiReviewRepository implements ReviewRepository {
     }
 
     @Override
-    public Map<String, List<Review>> forUsers(Set<String> userIds) { // TODO test
+    public Map<String, List<Review>> forUsers(Set<String> userIds) {
         if (userIds.isEmpty()) {
             return Collections.emptyMap();
         }
