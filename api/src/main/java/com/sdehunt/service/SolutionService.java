@@ -30,7 +30,6 @@ public class SolutionService {
     private final Logger logger;
     private ExecutorService executor;
     private ParameterService params;
-
     private BestSolutionService bestSolutionService;
 
     public SolutionService(
@@ -105,7 +104,9 @@ public class SolutionService {
             long score = count(solution);
             Solution toUpdate = solution.setScore(score).setStatus(SolutionStatus.ACCEPTED);
             solutionRepository.update(toUpdate);
-            User user = userRepository.get(solution.getUserId()).orElseThrow().setLastSubmit(Instant.now());
+            User user = userRepository.get(solution.getUserId()).orElseThrow();
+            user.setLastSubmit(Instant.now());
+            user.getLanguages().add(githubClient.getRepoLanguage(solution.getRepo()));
             userRepository.update(user);
             bestSolutionService.updateIfNeeded(solution, score);
             return score;

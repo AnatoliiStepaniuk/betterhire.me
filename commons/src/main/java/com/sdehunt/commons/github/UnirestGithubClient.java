@@ -10,6 +10,7 @@ import com.sdehunt.commons.github.model.CopyRepoDTO;
 import com.sdehunt.commons.github.model.CreateHookDTO;
 import com.sdehunt.commons.github.model.InvitationResponseDTO;
 import com.sdehunt.commons.github.model.Permission;
+import com.sdehunt.commons.model.Language;
 import com.sdehunt.commons.model.SimpleCommit;
 import com.sdehunt.commons.repo.AccessTokenRepository;
 import com.sdehunt.commons.util.FileUtils;
@@ -27,6 +28,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
@@ -46,6 +48,7 @@ public class UnirestGithubClient implements GithubClient {
     private final static String GENERATE = "generate";
     private final static String COLLABORATORS = "collaborators";
     private final static String HOOKS = "hooks";
+    private final static String LANGUAGES = "languages";
     private final String systemAccessToken;
     private final static int TIMEOUT_ATTEMPTS = 3;
     private final static int TIMEOUT_MILLIS = 3000;
@@ -204,6 +207,26 @@ public class UnirestGithubClient implements GithubClient {
             logger.warn("Status code " + response.getStatus() + " for URL " + url);
             throw new RuntimeException("Status code " + response.getStatus() + " for URL " + url);
         }
+    }
+
+    @Override
+    @SneakyThrows({IOException.class})
+    public Language getRepoLanguage(String repo) {
+        String url = API_DOMAIN + "/" + REPOS + "/" + repo + "/" + LANGUAGES;
+        HttpResponse<String> response = Unirest.get(url)
+                .header("Authorization", "token " + systemAccessToken)
+                .asString();
+        if (response.getStatus() != 200) {
+            logger.warn("Status code " + response.getStatus() + " for URL " + url);
+            throw new RuntimeException("Status code " + response.getStatus() + " for URL " + url);
+        }
+
+        Map<String, Long> map = objectMapper.readValue(response.getBody(), Map.class);
+        return map.entrySet().stream()
+                .reduce((e1, e2) -> e1.getValue() > e2.getValue() ? e1 : e2)
+                .map(Map.Entry::getKey)
+                .map(GithubLanguageConverter::convert)
+                .orElse(Language.OTHER);
     }
 
     @SneakyThrows({IOException.class, UnirestException.class})

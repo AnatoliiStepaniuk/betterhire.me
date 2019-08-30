@@ -4,6 +4,7 @@ import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
 import com.sdehunt.commons.github.exceptions.GithubTimeoutException;
 import com.sdehunt.commons.github.exceptions.RepositoryNotFoundException;
 import com.sdehunt.commons.github.model.Permission;
+import com.sdehunt.commons.model.Language;
 
 import java.util.Collection;
 
@@ -80,4 +81,11 @@ public interface GithubClient {
      */
     void createWebhook(String repo, String hookUrl, String secret);
 
+    /**
+     * Returns main language of repository
+     *
+     * @param repo repository to get language of
+     * @return Main language of repository or OTHER if not present in our system.
+     */
+    Language getRepoLanguage(String repo);
 }

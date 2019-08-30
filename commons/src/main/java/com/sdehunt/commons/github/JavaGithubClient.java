@@ -6,6 +6,7 @@ import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
 import com.sdehunt.commons.github.exceptions.GithubTimeoutException;
 import com.sdehunt.commons.github.exceptions.RepositoryNotFoundException;
 import com.sdehunt.commons.github.model.Permission;
+import com.sdehunt.commons.model.Language;
 import com.sdehunt.commons.model.SimpleCommit;
 import com.sdehunt.commons.repo.AccessTokenRepository;
 import com.sdehunt.commons.util.FileUtils;
@@ -149,6 +150,11 @@ public class JavaGithubClient implements GithubClient {
 
     @Override
     public void createWebhook(String repo, String hookUrl, String secret) {
+        throw new RuntimeException("Method not implemented;");
+    }
+
+    @Override
+    public Language getRepoLanguage(String repo) {
         throw new RuntimeException("Method not implemented;");
     }
 
