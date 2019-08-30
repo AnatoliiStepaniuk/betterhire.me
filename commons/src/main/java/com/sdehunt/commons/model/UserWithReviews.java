@@ -17,7 +17,7 @@ public class UserWithReviews extends User {
 
     public UserWithReviews(User u, List<Review> reviews) {
         super(u);
-        this.reviews = reviews;
+        this.reviews = reviews != null ? reviews : new ArrayList<>();
     }
 
 }
