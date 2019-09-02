@@ -88,4 +88,14 @@ public interface GithubClient {
      * @return Main language of repository or OTHER if not present in our system.
      */
     Language getRepoLanguage(String repo);
+
+    /**
+     * Opens issue in specified repository.
+     *
+     * @param repo     repo to open issue in
+     * @param title    title of the issue
+     * @param body     body of the issue
+     * @param assignee github user that will be assigned this issue
+     */
+    void openIssue(String repo, String title, String body, String assignee);
 }

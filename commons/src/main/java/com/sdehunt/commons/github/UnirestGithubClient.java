@@ -6,10 +6,7 @@ import com.sdehunt.commons.github.exceptions.AlreadyInvitedException;
 import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
 import com.sdehunt.commons.github.exceptions.GithubTimeoutException;
 import com.sdehunt.commons.github.exceptions.RepositoryNotFoundException;
-import com.sdehunt.commons.github.model.CopyRepoDTO;
-import com.sdehunt.commons.github.model.CreateHookDTO;
-import com.sdehunt.commons.github.model.InvitationResponseDTO;
-import com.sdehunt.commons.github.model.Permission;
+import com.sdehunt.commons.github.model.*;
 import com.sdehunt.commons.model.Language;
 import com.sdehunt.commons.model.SimpleCommit;
 import com.sdehunt.commons.repo.AccessTokenRepository;
@@ -48,6 +45,7 @@ public class UnirestGithubClient implements GithubClient {
     private final static String GENERATE = "generate";
     private final static String COLLABORATORS = "collaborators";
     private final static String HOOKS = "hooks";
+    private final static String ISSUES = "issues";
     private final static String LANGUAGES = "languages";
     private final String systemAccessToken;
     private final static int TIMEOUT_ATTEMPTS = 3;
@@ -227,6 +225,23 @@ public class UnirestGithubClient implements GithubClient {
                 .map(Map.Entry::getKey)
                 .map(GithubLanguageConverter::convert)
                 .orElse(Language.OTHER);
+    }
+
+    @Override
+    public void openIssue(String repo, String title, String body, String assignee) {
+        String url = API_DOMAIN + "/" + REPOS + "/" + repo + "/" + ISSUES;
+        CreateIssueDTO dto = new CreateIssueDTO()
+                .setTitle(title)
+                .setBody(body)
+                .setAssignees(Collections.singleton(assignee));
+        HttpResponse<JsonNode> response = Unirest.post(url)
+                .header("Authorization", "token " + systemAccessToken)
+                .body(body)
+                .asJson();
+        if (response.getStatus() != 201) {
+            logger.warn("Status code " + response.getStatus() + " for URL " + url);
+            throw new RuntimeException("Status code " + response.getStatus() + " for URL " + url);
+        }
     }
 
     @SneakyThrows({IOException.class, UnirestException.class})
