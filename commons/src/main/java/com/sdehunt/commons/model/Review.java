@@ -6,7 +6,7 @@ import lombok.Data;
 import java.time.Instant;
 
 @Data
-public class Review {
+public class Review implements Comparable<Review> {
 
     private String id;
     private String userId;
@@ -18,4 +18,8 @@ public class Review {
     private String reviewer;
     private Instant created;
 
+    @Override
+    public int compareTo(Review o) {
+        return this.getCreated().isBefore(o.getCreated()) ? 1 : -1;
+    }
 }

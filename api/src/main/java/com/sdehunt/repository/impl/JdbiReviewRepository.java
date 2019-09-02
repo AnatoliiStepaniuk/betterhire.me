@@ -23,6 +23,8 @@ public class JdbiReviewRepository implements ReviewRepository {
 
     private final Jdbi jdbi;
 
+    private final Comparator<Review> latestFirst = Comparator.comparingLong((Review r) -> r.getCreated().getEpochSecond()).reversed();
+
     public JdbiReviewRepository(DataSource dataSource, String db) {
         this.jdbi = Jdbi.create(dataSource);
         this.table = "`" + db + "`.`solution_review`";
@@ -57,12 +59,20 @@ public class JdbiReviewRepository implements ReviewRepository {
         }
 
         String userIdsString = userIds.stream().map(s -> "'" + s + "'").collect(Collectors.joining(","));
-        return jdbi.withHandle(
+        return sort(jdbi.withHandle(
                 db -> db.select(format("SELECT * FROM %s WHERE user IN (%s)", table, userIdsString))
                         .map(new ReviewRowMapper())
                         .stream()
                         .collect(Collectors.groupingBy(Review::getUserId))
-        );
+        ));
+    }
+
+    private Map<String, List<Review>> sort(Map<String, List<Review>> in) {
+        return in.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> {
+                    Collections.sort(e.getValue());
+                    return e.getValue();
+                }));
     }
 
     @Override
