@@ -3,6 +3,7 @@ package com.sdehunt.commons.github;
 import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
 import com.sdehunt.commons.github.exceptions.GithubTimeoutException;
 import com.sdehunt.commons.github.exceptions.RepositoryNotFoundException;
+import com.sdehunt.commons.github.model.IssueDTO;
 import com.sdehunt.commons.github.model.Permission;
 import com.sdehunt.commons.model.Language;
 
@@ -98,4 +99,13 @@ public interface GithubClient {
      * @param assignee github user that will be assigned this issue
      */
     void openIssue(String repo, String title, String body, String assignee);
+
+    /**
+     * Returns all issues of the repository.
+     *
+     * @param repo      repository to return issues of
+     * @param allStates if true issues in all states will be returned. Otherwise, only open ones.
+     * @return list of repository issues
+     */
+    Collection<IssueDTO> getRepoIssues(String repo, boolean allStates);
 }

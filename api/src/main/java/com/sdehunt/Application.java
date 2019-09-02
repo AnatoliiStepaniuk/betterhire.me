@@ -16,10 +16,7 @@ import com.sdehunt.repository.impl.*;
 import com.sdehunt.score.GeneralFilesDownloader;
 import com.sdehunt.score.GeneralScoreCounter;
 import com.sdehunt.security.AppProperties;
-import com.sdehunt.service.BestSolutionService;
-import com.sdehunt.service.CvService;
-import com.sdehunt.service.SolutionRepoService;
-import com.sdehunt.service.SolutionService;
+import com.sdehunt.service.*;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -152,15 +149,21 @@ public class Application implements WebMvcConfigurer {
     }
 
     @Bean
+    public ProfileNotificationService profileNotificationService(GithubClient githubClient) {
+        return new ProfileNotificationService(githubClient);
+    }
+
+    @Bean
     public SolutionService solutionService(
             GeneralScoreCounter scoreCounter,
             SolutionRepository solutionRepository,
             UserRepository userRepository,
             GithubClient githubClient,
             ParameterService params,
-            BestSolutionService bestSolutionService
+            BestSolutionService bestSolutionService,
+            ProfileNotificationService profileNotificationService
     ) {
-        return new SolutionService(scoreCounter, solutionRepository, userRepository, githubClient, params, bestSolutionService);
+        return new SolutionService(scoreCounter, solutionRepository, userRepository, githubClient, params, bestSolutionService, profileNotificationService);
     }
 
     @Bean

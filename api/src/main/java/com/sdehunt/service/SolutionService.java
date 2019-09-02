@@ -31,6 +31,7 @@ public class SolutionService {
     private ExecutorService executor;
     private ParameterService params;
     private BestSolutionService bestSolutionService;
+    private ProfileNotificationService profileNotificationService;
 
     public SolutionService(
             GeneralScoreCounter scoreCounter,
@@ -38,7 +39,8 @@ public class SolutionService {
             UserRepository userRepository,
             GithubClient githubClient,
             ParameterService params,
-            BestSolutionService bestSolutionService
+            BestSolutionService bestSolutionService,
+            ProfileNotificationService profileNotificationService
     ) {
         this.scoreCounter = scoreCounter;
         this.solutionRepository = solutionRepository;
@@ -48,6 +50,7 @@ public class SolutionService {
         this.params = params;
         this.logger = LoggerFactory.getLogger(SolutionService.class);
         this.bestSolutionService = bestSolutionService;
+        this.profileNotificationService = profileNotificationService;
     }
 
     /**
@@ -109,6 +112,7 @@ public class SolutionService {
             user.getLanguages().add(githubClient.getRepoLanguage(solution.getRepo()));
             userRepository.update(user);
             bestSolutionService.updateIfNeeded(solution, score);
+            profileNotificationService.notifyIfNotFilled(user, solution.getRepo());
             return score;
         };
     }

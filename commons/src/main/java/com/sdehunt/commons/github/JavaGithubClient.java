@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
 import com.sdehunt.commons.github.exceptions.GithubTimeoutException;
 import com.sdehunt.commons.github.exceptions.RepositoryNotFoundException;
+import com.sdehunt.commons.github.model.IssueDTO;
 import com.sdehunt.commons.github.model.Permission;
 import com.sdehunt.commons.model.Language;
 import com.sdehunt.commons.model.SimpleCommit;
@@ -160,6 +161,11 @@ public class JavaGithubClient implements GithubClient {
 
     @Override
     public void openIssue(String repo, String title, String body, String assignee) {
+        throw new RuntimeException("Method not implemented;");
+    }
+
+    @Override
+    public Collection<IssueDTO> getRepoIssues(String repo, boolean ignored) {
         throw new RuntimeException("Method not implemented;");
     }
 

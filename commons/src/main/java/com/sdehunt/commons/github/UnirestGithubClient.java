@@ -236,12 +236,28 @@ public class UnirestGithubClient implements GithubClient {
                 .setAssignees(Collections.singleton(assignee));
         HttpResponse<JsonNode> response = Unirest.post(url)
                 .header("Authorization", "token " + systemAccessToken)
-                .body(body)
+                .body(dto)
                 .asJson();
         if (response.getStatus() != 201) {
             logger.warn("Status code " + response.getStatus() + " for URL " + url);
             throw new RuntimeException("Status code " + response.getStatus() + " for URL " + url);
         }
+    }
+
+    @Override
+    @SneakyThrows({IOException.class})
+    public Collection<IssueDTO> getRepoIssues(String repo, boolean allStates) {
+        String url = API_DOMAIN + "/" + REPOS + "/" + repo + "/" + ISSUES; // TODO verify that closed issue is also listed
+        url += allStates ? "?state=all" : "";
+        HttpResponse<String> response = Unirest.get(url)
+                .header("Authorization", "token " + systemAccessToken)
+                .asString();
+        if (response.getStatus() != 200) {
+            logger.warn("Status code " + response.getStatus() + " for URL " + url);
+            throw new RuntimeException("Status code " + response.getStatus() + " for URL " + url);
+        }
+
+        return Arrays.asList(objectMapper.readValue(response.getBody(), IssueDTO[].class));
     }
 
     @SneakyThrows({IOException.class, UnirestException.class})
