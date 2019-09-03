@@ -15,14 +15,9 @@ public class ProfileNotificationService {
     }
 
     public void notifyIfNotFilled(User user, String repo) {
-        if (!isFilled(user) && !issueExists(repo) && isSystemUser(user)) {
+        if (!isFilled(user) && !issueExists(repo)) {
             githubClient.openIssue(repo, getTitle(), getBody(), user.getGithubLogin());
         }
-    }
-
-    // TODO remove this temporary method!
-    private boolean isSystemUser(User user) {
-        return user.getGithubLogin().equals("AnatoliiStepaniuk") || user.getGithubLogin().equals("chebotiuk");
     }
 
     private boolean issueExists(String repo) {
@@ -32,7 +27,7 @@ public class ProfileNotificationService {
 
     // TODO temporary
     private String getBody() {
-        return "Заполни свой профиль https://betterhire.me/profile чтобы рекрутеры могли с тобой связаться"; // TODO
+        return "Заполни свой профиль https://betterhire.me/profile и загрузи резюме чтобы рекрутеры могли с тобой связаться"; // TODO
     }
 
     // TODO temporary
