@@ -174,7 +174,7 @@ public class Application implements WebMvcConfigurer {
     @Bean
     public DataSource dataSource() {
         HikariDataSource dataSource = new HikariDataSource();
-        dataSource.setJdbcUrl("jdbc:mysql://" + rdsHost + ":" + rdsPort + "?useSSL=true&verifyServerCertificate=true");
+        dataSource.setJdbcUrl("jdbc:mysql://" + rdsHost + ":" + rdsPort + "?useSSL=true&verifyServerCertificate=true&useUnicode=true&characterEncoding=UTF-8");
         dataSource.setUsername(rdsUser);
         dataSource.setPassword(rdsPassword);
         return dataSource;

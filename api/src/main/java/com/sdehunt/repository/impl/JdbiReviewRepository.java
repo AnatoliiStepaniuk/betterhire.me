@@ -23,8 +23,6 @@ public class JdbiReviewRepository implements ReviewRepository {
 
     private final Jdbi jdbi;
 
-    private final Comparator<Review> latestFirst = Comparator.comparingLong((Review r) -> r.getCreated().getEpochSecond()).reversed();
-
     public JdbiReviewRepository(DataSource dataSource, String db) {
         this.jdbi = Jdbi.create(dataSource);
         this.table = "`" + db + "`.`solution_review`";
@@ -34,7 +32,7 @@ public class JdbiReviewRepository implements ReviewRepository {
     public void create(String solutionId, String userId, TaskID taskID, Long grade, String comment, String emoji, String reviewer) {
         String id = UUID.randomUUID().toString();
         jdbi.withHandle(
-                db -> db.execute(format("INSERT INTO %s (`id`, `user`, `task`, `solution`, `grade`, `comment`, `emoji`, `reviewer`, `created`) VALUES (?, ?, ?, ?, ?, ?, ?,  ?, ?)", table),
+                db -> db.execute(format("INSERT INTO %s (`id`, `user`, `task`, `solution`, `grade`, `comment`, `emoji`, `reviewer`, `created`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", table),
                         id, userId, taskID, solutionId, grade, comment, emoji, reviewer, Instant.now().getEpochSecond())
         );
     }
