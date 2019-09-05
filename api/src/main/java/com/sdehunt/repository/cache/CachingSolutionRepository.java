@@ -7,6 +7,7 @@ import com.sdehunt.repository.SolutionQuery;
 import com.sdehunt.repository.SolutionRepository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class CachingSolutionRepository implements SolutionRepository {
@@ -52,5 +53,10 @@ public class CachingSolutionRepository implements SolutionRepository {
     @Override
     public long getTotalSolutions() {
         return totalSolutionsCache.computeIfAbsent("", s -> inner.getTotalSolutions());
+    }
+
+    @Override
+    public Map<String, List<String>> getAllRepos() {
+        return inner.getAllRepos();
     }
 }

@@ -4,6 +4,7 @@ import com.sdehunt.commons.model.Solution;
 import com.sdehunt.repository.impl.SolutionQueryImpl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -56,5 +57,10 @@ public interface SolutionRepository {
     default List<Solution> forUser(String userId, boolean test) {
         return query(new SolutionQueryImpl().user(userId).test(test));
     }
+
+    /**
+     * Returns all repositories mapped by userId
+     */
+    Map<String, List<String>> getAllRepos();
 
 }

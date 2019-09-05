@@ -5,6 +5,7 @@ import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.SolutionStatus;
 import com.sdehunt.repository.SolutionQuery;
 import com.sdehunt.repository.SolutionRepository;
+import lombok.Data;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;
@@ -13,10 +14,8 @@ import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -118,6 +117,16 @@ public class JdbiSolutionRepository implements SolutionRepository {
         );
     }
 
+    @Override
+    public Map<String, List<String>> getAllRepos() {
+        return jdbi.withHandle(
+                db -> db.select(format("SELECT repo, user FROM %s GROUP BY repo;", table))
+                        .map(new UserRepoRowMapper())
+                        .stream()
+                        .collect(Collectors.groupingBy(UserRepo::getUserId, Collectors.mapping(UserRepo::getRepo, Collectors.toList())))
+        );
+    }
+
     private class SolutionRowMapper implements RowMapper<Solution> {
         @Override
         public Solution map(ResultSet rs, StatementContext ctx) throws SQLException {
@@ -133,5 +142,20 @@ public class JdbiSolutionRepository implements SolutionRepository {
                     .setTest(rs.getBoolean("test"))
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")));
         }
+    }
+
+    private class UserRepoRowMapper implements RowMapper<UserRepo> {
+        @Override
+        public UserRepo map(ResultSet rs, StatementContext ctx) throws SQLException {
+            return new UserRepo()
+                    .setUserId(rs.getString("user"))
+                    .setRepo(rs.getString("repo"));
+        }
+    }
+
+    @Data
+    private class UserRepo {
+        private String repo;
+        private String userId;
     }
 }

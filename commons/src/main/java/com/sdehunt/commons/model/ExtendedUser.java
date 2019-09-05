@@ -6,16 +6,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class UserWithReviews extends User {
+public class ExtendedUser extends User {
 
     private List<Review> reviews;
+    private List<String> repos;
 
-    public UserWithReviews(User u) {
+    public ExtendedUser(User u) {
         super(u);
         this.reviews = new ArrayList<>();
     }
 
-    public UserWithReviews(User u, List<Review> reviews) {
+    public ExtendedUser(User u, List<Review> reviews) {
         super(u);
         this.reviews = reviews != null ? reviews : new ArrayList<>();
     }

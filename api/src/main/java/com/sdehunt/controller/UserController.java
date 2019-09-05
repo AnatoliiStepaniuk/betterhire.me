@@ -33,6 +33,9 @@ public class UserController {
     @Autowired
     private ReviewRepository reviewsRepo;
 
+    @Autowired
+    private SolutionRepository solutionsRepo;
+
     @GetMapping("/me")
     @PreAuthorize("hasRole('USER')")
     public User getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
@@ -45,12 +48,17 @@ public class UserController {
         return usersRepo.getAll(test);
     }
 
-    @RequestMapping(path = "/reviews", method = RequestMethod.GET)
-    public List<UserWithReviews> getAllUsersWithReviews(@RequestParam(required = false) boolean test) {
+    @RequestMapping(path = {"/extended", "/reviews"}, method = RequestMethod.GET)
+    public List<ExtendedUser> getAllUsersWithReviews(@RequestParam(required = false) boolean test) {
         Collection<User> users = usersRepo.getAll(test);
         Set<String> userIds = users.stream().map(User::getId).collect(Collectors.toSet());
         Map<String, List<Review>> reviews = reviewsRepo.forUsers(userIds);
-        return users.stream().map(u -> new UserWithReviews(u, reviews.get(u.getId()))).collect(Collectors.toList());
+        Map<String, List<String>> repos = solutionsRepo.getAllRepos();
+        return users.stream().map(
+                u -> new ExtendedUser(u)
+                        .setReviews(reviews.get(u.getId()))
+                        .setRepos(repos.get(u.getId()))
+        ).collect(Collectors.toList());
     }
 
     @RequestMapping(path = "/query", method = RequestMethod.POST)
