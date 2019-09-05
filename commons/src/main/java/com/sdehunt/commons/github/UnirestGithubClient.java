@@ -168,11 +168,10 @@ public class UnirestGithubClient implements GithubClient {
 
     @Override
     @SneakyThrows({UnirestException.class})
-    public String invite(String repo, String githubLogin, Permission permission) {
+    public String invite(String repo, String githubLogin) {
         String url = API_DOMAIN + "/" + REPOS + "/" + repo + "/" + COLLABORATORS + "/" + githubLogin;
         HttpResponse<InvitationResponseDTO> response = Unirest.put(url)
                 .header("Authorization", "token " + systemAccessToken)
-                .body(Collections.singletonMap("permission", permission.name().toLowerCase()))
                 .asObject(InvitationResponseDTO.class);
 
         if (response.getStatus() == 201) {

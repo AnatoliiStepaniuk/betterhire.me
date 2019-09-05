@@ -4,7 +4,6 @@ import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
 import com.sdehunt.commons.github.exceptions.GithubTimeoutException;
 import com.sdehunt.commons.github.exceptions.RepositoryNotFoundException;
 import com.sdehunt.commons.github.model.IssueDTO;
-import com.sdehunt.commons.github.model.Permission;
 import com.sdehunt.commons.model.Language;
 
 import java.util.Collection;
@@ -73,7 +72,7 @@ public interface GithubClient {
     /**
      * Invites user to be a collaborator for the repo and returns invitation link.
      */
-    String invite(String repo, String githubLogin, Permission permission);
+    String invite(String repo, String githubLogin);
 
     /**
      * Registers a push webhook for specified url

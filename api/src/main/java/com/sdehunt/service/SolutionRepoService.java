@@ -2,7 +2,6 @@ package com.sdehunt.service;
 
 import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.github.GithubClient;
-import com.sdehunt.commons.github.model.Permission;
 import com.sdehunt.commons.model.Language;
 import com.sdehunt.commons.model.Template;
 import com.sdehunt.commons.model.User;
@@ -51,7 +50,7 @@ public class SolutionRepoService {
 
         solutionRepos.save(taskID, userId, language, githubLogin + "/" + repoName, webhookSecret);
 
-        return githubClient.invite(githubLogin + "/" + repoName, user.getGithubLogin(), Permission.PUSH);
+        return githubClient.invite(githubLogin + "/" + repoName, user.getGithubLogin());
     }
 
     private String getDescription(String githubLogin, TaskID taskID) {

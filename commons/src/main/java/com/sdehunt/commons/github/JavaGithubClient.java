@@ -6,7 +6,6 @@ import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
 import com.sdehunt.commons.github.exceptions.GithubTimeoutException;
 import com.sdehunt.commons.github.exceptions.RepositoryNotFoundException;
 import com.sdehunt.commons.github.model.IssueDTO;
-import com.sdehunt.commons.github.model.Permission;
 import com.sdehunt.commons.model.Language;
 import com.sdehunt.commons.model.SimpleCommit;
 import com.sdehunt.commons.repo.AccessTokenRepository;
@@ -145,7 +144,7 @@ public class JavaGithubClient implements GithubClient {
     }
 
     @Override
-    public String invite(String repo, String githubLogin, Permission permission) {
+    public String invite(String repo, String githubLogin) {
         throw new RuntimeException("Method not implemented;");
     }
 
