@@ -8,12 +8,11 @@ import java.util.List;
 @Data
 public class ExtendedUser extends User {
 
-    private List<Review> reviews;
-    private List<String> repos;
+    private List<Review> reviews = new ArrayList<>();
+    private List<String> repos = new ArrayList<>();
 
     public ExtendedUser(User u) {
         super(u);
-        this.reviews = new ArrayList<>();
     }
 
     public ExtendedUser(User u, List<Review> reviews) {

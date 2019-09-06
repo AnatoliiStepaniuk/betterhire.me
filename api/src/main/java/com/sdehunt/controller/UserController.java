@@ -11,10 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController()
@@ -49,15 +46,15 @@ public class UserController {
     }
 
     @RequestMapping(path = {"/extended", "/reviews"}, method = RequestMethod.GET)
-    public List<ExtendedUser> getAllUsersWithReviews(@RequestParam(required = false) boolean test) {
+    public List<ExtendedUser> getAllUsersExtended(@RequestParam(required = false) boolean test) {
         Collection<User> users = usersRepo.getAll(test);
         Set<String> userIds = users.stream().map(User::getId).collect(Collectors.toSet());
         Map<String, List<Review>> reviews = reviewsRepo.forUsers(userIds);
         Map<String, List<String>> repos = solutionsRepo.getAllRepos();
         return users.stream().map(
                 u -> new ExtendedUser(u)
-                        .setReviews(reviews.get(u.getId()))
-                        .setRepos(repos.get(u.getId()))
+                        .setReviews(reviews.containsKey(u.getId()) ? reviews.get(u.getId()) : new ArrayList<>())
+                        .setRepos(repos.containsKey(u.getId()) ? repos.get(u.getId()) : new ArrayList<>())
         ).collect(Collectors.toList());
     }
 
