@@ -156,6 +156,7 @@ public class Application implements WebMvcConfigurer {
     @Bean
     public SolutionService solutionService(
             GeneralScoreCounter scoreCounter,
+            TaskRepository taskRepository,
             SolutionRepository solutionRepository,
             UserRepository userRepository,
             GithubClient githubClient,
@@ -163,7 +164,7 @@ public class Application implements WebMvcConfigurer {
             BestSolutionService bestSolutionService,
             ProfileNotificationService profileNotificationService
     ) {
-        return new SolutionService(scoreCounter, solutionRepository, userRepository, githubClient, params, bestSolutionService, profileNotificationService);
+        return new SolutionService(scoreCounter, taskRepository, solutionRepository, userRepository, githubClient, params, bestSolutionService, profileNotificationService);
     }
 
     @Bean

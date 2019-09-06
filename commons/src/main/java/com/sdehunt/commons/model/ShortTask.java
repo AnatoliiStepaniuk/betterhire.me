@@ -10,6 +10,7 @@ import java.util.Set;
 public class ShortTask {
 
     private TaskID id;
+    private TaskType type;
     private String name;
     private String imageUrl;
     private String shortDescription;

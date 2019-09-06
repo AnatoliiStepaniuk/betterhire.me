@@ -6,5 +6,8 @@ public enum SolutionStatus {
     INVALID_FILES,      // Required solution files were not found in specified location
     INVALID_SOLUTION,   // Solution does not satisfy task requirements
     TIMEOUT,            // Solution processing took too long
-    ERROR               // General error, not covered by other statuses
+    ERROR,              // General error, not covered by other statuses
+
+    WAITING_FOR_REVIEW, // Waiting for company representative to review the task
+    REVIEWED            // The task was reviewed by company representative
 }

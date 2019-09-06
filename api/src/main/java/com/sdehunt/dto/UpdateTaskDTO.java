@@ -2,12 +2,14 @@ package com.sdehunt.dto;
 
 import com.sdehunt.commons.model.Language;
 import com.sdehunt.commons.model.Tag;
+import com.sdehunt.commons.model.TaskType;
 import lombok.Data;
 
 import java.util.Set;
 
 @Data
 public class UpdateTaskDTO {
+    private TaskType type;
     private String name;
     private String description;
     private String descriptionUrl;

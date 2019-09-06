@@ -64,6 +64,7 @@ public class TaskController {
         taskToUpdate.setCompany(request.getCompany());
         taskToUpdate.setJob(request.getJob());
         taskToUpdate.setJobUrl(request.getJobUrl());
+        taskToUpdate.setType(request.getType());
 
         tasks.update(taskToUpdate);
     }

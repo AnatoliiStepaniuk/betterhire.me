@@ -2,10 +2,7 @@ package com.sdehunt.repository.impl;
 
 import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.github.JavaGithubClient;
-import com.sdehunt.commons.model.Language;
-import com.sdehunt.commons.model.ShortTask;
-import com.sdehunt.commons.model.Tag;
-import com.sdehunt.commons.model.Task;
+import com.sdehunt.commons.model.*;
 import com.sdehunt.commons.util.EnumUtils;
 import com.sdehunt.repository.TaskRepository;
 import org.jdbi.v3.core.Jdbi;
@@ -92,8 +89,9 @@ public class JdbiTaskRepository implements TaskRepository {
         long now = Instant.now().getEpochSecond();
         jdbi.withHandle(
                 db -> db.execute(
-                        format("INSERT INTO %s (task, name, image_url, short_description, description, description_url, requirements, input, tags, languages, participants, users, offers, bestOffer, created, last_submit, submittable, test, enabled, company, job, job_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, true, ?, ?, ?)", table),
+                        format("INSERT INTO %s (task, type, name, image_url, short_description, description, description_url, requirements, input, tags, languages, participants, users, offers, bestOffer, created, last_submit, submittable, test, enabled, company, job, job_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, true, ?, ?, ?)", table),
                         t.getId(),
+                        t.getType().name().toLowerCase(),
                         t.getName(),
                         t.getImageUrl(),
                         t.getShortDescription(),
@@ -127,6 +125,7 @@ public class JdbiTaskRepository implements TaskRepository {
     }
 
     private void setFields(Task task, Task t) {
+        Optional.ofNullable(t.getType()).ifPresent(task::setType);
         Optional.ofNullable(t.getDescription()).ifPresent(task::setDescription);
         Optional.ofNullable(t.getDescriptionUrl()).ifPresent(task::setDescriptionUrl);
         Optional.ofNullable(t.getInputFilesUrl()).ifPresent(task::setInputFilesUrl);
@@ -191,7 +190,8 @@ public class JdbiTaskRepository implements TaskRepository {
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")))
                     .setLastSubmit(Optional.ofNullable(rs.getString("last_submit")).map(Long::valueOf).map(Instant::ofEpochSecond).orElse(null))
                     .setTest(rs.getBoolean("test"))
-                    .setTags(tagsFromString(rs.getString("tags")));
+                    .setTags(tagsFromString(rs.getString("tags")))
+                    .setType(TaskType.of(rs.getString("type")));
             return task;
         }
     }
@@ -215,7 +215,8 @@ public class JdbiTaskRepository implements TaskRepository {
                     .setLastSubmit(Optional.ofNullable(rs.getString("last_submit")).map(Long::valueOf).map(Instant::ofEpochSecond).orElse(null))
                     .setTest(rs.getBoolean("test"))
                     .setTags(tagsFromString(rs.getString("tags")))
-                    .setCompany(rs.getString("company"));
+                    .setCompany(rs.getString("company"))
+                    .setType(TaskType.of(rs.getString("type")));
         }
     }
 }

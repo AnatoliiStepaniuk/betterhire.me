@@ -1,10 +1,7 @@
 package com.sdehunt.api;
 
 import com.sdehunt.commons.TaskID;
-import com.sdehunt.commons.model.Language;
-import com.sdehunt.commons.model.ShortTask;
-import com.sdehunt.commons.model.Tag;
-import com.sdehunt.commons.model.Task;
+import com.sdehunt.commons.model.*;
 import com.sdehunt.dto.UpdateTaskDTO;
 import org.junit.Assert;
 import org.junit.Test;
@@ -36,6 +33,7 @@ public class TaskApiIT extends AbstractApiTest {
         String company = UUID.randomUUID().toString();
         String job = UUID.randomUUID().toString();
         String jobUrl = UUID.randomUUID().toString();
+        TaskType type = TaskType.values()[random.nextInt(TaskType.values().length)];
         Tag tag = Tag.values()[random.nextInt(Tag.values().length)];
         Language language = Language.values()[random.nextInt(Tag.values().length)];
         Set<Tag> tags = Collections.singleton(tag);
@@ -61,7 +59,8 @@ public class TaskApiIT extends AbstractApiTest {
                 .setLanguages(languages)
                 .setCompany(company)
                 .setJob(job)
-                .setJobUrl(jobUrl);
+                .setJobUrl(jobUrl)
+                .setType(type);
 
         // Updating task
         host()
@@ -89,7 +88,8 @@ public class TaskApiIT extends AbstractApiTest {
                 .body("job", is(job))
                 .body("jobUrl", is(jobUrl))
                 .body("test", is(true))
-                .body("tags", contains(tag.name()));
+                .body("tags", contains(tag.name()))
+                .body("type", is(type.name()));
 
         // Verify updated
         host().contentType(APP_JSON)
@@ -104,7 +104,8 @@ public class TaskApiIT extends AbstractApiTest {
                 .body("company", is(company))
                 .body("name", is(name))
                 .body("test", is(true))
-                .body("tags", contains(tag.name()));
+                .body("tags", contains(tag.name()))
+                .body("type", is(type.name()));
 
         // Check history
         host().contentType(APP_JSON)
@@ -123,7 +124,9 @@ public class TaskApiIT extends AbstractApiTest {
                 .body("[0].job", is(job))
                 .body("[0].jobUrl", is(jobUrl))
                 .body("[0].test", is(true))
-                .body("[0].tags", contains(tag.name()));
+                .body("[0].tags", contains(tag.name()))
+                .body("[0].type", is(type.name()));
+
 
         // Getting all tasks
         Task[] tasks = host().get(TASKS + "?test=true")
@@ -141,6 +144,7 @@ public class TaskApiIT extends AbstractApiTest {
         Assert.assertEquals(company, foundTask.getCompany());
         Assert.assertEquals(job, foundTask.getJob());
         Assert.assertEquals(jobUrl, foundTask.getJobUrl());
+        Assert.assertEquals(type, foundTask.getType());
 
         ShortTask[] shortTasks = host().get(TASKS + SHORT + "?test=true")
                 .as(ShortTask[].class);
@@ -149,5 +153,6 @@ public class TaskApiIT extends AbstractApiTest {
                 .findFirst()
                 .orElseThrow();
         Assert.assertEquals(shortDescription, foundShortTask.getShortDescription());
+        Assert.assertEquals(type, foundShortTask.getType());
     }
 }
