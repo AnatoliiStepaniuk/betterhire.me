@@ -14,6 +14,7 @@ public enum TaskID {
     CITIES,
     LETTER,
     CITY,
+    INTERSOG1,
     SLIDES_TEST;
 
     public static TaskID of(String taskId) {
