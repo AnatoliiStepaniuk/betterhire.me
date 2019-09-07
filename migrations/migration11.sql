@@ -7,10 +7,45 @@ ALTER TABLE `task`
 ALTER TABLE `task`
     CHANGE COLUMN `requirements` `requirements` VARCHAR(2000) NULL;
 
+ALTER TABLE `task`
+    CHANGE COLUMN `description` `description` TEXT CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci' NULL DEFAULT NULL;
+
 INSERT INTO `task` (`type`, `task`, `description`, `created`, `name`, `input`, `languages`, `job`, `job_url`, `company`,
                     `image_url`)
 VALUES ('manual', 'intersog1',
-        'Create an application for monitoring file system events in a certain directory. \n\nThe app has to read config (e.g. `config.ini`, `settings.py`) and setup configurations.\nThe application must detect events that occur in the file system. For example file or folder was created/deleted/changed.\nWhen event occurs -> certain Handler (registered in config) should be used to process that event. \nIt\'s up to you which handlers to implement. It can be anything (compiling/renaming/deleting...).\nMap handlers and patterns in the config file. \n\n##### Example: \n`Workdir`\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`\\-` `<filename1>.<file_extention_to_delete>` -> delete it\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `\\-` `<filename2>.c` -> compile it\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `\\-` `<filename3>.jpg` -> convert to .png\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `\\-` `<filename4>.doc` -> to .pdf\n \n##### Requirements: \n- application must not use all CPU time of one or more cores.\n- implement a minimum of 3 different event handlers. \n- possibility to add or remove handlers.\n \n##### Not required but will be a very big plus: \n1. daemonization of app process. +\n1. concurrency. ++ \n1. docker containerization. ++ \n1. implement a module for notifying the user about events that have occured. +++ \n1. Readme.md ++++ \n\n',
+        '# Intersog: Junior Python Developer task
+
+Create an application for monitoring file system events in a certain directory.
+
+The app has to read config (e.g. `config.ini`, `settings.py`) and setup configurations.
+The application must detect events that occur in the file system. For example file or folder was created/deleted/changed.
+When event occurs -> certain Handler (registered in config) should be used to process that event.
+It''s up to you which handlers to implement. It can be anything (compiling/renaming/deleting...).
+Map handlers and patterns in the config file.
+
+##### Example:
+`Workdir:`
+- `<filename1>.<file_extention_to_delete>` -> delete it
+- `<filename2>.c` -> compile it
+- `<filename3>.jpg` -> convert to .png
+- `<filename4>.doc` -> to .pdf
+
+##### Requirements:
+- application must not use all CPU time of one or more cores.
+- implement a minimum of 3 different event handlers.
+- possibility to add or remove handlers.
+
+##### Not required but will be a very big plus:
+1. Daemonization of app process. +
+1. Concurrency. ++
+1. Docker containerization. ++
+1. Implement a module for notifying the user about events that have occured. +++
+1. Readme.md ++++
+
+### To submit your solution just push your code to this repo 😎
+
+Happy coding! 😉
+',
         '1567852033', 'Intersog: Junior Python Developer', 'https://github.com/BetterHireMe/intersog1', 'python',
         'We’re looking for an Intern/Junior Python developer to join the team of our Israeli client that provides advertising services based on personalized recommendations and data analysis.',
         'https://careers.intersog.com/job/intern-junior-python-developer',
