@@ -19,3 +19,18 @@ VALUES ('manual', 'intersog1',
 
 ALTER TABLE `solution`
     CHANGE COLUMN `status` `status` ENUM ('accepted', 'in_progress', 'invalid_files', 'invalid_solution', 'timeout', 'error', 'waiting_for_review', 'reviewed') NOT NULL DEFAULT 'in_progress';
+
+ALTER TABLE `template`
+    CHANGE COLUMN `task` `task` ENUM ('slides', 'slides_test', 'pizza', 'cars', 'letters', 'cities', 'letter', 'city', 'intersog1') NOT NULL;
+
+INSERT INTO `template` (`task`, `language`, `repo`)
+VALUES ('intersog1', 'python', 'intersog1');
+
+ALTER TABLE `best_solution`
+    CHANGE COLUMN `task` `task` ENUM ('slides', 'slides_test', 'pizza', 'cars', 'letters', 'cities', 'letter', 'city', 'intersog1') NOT NULL;
+
+ALTER TABLE `solution`
+    CHANGE COLUMN `task` `task` ENUM ('slides', 'slides_test', 'pizza', 'cars', 'letters', 'cities', 'letter', 'city', 'intersog1') NOT NULL;
+
+ALTER TABLE `solution_repo`
+    CHANGE COLUMN `task` `task` ENUM ('slides', 'slides_test', 'cars', 'balloons', 'datacenter', 'pizza', 'letters', 'cities', 'letter', 'city', 'intersog1') NOT NULL;
