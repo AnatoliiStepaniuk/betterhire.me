@@ -16,3 +16,6 @@ VALUES ('manual', 'intersog1',
         'https://careers.intersog.com/job/intern-junior-python-developer',
         'Intersog® is a Chicago-based provider of ROI-driven custom web and mobile development specializing in delivery of end-to-end solutions to Fortune 500 companies, SMEs and startups.',
         'https://betterhire-tasks.s3.eu-central-1.amazonaws.com/intersog1/intersog.png');
+
+ALTER TABLE `solution`
+    CHANGE COLUMN `status` `status` ENUM ('accepted', 'in_progress', 'invalid_files', 'invalid_solution', 'timeout', 'error', 'waiting_for_review', 'reviewed') NOT NULL DEFAULT 'in_progress';

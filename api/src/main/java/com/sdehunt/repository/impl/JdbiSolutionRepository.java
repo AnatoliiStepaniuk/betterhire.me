@@ -37,8 +37,8 @@ public class JdbiSolutionRepository implements SolutionRepository {
 
         jdbi.withHandle(
                 db -> db.execute(
-                        format("INSERT INTO %s (`id`, `task`, `user`, `repo`, `commit`, `score`, `cause`, `test`, `created`) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", table),
-                        id, s.getTaskId(), s.getUserId(), s.getRepo(), s.getCommit(), s.getScore(), s.getCause(), s.isTest(), Instant.now().getEpochSecond()
+                        format("INSERT INTO %s (`id`, `task`, `user`, `repo`, `commit`, `status`, `score`, `cause`, `test`, `created`) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", table),
+                        id, s.getTaskId(), s.getUserId(), s.getRepo(), s.getCommit(), s.getStatus().name().toLowerCase(), s.getScore(), s.getCause(), s.isTest(), Instant.now().getEpochSecond()
                 )
         );
 

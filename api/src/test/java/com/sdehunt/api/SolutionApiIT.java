@@ -1,12 +1,10 @@
 package com.sdehunt.api;
 
 import com.sdehunt.commons.TaskID;
-import com.sdehunt.commons.model.BestTaskResult;
-import com.sdehunt.commons.model.Solution;
-import com.sdehunt.commons.model.SolutionStatus;
-import com.sdehunt.commons.model.User;
+import com.sdehunt.commons.model.*;
 import com.sdehunt.dto.SaveSolutionDTO;
 import com.sdehunt.dto.SolutionIdDTO;
+import com.sdehunt.dto.UpdateTaskDTO;
 import com.sdehunt.repository.UserQuery;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -25,13 +23,24 @@ import static org.hamcrest.core.Is.is;
 
 public class SolutionApiIT extends AbstractApiTest {
 
+    private final static String TASKS = "/tasks";
+
     @Test
-    public void crudTest() {
+    public void crudAutoTest() {
         TaskID taskId = TaskID.SLIDES_TEST;
         String githubLogin = "sdehuntdeveloper"; // TODo restore access_token somehow.
         User user = getUserIdByGithubLogin(githubLogin);
         String repo = "google_hash_code_2019_public";
         String commit = "61f487523ad641cc6fffc44ded7537d94cf0d1eb";
+
+        // Make sure task has AUTO type
+        host()
+                .body(new UpdateTaskDTO().setType(TaskType.AUTO))
+                .contentType(APP_JSON)
+                .put(TASKS + "/" + taskId.name().toLowerCase())
+                .then()
+                .statusCode(SUCCESS)
+                .body(isEmptyString());
 
         String jwt = Jwts.builder()
                 .setSubject(user.getId())
@@ -51,16 +60,17 @@ public class SolutionApiIT extends AbstractApiTest {
                 .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
                 .as(SolutionIdDTO.class).getId();
 
-        verifySolutionStatus(id, SolutionStatus.ACCEPTED);
+        SolutionStatus status = SolutionStatus.ACCEPTED;
+        verifySolutionStatus(id, status);
 
         // Verify save (query by userId)
-        host().get("/tasks/{taskId}/solutions?userId=" + user.getId() + "&status=ACCEPTED&test=true", taskId).then()
+        host().get("/tasks/{taskId}/solutions?userId=" + user.getId() + "&test=true&status=" + status, taskId).then()
                 .body("size()", equalTo(1))
                 .body("[0].taskId", equalTo(taskId.name()))
                 .body("[0].userId", equalTo(user.getId()))
                 .body("[0].repo", equalTo(githubLogin + "/" + repo))
                 .body("[0].commit", equalTo(commit))
-                .body("[0].status", equalTo(SolutionStatus.ACCEPTED.name()))
+                .body("[0].status", equalTo(status.name()))
                 .body("[0].test", equalTo(true));
 
         // Verify save (by id)
@@ -72,7 +82,7 @@ public class SolutionApiIT extends AbstractApiTest {
                 .body("userId", equalTo(user.getId()))
                 .body("repo", equalTo(githubLogin + "/" + repo))
                 .body("commit", equalTo(commit))
-                .body("status", equalTo(SolutionStatus.ACCEPTED.name()));
+                .body("status", equalTo(status.name()));
 
         // Verify save (by userId)
         host().get("/users/{userId}/solutions?test=true", user.getId())
@@ -84,7 +94,105 @@ public class SolutionApiIT extends AbstractApiTest {
                 .body("[0].userId", equalTo(user.getId()))
                 .body("[0].repo", equalTo(githubLogin + "/" + repo))
                 .body("[0].commit", equalTo(commit))
-                .body("[0].status", equalTo(SolutionStatus.ACCEPTED.name()));
+                .body("[0].status", equalTo(status.name()));
+
+        // Checking best solution
+        BestTaskResult[] results = host().get("/tasks/{taskId}/solutions/best?test=true", taskId)
+                .as(BestTaskResult[].class);
+
+        String userName = user.getNickname() != null ? user.getNickname() : user.getGithubLogin();
+        Arrays.stream(results)
+                .filter(r -> r.getUserName().equals(userName))
+                .findAny()
+                .orElseThrow();
+
+        // Delete
+        host().delete("/solutions/{id}", id)
+                .then().log().ifValidationFails()
+                .statusCode(SUCCESS);
+
+        // Verify delete
+        host().get("/solutions/" + id)
+                .then().log().ifValidationFails()
+                .statusCode(NOT_FOUND);
+
+        // Verify delete (query)
+        host().get("/tasks/{taskId}/solutions?userId=" + user.getId(), taskId.name().toLowerCase())
+                .then().log().ifValidationFails()
+                .statusCode(SUCCESS)
+                .body("size()", is(0));
+    }
+
+    @Test
+    public void crudManualTest() {
+        TaskID taskId = TaskID.SLIDES_TEST;
+        String githubLogin = "sdehuntdeveloper"; // TODo restore access_token somehow.
+        User user = getUserIdByGithubLogin(githubLogin);
+        String repo = "google_hash_code_2019_public";
+        String commit = "61f487523ad641cc6fffc44ded7537d94cf0d1eb";
+
+        // Make sure task has MANUAL type
+        host()
+                .body(new UpdateTaskDTO().setType(TaskType.MANUAL))
+                .contentType(APP_JSON)
+                .put(TASKS + "/" + taskId.name().toLowerCase())
+                .then()
+                .statusCode(SUCCESS)
+                .body(isEmptyString());
+
+        String jwt = Jwts.builder()
+                .setSubject(user.getId())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(new Date().getTime() + 864000000))
+                .signWith(SignatureAlgorithm.HS512, "926D96C90030DD58429D2751AC1BDBBC")
+                .compact();
+        SaveSolutionDTO solutionDTO = new SaveSolutionDTO()
+                .setRepo(repo)
+                .setCommit(commit)
+                .setTest(true);
+
+        // Saving solution
+        String id = host().contentType(APP_JSON)
+                .header(new Header("Authorization", "Bearer " + jwt))
+                .body(solutionDTO)
+                .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
+                .as(SolutionIdDTO.class).getId();
+
+        SolutionStatus status = SolutionStatus.WAITING_FOR_REVIEW;
+        verifySolutionStatus(id, status);
+
+        // Verify save (query by userId)
+        host().get("/tasks/{taskId}/solutions?userId=" + user.getId() + "&test=true&status=" + status, taskId).then()
+                .body("size()", equalTo(1))
+                .body("[0].taskId", equalTo(taskId.name()))
+                .body("[0].userId", equalTo(user.getId()))
+                .body("[0].repo", equalTo(githubLogin + "/" + repo))
+                .body("[0].commit", equalTo(commit))
+                .body("[0].status", equalTo(status.name()))
+                .body("[0].test", equalTo(true));
+
+        // Verify save (by id)
+        host().get("/solutions/" + id)
+                .then().log().ifValidationFails()
+                .statusCode(SUCCESS)
+                .body("id", equalTo(id))
+                .body("taskId", equalToIgnoringCase(taskId.name()))
+                .body("userId", equalTo(user.getId()))
+                .body("repo", equalTo(githubLogin + "/" + repo))
+                .body("commit", equalTo(commit))
+                .body("status", equalTo(status.name()));
+
+        // Verify save (by userId)
+        host().get("/users/{userId}/solutions?test=true", user.getId())
+                .then().log().ifValidationFails()
+                .statusCode(SUCCESS)
+                .body("size()", equalTo(1))
+                .body("[0].id", equalTo(id))
+                .body("[0].taskId", equalToIgnoringCase(taskId.name()))
+                .body("[0].userId", equalTo(user.getId()))
+                .body("[0].repo", equalTo(githubLogin + "/" + repo))
+                .body("[0].commit", equalTo(commit))
+                .body("[0].status", equalTo(status.name()));
 
         // Checking best solution
         BestTaskResult[] results = host().get("/tasks/{taskId}/solutions/best?test=true", taskId)
@@ -128,6 +236,15 @@ public class SolutionApiIT extends AbstractApiTest {
                 .setExpiration(new Date(new Date().getTime() + 864000000))
                 .signWith(SignatureAlgorithm.HS512, "926D96C90030DD58429D2751AC1BDBBC")
                 .compact();
+
+        // Make sure task has AUTO type
+        host()
+                .body(new UpdateTaskDTO().setType(TaskType.AUTO))
+                .contentType(APP_JSON)
+                .put(TASKS + "/" + taskId.name().toLowerCase())
+                .then()
+                .statusCode(SUCCESS)
+                .body(isEmptyString());
 
         // First verify successful response for valid request
         SaveSolutionDTO validDTO = new SaveSolutionDTO()
