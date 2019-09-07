@@ -2,6 +2,7 @@ package com.sdehunt;
 
 import com.sdehunt.commons.file.FileDownloader;
 import com.sdehunt.commons.file.UnirestFileDownloader;
+import com.sdehunt.commons.github.CachingGithubClient;
 import com.sdehunt.commons.github.GithubClient;
 import com.sdehunt.commons.github.UnirestGithubClient;
 import com.sdehunt.commons.params.EhcacheParameterService;
@@ -117,7 +118,7 @@ public class Application implements WebMvcConfigurer {
 
     @Bean
     public GithubClient githubClient(AccessTokenRepository accessTokens) {
-        return new UnirestGithubClient(githubAccessToken, accessTokens);
+        return new CachingGithubClient(new UnirestGithubClient(githubAccessToken, accessTokens));
     }
 
     @Bean

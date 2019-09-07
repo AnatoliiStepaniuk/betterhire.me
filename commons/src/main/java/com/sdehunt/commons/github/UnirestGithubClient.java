@@ -2,7 +2,6 @@ package com.sdehunt.commons.github;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sdehunt.commons.github.exceptions.AlreadyInvitedException;
 import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
 import com.sdehunt.commons.github.exceptions.GithubTimeoutException;
 import com.sdehunt.commons.github.exceptions.RepositoryNotFoundException;
@@ -38,6 +37,7 @@ public class UnirestGithubClient implements GithubClient {
 
     private final static String RAW_DOMAIN = "https://raw.githubusercontent.com";
     private final static String API_DOMAIN = "https://api.github.com";
+    private final static String WEB_DOMAIN = "https://github.com";
     private final static String GIT = "git";
     private final static String REPOS = "repos";
     private final static String COMMITS = "commits";
@@ -178,7 +178,7 @@ public class UnirestGithubClient implements GithubClient {
             return response.getBody().getRepository().getHtmlUrl();
         }
         if (response.getStatus() == 204) {
-            throw new AlreadyInvitedException(repo, githubLogin);
+            return WEB_DOMAIN + "/" + repo;
         }
 
         throw new RuntimeException(format("Unexpected status code (%d) for invitation request of user %s to repo %s", response.getStatus(), githubLogin, repo));
