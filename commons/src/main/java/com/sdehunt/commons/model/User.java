@@ -26,6 +26,7 @@ public class User {
     private Instant created;
     private Instant updated;
     private boolean test;
+    private Boolean available;
 
     public User() {
     }

@@ -97,7 +97,8 @@ public class UserController {
                 .setCv(req.getCv())
                 .setCity(req.getCity())
                 .setLanguages(req.getLanguages())
-                .setPhone(req.getPhone());
+                .setPhone(req.getPhone())
+                .setAvailable(req.getAvailable());
 
         return usersRepo.update(user);
     }

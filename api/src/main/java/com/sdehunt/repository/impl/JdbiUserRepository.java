@@ -92,8 +92,8 @@ public class JdbiUserRepository implements UserRepository {
 
         jdbi.withHandle(
                 db -> db.execute(
-                        format("UPDATE %s SET name = ?, nickname = ?, email = ?, cv = ?, city = ?, languages = ?, phone = ?, github_login = ?, linkedin_id = ?, image_url = ?, updated = ?, solved = ?, avg_rank = ?, last_submit = ? WHERE id = ?", userTable),
-                        user.getName(), user.getNickname(), user.getEmail(), user.getCv(), user.getCity(), EnumUtils.stringify(user.getLanguages()), user.getPhone(), user.getGithubLogin(), user.getLinkedinId(), user.getImageUrl(), Instant.now().getEpochSecond(), user.getSolved(), user.getAvgRank(), Optional.ofNullable(user.getLastSubmit()).map(Instant::getEpochSecond).orElse(null), user.getId())
+                        format("UPDATE %s SET name = ?, nickname = ?, email = ?, cv = ?, city = ?, languages = ?, phone = ?, github_login = ?, linkedin_id = ?, image_url = ?, updated = ?, solved = ?, avg_rank = ?, last_submit = ?, available = ? WHERE id = ?", userTable),
+                        user.getName(), user.getNickname(), user.getEmail(), user.getCv(), user.getCity(), EnumUtils.stringify(user.getLanguages()), user.getPhone(), user.getGithubLogin(), user.getLinkedinId(), user.getImageUrl(), Instant.now().getEpochSecond(), user.getSolved(), user.getAvgRank(), Optional.ofNullable(user.getLastSubmit()).map(Instant::getEpochSecond).orElse(null), user.getAvailable(), user.getId())
         );
 
         return get(user.getId()).orElseThrow();
@@ -114,6 +114,7 @@ public class JdbiUserRepository implements UserRepository {
         Optional.ofNullable(u.getPhone()).ifPresent(existing::setPhone);
         Optional.ofNullable(u.getCity()).ifPresent(existing::setCity);
         Optional.ofNullable(u.getLanguages()).ifPresent(existing::setLanguages);
+        Optional.ofNullable(u.getAvailable()).ifPresent(existing::setAvailable);
     }
 
     @Override
@@ -215,7 +216,8 @@ public class JdbiUserRepository implements UserRepository {
                     .setSolved(rs.getInt("solved"))
                     .setAvgRank(rs.getString("avg_rank") != null ? Integer.valueOf(rs.getString("avg_rank")) : null)
                     .setLastSubmit(Instant.ofEpochSecond(rs.getLong("last_submit")))
-                    .setUserName(userName);
+                    .setUserName(userName)
+                    .setAvailable(rs.getBoolean("available"));
         }
     }
 }

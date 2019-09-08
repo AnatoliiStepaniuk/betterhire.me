@@ -63,7 +63,8 @@ public class UserApiIT extends AbstractApiTest {
                 .body("phone", is(phone))
                 .body("solved", is(0))
                 .body("avgRank", equalTo(null))
-                .body("test", is(true));
+                .body("test", is(true))
+                .body("available", is(true));
 
         User user = response.as(User.class);
 
@@ -85,6 +86,7 @@ public class UserApiIT extends AbstractApiTest {
                 .body("avgRank", equalTo(null))
                 .body("created", notNullValue())
                 .body("updated", notNullValue())
+                .body("test", is(true))
                 .body("test", is(true));
 
         // Query test
@@ -113,7 +115,8 @@ public class UserApiIT extends AbstractApiTest {
                 .body("[0].avgRank", equalTo(null))
                 .body("[0].created", notNullValue())
                 .body("[0].updated", notNullValue())
-                .body("[0].test", is(true));
+                .body("[0].test", is(true))
+                .body("[0].available", is(true));
 
         int usersCountAfter = host().get("/users?test=true").as(Collection.class).size();
         Assert.assertEquals(usersCountBefore + 1, usersCountAfter);
@@ -129,7 +132,8 @@ public class UserApiIT extends AbstractApiTest {
                 .setPhone(user.getPhone() + "2")
                 .setCv(user.getCv() + "2")
                 .setCity(user.getCity() + "2")
-                .setLanguages(newLanguages);
+                .setLanguages(newLanguages)
+                .setAvailable(false);
 
         host().contentType(APP_JSON)
                 .body(updateRequest)
@@ -151,7 +155,8 @@ public class UserApiIT extends AbstractApiTest {
                 .body("avgRank", equalTo(null))
                 .body("updated", notNullValue())
                 .body("updated", not(equalTo(user.getCreated())))
-                .body("test", is(true));
+                .body("test", is(true))
+                .body("available", is(false));
 
         host().get("/users/{userId}", user.getId())
                 .then().log().ifValidationFails()
@@ -171,7 +176,8 @@ public class UserApiIT extends AbstractApiTest {
                 .body("avgRank", equalTo(null))
                 .body("updated", notNullValue())
                 .body("updated", not(equalTo(user.getCreated())))
-                .body("test", is(true));
+                .body("test", is(true))
+                .body("available", is(false));
 
         host().delete("/users/{userId}", user.getId())
                 .then().log().ifValidationFails()

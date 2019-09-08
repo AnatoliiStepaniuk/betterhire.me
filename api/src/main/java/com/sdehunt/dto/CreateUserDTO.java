@@ -17,5 +17,6 @@ public class CreateUserDTO {
     private String phone;
     private String city;
     private Set<Language> languages;
+    private Boolean available;
     private boolean test;
 }
