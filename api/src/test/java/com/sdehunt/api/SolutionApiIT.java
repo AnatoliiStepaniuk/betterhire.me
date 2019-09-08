@@ -312,6 +312,15 @@ public class SolutionApiIT extends AbstractApiTest {
         String invalidSolutionRepo = "google_hash_code_2019_invalid";
         String commit = "master";
 
+        // Make sure task has AUTO type
+        host()
+                .body(new UpdateTaskDTO().setType(TaskType.AUTO))
+                .contentType(APP_JSON)
+                .put(TASKS + "/" + taskId.name().toLowerCase())
+                .then()
+                .statusCode(SUCCESS)
+                .body(isEmptyString());
+
         String jwt = Jwts.builder()
                 .setSubject(userId)
                 .setIssuedAt(new Date())
