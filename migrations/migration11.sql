@@ -47,7 +47,7 @@ Map handlers and patterns in the config file.
 Happy coding! 😉
 ',
         '1567852033',
-        'Intersog: Junior Python Developer',
+        'Junior Python Developer (Kyiv)',
         'https://github.com/BetterHireMe/intersog1',
         'python',
         'Intersog® is a Chicago-based provider of ROI-driven custom web and mobile development specializing in delivery of end-to-end solutions to Fortune 500 companies, SMEs and startups.
