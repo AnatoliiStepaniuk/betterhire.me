@@ -46,8 +46,27 @@ Map handlers and patterns in the config file.
 
 Happy coding! 😉
 ',
-        '1567852033', 'Intersog: Junior Python Developer', 'https://github.com/BetterHireMe/intersog1', 'python',
-        'We’re looking for an Intern/Junior Python developer to join the team of our Israeli client that provides advertising services based on personalized recommendations and data analysis.',
+        '1567852033',
+        'Intersog: Junior Python Developer',
+        'https://github.com/BetterHireMe/intersog1',
+        'python',
+        'Intersog® is a Chicago-based provider of ROI-driven custom web and mobile development specializing in delivery of end-to-end solutions to Fortune 500 companies, SMEs and startups.
+
+We’re looking for an **Intern/Junior Python developer** to join the team of our Israeli client that provides advertising services based on personalized recommendations and data analysis.
+
+#### Requirements
+- Experience with Django and Django Rest Framework;
+- Basic knowledge of SQL and RDBMS (PostgreSQL, MySQL);
+- Experience with asyncio;
+- At least intermediate English (both written and spoken).
+
+#### Bonus if you have
+- Experience with aiohttp;
+- Experience with unit testing;
+- Experience with Docker;
+- Experience with AWS infrastructure;
+- Understanding on NoSQL databases (MongoDB, DynamoDB).
+',
         'https://careers.intersog.com/job/intern-junior-python-developer',
         'Intersog® is a Chicago-based provider of ROI-driven custom web and mobile development specializing in delivery of end-to-end solutions to Fortune 500 companies, SMEs and startups.',
         'https://betterhire-tasks.s3.eu-central-1.amazonaws.com/intersog1/intersog.png');
