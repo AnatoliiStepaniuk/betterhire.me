@@ -1,14 +1,17 @@
 package com.sdehunt.repository.cache;
 
+import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.cache.Cache;
 import com.sdehunt.commons.cache.CacheImpl;
 import com.sdehunt.commons.model.Solution;
+import com.sdehunt.commons.model.SolutionStatus;
 import com.sdehunt.repository.SolutionQuery;
 import com.sdehunt.repository.SolutionRepository;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public class CachingSolutionRepository implements SolutionRepository {
 
@@ -58,5 +61,10 @@ public class CachingSolutionRepository implements SolutionRepository {
     @Override
     public Map<String, List<String>> getAllRepos() {
         return inner.getAllRepos();
+    }
+
+    @Override
+    public int getNumberUsersSolvedTask(TaskID taskID, Set<SolutionStatus> statuses) {
+        return inner.getNumberUsersSolvedTask(taskID, statuses);
     }
 }

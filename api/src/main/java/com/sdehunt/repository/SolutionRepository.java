@@ -1,11 +1,11 @@
 package com.sdehunt.repository;
 
+import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.Solution;
+import com.sdehunt.commons.model.SolutionStatus;
 import com.sdehunt.repository.impl.SolutionQueryImpl;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Repository for managing Solution entities persistence
@@ -62,5 +62,17 @@ public interface SolutionRepository {
      * Returns all repositories mapped by userId
      */
     Map<String, List<String>> getAllRepos();
+
+    /**
+     * Returns number of users that submitted solution for the task (any status).
+     */
+    default int getNumberUsersSolvedTask(TaskID taskID) {
+        return getNumberUsersSolvedTask(taskID, Collections.emptySet());
+    }
+
+    /**
+     * Returns number of users that submitted solution for the task in specified statuses.
+     */
+    int getNumberUsersSolvedTask(TaskID taskID, Set<SolutionStatus> statuses);
 
 }

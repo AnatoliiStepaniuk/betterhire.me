@@ -87,6 +87,11 @@ public class SolutionService {
 
         if (task.getType() == TaskType.AUTO) {
             countScoreBackground(solution);
+        } else {
+            // For manual task we count each user submitted the solution (not only successful ones.
+            int solved = solutionRepository.getNumberUsersSolvedTask(task.getId());
+            task.setUsers(solved);
+            taskRepository.update(task);
         }
 
         return solutionId;

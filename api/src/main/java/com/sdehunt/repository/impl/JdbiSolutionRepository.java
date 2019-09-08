@@ -127,6 +127,16 @@ public class JdbiSolutionRepository implements SolutionRepository {
         );
     }
 
+    @Override
+    public int getNumberUsersSolvedTask(TaskID taskID, Set<SolutionStatus> statuses) {
+        String statusString = statuses.stream().map(s -> "'" + s + "'").collect(Collectors.joining(","));
+        String statusQuery = statuses.isEmpty() ? "" : " AND status IN (" + statusString + ")";
+        return jdbi.withHandle(
+                db -> db.select(format("SELECT count(distinct user) FROM %s WHERE task = ? AND test = false" + statusQuery, table), taskID.name().toLowerCase())
+                        .mapTo(Integer.class).first()
+        );
+    }
+
     private class SolutionRowMapper implements RowMapper<Solution> {
         @Override
         public Solution map(ResultSet rs, StatementContext ctx) throws SQLException {
