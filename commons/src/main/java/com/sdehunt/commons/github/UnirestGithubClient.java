@@ -177,7 +177,7 @@ public class UnirestGithubClient implements GithubClient {
         if (response.getStatus() == 201) {
             return response.getBody().getRepository().getHtmlUrl();
         }
-        if (response.getStatus() == 204) {
+        if (response.getStatus() == 204 || response.getStatus() == 422) {
             return WEB_DOMAIN + "/" + repo;
         }
 
