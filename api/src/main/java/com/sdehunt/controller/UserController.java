@@ -75,7 +75,8 @@ public class UserController {
                 .setPhone(req.getPhone())
                 .setCity(req.getCity())
                 .setLanguages(req.getLanguages())
-                .setTest(req.isTest());
+                .setTest(req.isTest())
+                .setManager(req.getManager());
 
         return usersRepo.create(user);
     }
@@ -98,7 +99,8 @@ public class UserController {
                 .setCity(req.getCity())
                 .setLanguages(req.getLanguages())
                 .setPhone(req.getPhone())
-                .setAvailable(req.getAvailable());
+                .setAvailable(req.getAvailable())
+                .setManager(req.getManager());
 
         return usersRepo.update(user);
     }

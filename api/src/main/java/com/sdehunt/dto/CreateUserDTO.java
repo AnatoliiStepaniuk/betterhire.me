@@ -19,4 +19,5 @@ public class CreateUserDTO {
     private Set<Language> languages;
     private Boolean available;
     private boolean test;
+    private Boolean manager;
 }

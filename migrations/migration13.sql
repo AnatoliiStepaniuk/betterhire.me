@@ -1,0 +1,5 @@
+ALTER TABLE `user`
+    ADD COLUMN `manager` TINYINT(4) NOT NULL DEFAULT 0 AFTER `available`,
+    CHANGE COLUMN `test` `test` TINYINT(1) NOT NULL DEFAULT 0 ,
+    CHANGE COLUMN `solved` `solved` INT(10) NOT NULL DEFAULT 0 ,
+    CHANGE COLUMN `available` `available` TINYINT(4) NOT NULL DEFAULT 1;

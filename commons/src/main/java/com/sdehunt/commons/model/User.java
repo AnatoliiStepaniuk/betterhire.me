@@ -26,6 +26,7 @@ public class User {
     private Instant created;
     private Instant updated;
     private boolean test;
+    private Boolean manager;
     private Boolean available;
 
     public User() {
@@ -50,5 +51,7 @@ public class User {
         this.created = u.getCreated();
         this.updated = u.getUpdated();
         this.test = u.isTest();
+        this.available = u.getAvailable();
+        this.manager = u.getManager();
     }
 }
