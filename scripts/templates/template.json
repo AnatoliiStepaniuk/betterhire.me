@@ -1,0 +1,8 @@
+{
+  "Template": {
+    "HtmlPart": "Hi! It's a test email for you!",
+    "SubjectPart": "Greetings!",
+    "TextPart": "Hi! It's a test email for you!",
+    "TemplateName": "MyTemplate"
+  }
+}
