@@ -191,7 +191,7 @@ public class JdbiTaskRepository implements TaskRepository {
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")))
                     .setLastSubmit(Optional.ofNullable(rs.getString("last_submit")).map(Long::valueOf).map(Instant::ofEpochSecond).orElse(null))
                     .setTest(rs.getBoolean("test"))
-                    .setTags(tagsFromString(rs.getString("tags")))
+                    .setTags(tagsFromString(rs.getString("tags").toUpperCase()))
                     .setType(TaskType.of(rs.getString("type")));
             return task;
         }
