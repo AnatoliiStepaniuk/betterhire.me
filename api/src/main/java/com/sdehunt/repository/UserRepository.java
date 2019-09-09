@@ -48,6 +48,8 @@ public interface UserRepository {
 
     Collection<User> query(UserQuery userQuery);
 
+    Collection<User> getBySql(String sql);
+
     /**
      * @return Total number of users that solved at least one task successfully
      */

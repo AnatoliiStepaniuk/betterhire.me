@@ -169,6 +169,15 @@ public class JdbiUserRepository implements UserRepository {
     }
 
     @Override
+    public Collection<User> getBySql(String sqlClause) {
+        String sql = format("SELECT * FROM %s", userTable) + " WHERE " + sqlClause;
+        return jdbi.withHandle(
+                handle -> handle.select(sql).map(new UserRowMapper()).list()
+        );
+
+    }
+
+    @Override
     public long getTotalUsers() {
         return jdbi.withHandle(db -> db.select(format("SELECT count(distinct user) FROM %s WHERE test = false", bestSolutionTable))
                 .mapTo(Long.class).first());

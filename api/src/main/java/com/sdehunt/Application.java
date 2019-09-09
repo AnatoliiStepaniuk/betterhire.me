@@ -1,5 +1,7 @@
 package com.sdehunt;
 
+import com.sdehunt.commons.email.EmailSender;
+import com.sdehunt.commons.email.SesEmailSender;
 import com.sdehunt.commons.file.FileDownloader;
 import com.sdehunt.commons.file.UnirestFileDownloader;
 import com.sdehunt.commons.github.CachingGithubClient;
@@ -171,6 +173,16 @@ public class Application implements WebMvcConfigurer {
     @Bean
     public CvService cvService() {
         return new CvService();
+    }
+
+    @Bean
+    public EmailSender emailSender() {
+        return new SesEmailSender();
+    }
+
+    @Bean
+    public EmailService emailService(UserRepository userRepository, EmailSender emailSender) {
+        return new EmailService(userRepository, emailSender);
     }
 
     @Bean

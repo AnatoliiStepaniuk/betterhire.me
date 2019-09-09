@@ -68,6 +68,11 @@ public class CachingUserRepository implements UserRepository {
     }
 
     @Override
+    public Collection<User> getBySql(String sql) {
+        return inner.getBySql(sql);
+    }
+
+    @Override
     public long getTotalUsers() {
         return userCache.computeIfAbsent("totalUsers", s -> inner.getTotalUsers());
     }
