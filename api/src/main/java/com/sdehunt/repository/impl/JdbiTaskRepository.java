@@ -2,7 +2,10 @@ package com.sdehunt.repository.impl;
 
 import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.github.JavaGithubClient;
-import com.sdehunt.commons.model.*;
+import com.sdehunt.commons.model.Language;
+import com.sdehunt.commons.model.ShortTask;
+import com.sdehunt.commons.model.Task;
+import com.sdehunt.commons.model.TaskType;
 import com.sdehunt.commons.util.EnumUtils;
 import com.sdehunt.repository.TaskRepository;
 import org.jdbi.v3.core.Jdbi;
@@ -99,7 +102,7 @@ public class JdbiTaskRepository implements TaskRepository {
                         t.getDescriptionUrl(),
                         t.getRequirements(),
                         t.getInputFilesUrl(),
-                        EnumUtils.stringify(t.getTags()),
+                        String.join(",", t.getTags()),
                         EnumUtils.stringify(t.getLanguages()),
                         t.getParticipants(),
                         t.getUsers(),
@@ -145,13 +148,11 @@ public class JdbiTaskRepository implements TaskRepository {
         Optional.ofNullable(t.getJobUrl()).ifPresent(task::setJobUrl);
     }
 
-    private Set<Tag> tagsFromString(String tags) { // TODO make one generic method
-        return Optional.ofNullable(tags)
-                .filter(t -> !t.isEmpty() && !t.isBlank())
-                .map(String::toUpperCase)
-                .map(s -> s.split(","))
-                .map(t -> Arrays.stream(t).map(Tag::valueOf).collect(Collectors.toSet()))
-                .orElse(new HashSet<>());
+    private Set<String> tagsFromString(String tags) {
+        if (tags == null || tags.isEmpty()) {
+            return Collections.emptySet();
+        }
+        return new HashSet<>(Arrays.asList(tags.split(",")));
     }
 
     private Set<Language> langsFromString(String langs) {

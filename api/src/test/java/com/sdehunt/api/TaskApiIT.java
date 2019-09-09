@@ -1,7 +1,10 @@
 package com.sdehunt.api;
 
 import com.sdehunt.commons.TaskID;
-import com.sdehunt.commons.model.*;
+import com.sdehunt.commons.model.Language;
+import com.sdehunt.commons.model.ShortTask;
+import com.sdehunt.commons.model.Task;
+import com.sdehunt.commons.model.TaskType;
 import com.sdehunt.dto.UpdateTaskDTO;
 import org.junit.Assert;
 import org.junit.Test;
@@ -34,9 +37,9 @@ public class TaskApiIT extends AbstractApiTest {
         String job = UUID.randomUUID().toString();
         String jobUrl = UUID.randomUUID().toString();
         TaskType type = TaskType.values()[random.nextInt(TaskType.values().length)];
-        Tag tag = Tag.values()[random.nextInt(Tag.values().length)];
-        Language language = Language.values()[random.nextInt(Tag.values().length)];
-        Set<Tag> tags = Collections.singleton(tag);
+        String tag = UUID.randomUUID().toString();
+        Language language = Language.values()[random.nextInt(Language.values().length)];
+        Set<String> tags = Collections.singleton(tag);
         Set<Language> languages = Collections.singleton(language);
 
         // Verify task is present
@@ -88,7 +91,7 @@ public class TaskApiIT extends AbstractApiTest {
                 .body("job", is(job))
                 .body("jobUrl", is(jobUrl))
                 .body("test", is(true))
-                .body("tags", contains(tag.name()))
+                .body("tags", contains(tag))
                 .body("type", is(type.name()));
 
         // Verify updated
@@ -104,7 +107,7 @@ public class TaskApiIT extends AbstractApiTest {
                 .body("company", is(company))
                 .body("name", is(name))
                 .body("test", is(true))
-                .body("tags", contains(tag.name()))
+                .body("tags", contains(tag))
                 .body("type", is(type.name()));
 
         // Check history
@@ -124,7 +127,7 @@ public class TaskApiIT extends AbstractApiTest {
                 .body("[0].job", is(job))
                 .body("[0].jobUrl", is(jobUrl))
                 .body("[0].test", is(true))
-                .body("[0].tags", contains(tag.name()))
+                .body("[0].tags", contains(tag))
                 .body("[0].type", is(type.name()));
 
 

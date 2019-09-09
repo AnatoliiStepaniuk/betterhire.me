@@ -20,7 +20,7 @@ public class ShortTask {
     private Integer offers;
     private Integer bestOffer;// TODO remove, we are showing lastSubmit now
     private Instant lastSubmit;
-    private Set<Tag> tags;
+    private Set<String> tags;
     private Set<Language> languages;
     private Instant created;
     private boolean enabled;

@@ -1,7 +1,6 @@
 package com.sdehunt.dto;
 
 import com.sdehunt.commons.model.Language;
-import com.sdehunt.commons.model.Tag;
 import com.sdehunt.commons.model.TaskType;
 import lombok.Data;
 
@@ -20,7 +19,7 @@ public class UpdateTaskDTO {
     private String company;
     private String job;
     private String jobUrl;
-    private Set<Tag> tags;
+    private Set<String> tags;
     private Set<Language> languages;
     private boolean enabled;
     private boolean submittable;

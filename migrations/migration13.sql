@@ -3,3 +3,7 @@ ALTER TABLE `user`
     CHANGE COLUMN `test` `test` TINYINT(1) NOT NULL DEFAULT 0 ,
     CHANGE COLUMN `solved` `solved` INT(10) NOT NULL DEFAULT 0 ,
     CHANGE COLUMN `available` `available` TINYINT(4) NOT NULL DEFAULT 1;
+
+ALTER TABLE `task`
+    CHANGE COLUMN `tags` `tags` VARCHAR(255) NULL DEFAULT NULL;
+
