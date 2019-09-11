@@ -76,12 +76,12 @@ public class SolutionService {
         if (solutionRepository.isPresentForUser(solution)) {
             throw new SolutionIsPresentException();
         }
-        Task task = taskRepository.get(solution.getTaskId()).orElseThrow();
+        Task task = taskRepository.get(solution.getTaskId()).orElseThrow(RuntimeException::new);
 
         String solutionId = solutionRepository.save(solution.setStatus(task.getType() == TaskType.AUTO ? IN_PROGRESS : WAITING_FOR_REVIEW));
         solution.setId(solutionId);
 
-        User user = userRepository.get(solution.getUserId()).orElseThrow();
+        User user = userRepository.get(solution.getUserId()).orElseThrow(RuntimeException::new);
         updateUser(user, solution.getRepo());
         profileNotificationService.notifyIfNotFilled(user, solution.getRepo());
 

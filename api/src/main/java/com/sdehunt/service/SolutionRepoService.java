@@ -33,8 +33,8 @@ public class SolutionRepoService {
 
     public String createSolutionRepo(TaskID taskID, Language language, String userId, String webhookUrl) {
 
-        Template template = templates.find(taskID, language).orElseThrow();
-        User user = users.get(userId).orElseThrow();
+        Template template = templates.find(taskID, language).orElseThrow(RuntimeException::new);
+        User user = users.get(userId).orElseThrow(RuntimeException::new);
         String repoName = template.getRepo() + "_" + user.getGithubLogin();
 
         githubClient.copyRepo(

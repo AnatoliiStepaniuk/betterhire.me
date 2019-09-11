@@ -72,8 +72,8 @@ public class UnirestGithubClient implements GithubClient {
         String path = RAW_DOMAIN + "/" + repo + "/" + commit + "/" + file;
 
         logger.debug(format("Downloading file %s of repo %s for commit %s", file, repo, commit));
-        if (Files.exists(Path.of(FileUtils.fileName(file)))) {
-            Files.delete(Path.of(FileUtils.fileName(file)));
+        if (Files.exists(Paths.get(FileUtils.fileName(file)))) {
+            Files.delete(Paths.get(FileUtils.fileName(file)));
         }
         HttpResponse<File> response = Unirest.get(path)
                 .header("Authorization", "token " + systemAccessToken)

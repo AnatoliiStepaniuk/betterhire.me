@@ -64,7 +64,7 @@ public class RepoController {
             @CurrentUser UserPrincipal currentUser
     ) {
         String userId = Optional.ofNullable(currentUser).map(UserPrincipal::getId).orElseThrow(UserNotFoundException::new);
-        User user = users.get(userId).orElseThrow();
+        User user = users.get(userId).orElseThrow(RuntimeException::new);
         String url = githubClient.invite(userName + "/" + repoName, user.getGithubLogin());
         return new RepoResponseDTO().setRepoUrl(url);
     }

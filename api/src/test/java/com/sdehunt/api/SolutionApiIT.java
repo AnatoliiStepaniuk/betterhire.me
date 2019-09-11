@@ -104,7 +104,7 @@ public class SolutionApiIT extends AbstractApiTest {
         Arrays.stream(results)
                 .filter(r -> r.getUserName().equals(userName))
                 .findAny()
-                .orElseThrow();
+                .orElseThrow(RuntimeException::new);
 
         // Delete
         host().delete("/solutions/{id}", id)
@@ -202,7 +202,7 @@ public class SolutionApiIT extends AbstractApiTest {
         Arrays.stream(results)
                 .filter(r -> r.getUserName().equals(userName))
                 .findAny()
-                .orElseThrow();
+                .orElseThrow(RuntimeException::new);
 
         // Delete
         host().delete("/solutions/{id}", id)

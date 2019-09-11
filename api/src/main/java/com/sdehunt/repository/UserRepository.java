@@ -23,11 +23,11 @@ public interface UserRepository {
             found = byEmail(user.getEmail());
         }
 
-        if (found.isEmpty()) {
+        if (!found.isPresent()) {
             found = byGithubLogin(user.getGithubLogin());
         }
 
-        if (found.isEmpty()) {
+        if (!found.isPresent()) {
             found = byLinkedinId(user.getLinkedinId());
         }
 

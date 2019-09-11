@@ -1,7 +1,7 @@
 package com.sdehunt.repository.impl;
 
 import com.sdehunt.commons.TaskID;
-import com.sdehunt.commons.github.JavaGithubClient;
+import com.sdehunt.commons.github.UnirestGithubClient;
 import com.sdehunt.commons.model.Language;
 import com.sdehunt.commons.model.ShortTask;
 import com.sdehunt.commons.model.Task;
@@ -32,7 +32,7 @@ public class JdbiTaskRepository implements TaskRepository {
     public JdbiTaskRepository(DataSource dataSource, String db) {
         this.jdbi = Jdbi.create(dataSource);
         this.table = "`" + db + "`.`task`";
-        this.logger = LoggerFactory.getLogger(JavaGithubClient.class);
+        this.logger = LoggerFactory.getLogger( UnirestGithubClient.class);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class JdbiTaskRepository implements TaskRepository {
 
     @Override
     public void update(Task updateRequest) {
-        Task t = get(updateRequest.getId()).orElseThrow();
+        Task t = get(updateRequest.getId()).orElseThrow(RuntimeException::new);
         setFields(t, updateRequest);
         // Disabling old entry
         jdbi.withHandle(db -> db.execute(format("UPDATE %s SET enabled = false WHERE task = ? AND enabled = true", table), t.getId()));
@@ -157,7 +157,7 @@ public class JdbiTaskRepository implements TaskRepository {
 
     private Set<Language> langsFromString(String langs) {
         return Optional.ofNullable(langs)
-                .filter(t -> !t.isEmpty() && !t.isBlank())
+                .filter(t -> !t.isEmpty())
                 .map(String::toUpperCase)
                 .map(s -> s.split(","))
                 .map(t -> Arrays.stream(t).map(Language::valueOf).collect(Collectors.toSet()))

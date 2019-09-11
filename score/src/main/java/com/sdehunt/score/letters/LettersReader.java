@@ -4,6 +4,7 @@ import lombok.SneakyThrows;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +17,7 @@ public class LettersReader {
 
         Map<Character, Integer> lettersMap = emptyLettersMap();
 
-        for (String c : Files.readAllLines(Path.of(file))) {
+        for (String c : Files.readAllLines( Paths.get(file))) {
             char ch = c.charAt(0);
             lettersMap.put(ch, lettersMap.get(ch) + 1);
         }
