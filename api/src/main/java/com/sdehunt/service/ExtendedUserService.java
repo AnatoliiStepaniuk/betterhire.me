@@ -60,4 +60,16 @@ public class ExtendedUserService {
                         .setRepos(repos.containsKey(u.getId()) ? repos.get(u.getId()) : new ArrayList<>())
         ).collect(Collectors.toList());
     }
+
+    public List<ExtendedUser> getAll() {
+        Collection<User> users = usersRepo.getAll(false);
+        Set<String> userIds = users.stream().map(User::getId).collect(Collectors.toSet());
+        Map<String, List<Review>> reviews = reviewsRepo.forUsers(userIds);
+        Map<String, List<String>> repos = solutionsRepo.getAllRepos();
+        return users.stream().map(
+                u -> new ExtendedUser(u)
+                        .setReviews(reviews.containsKey(u.getId()) ? reviews.get(u.getId()) : new ArrayList<>())
+                        .setRepos(repos.containsKey(u.getId()) ? repos.get(u.getId()) : new ArrayList<>())
+        ).collect(Collectors.toList());
+    }
 }

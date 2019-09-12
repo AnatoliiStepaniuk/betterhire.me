@@ -18,6 +18,11 @@ public class ExtendedUserController {
     @Autowired
     private ExtendedUserService extendedUserService;
 
+    @RequestMapping(path = "", method = RequestMethod.GET)
+    public List<ExtendedUser> getAll() {
+        return extendedUserService.getAll();
+    }
+
     @RequestMapping(path = "/task/{taskId}", method = RequestMethod.GET)
     public List<ExtendedUser> getForTask(@PathVariable TaskID taskId) {
         return extendedUserService.getForTask(taskId);

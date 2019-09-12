@@ -37,7 +37,7 @@ public class TaskApiIT extends AbstractApiTest {
         String job = UUID.randomUUID().toString();
         String jobUrl = UUID.randomUUID().toString();
         TaskType type = TaskType.values()[random.nextInt(TaskType.values().length)];
-        String tag = UUID.randomUUID().toString();
+        String tag = UUID.randomUUID().toString().toUpperCase();
         Language language = Language.values()[random.nextInt(Language.values().length)];
         Set<String> tags = Collections.singleton(tag);
         Set<Language> languages = Collections.singleton(language);
