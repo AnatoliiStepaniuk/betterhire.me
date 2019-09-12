@@ -26,6 +26,11 @@ public class TaskController {
         return tasks.getAll(test);
     }
 
+    @RequestMapping(method = GET, path = "/company/{company}", produces = APPLICATION_JSON_VALUE)
+    public List<Task> getForCompany(@PathVariable String company) {
+        return tasks.getForCompany(company);
+    }
+
     @RequestMapping(method = GET, path = "/short", produces = APPLICATION_JSON_VALUE) // TODO use field `enabled`
     public List<ShortTask> getAllShort(@RequestParam(required = false) boolean test) { // TODO test
         return tasks.getAllShort(test);

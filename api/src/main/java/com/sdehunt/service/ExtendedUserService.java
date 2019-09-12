@@ -9,7 +9,6 @@ import com.sdehunt.repository.ReviewRepository;
 import com.sdehunt.repository.SolutionRepository;
 import com.sdehunt.repository.TaskRepository;
 import com.sdehunt.repository.UserRepository;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,11 +35,11 @@ public class ExtendedUserService {
         this.tasksRepo = tasksRepo;
     }
 
-    public List<ExtendedUser> getForTask(@RequestParam TaskID taskId) {
+    public List<ExtendedUser> getForTask(TaskID taskId) {
         return getForTasks(Collections.singleton(taskId));
     }
 
-    public List<ExtendedUser> getForCompany(@RequestParam String company) {
+    public List<ExtendedUser> getForCompany(String company) {
         List<Task> tasks = tasksRepo.getForCompany(company); // TODO make it as a route
         Set<TaskID> taskIds = tasks.stream().map(Task::getId).collect(Collectors.toSet());
         return getForTasks(taskIds);
@@ -48,6 +47,9 @@ public class ExtendedUserService {
 
 
     private List<ExtendedUser> getForTasks(Set<TaskID> tasks) {
+        if (tasks.isEmpty()) {
+            return Collections.emptyList();
+        }
         Set<String> userIds = solutionsRepo.solvedTasks(tasks);
         Collection<User> users = usersRepo.getByIds(userIds);
         Map<String, List<Review>> reviews = reviewsRepo.forUsers(userIds);
