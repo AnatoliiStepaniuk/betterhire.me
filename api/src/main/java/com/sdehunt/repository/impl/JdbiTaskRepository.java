@@ -122,7 +122,15 @@ public class JdbiTaskRepository implements TaskRepository {
     @Override
     public List<Task> getHistory(TaskID taskID) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s WHERE task = ? ORDER BY id DESC", table), taskID)
+                db -> db.select(format("SELECT * FROM %s WHERE task = ? ORDER BY created DESC", table), taskID)
+                        .map(new TaskRowMapper()).list()
+        );
+    }
+
+    @Override
+    public List<Task> getForCompany(String company) {
+        return jdbi.withHandle(
+                db -> db.select(format("SELECT * FROM %s WHERE company = ? AND test = false AND enabled = true ORDER BY created DESC", table), company)
                         .map(new TaskRowMapper()).list()
         );
     }

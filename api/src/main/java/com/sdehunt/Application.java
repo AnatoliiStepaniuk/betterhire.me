@@ -194,6 +194,19 @@ public class Application implements WebMvcConfigurer {
         return dataSource;
     }
 
+    @Bean
+    public ExtendedUserService extendedUserService(UserRepository usersRepo,
+                                                   ReviewRepository reviewsRepo,
+                                                   SolutionRepository solutionsRepo,
+                                                   TaskRepository tasksRepo) {
+        return new ExtendedUserService(
+                usersRepo,
+                reviewsRepo,
+                solutionsRepo,
+                tasksRepo
+        );
+    }
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")

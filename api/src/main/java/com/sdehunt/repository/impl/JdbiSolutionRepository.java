@@ -120,7 +120,22 @@ public class JdbiSolutionRepository implements SolutionRepository {
     @Override
     public Map<String, List<String>> getAllRepos() {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT repo, user FROM %s GROUP BY repo;", table))
+                db -> db.select(format("SELECT repo, user FROM %s GROUP BY repo", table))
+                        .map(new UserRepoRowMapper())
+                        .stream()
+                        .collect(Collectors.groupingBy(UserRepo::getUserId, Collectors.mapping(UserRepo::getRepo, Collectors.toList())))
+        );
+    }
+
+    @Override
+    public Map<String, List<String>> getTasksRepos(Set<TaskID> taskIDS) {
+        String tasksStr = taskIDS.stream()
+                .map(Enum::name)
+                .map(String::toLowerCase)
+                .map(s -> "'" + s + "'")
+                .collect(Collectors.joining(","));
+        return jdbi.withHandle(
+                db -> db.select(format("SELECT repo, user FROM %s WHERE task IN (" + tasksStr + ") GROUP BY repo", table))
                         .map(new UserRepoRowMapper())
                         .stream()
                         .collect(Collectors.groupingBy(UserRepo::getUserId, Collectors.mapping(UserRepo::getRepo, Collectors.toList())))
@@ -135,6 +150,18 @@ public class JdbiSolutionRepository implements SolutionRepository {
                 db -> db.select(format("SELECT count(distinct user) FROM %s WHERE task = ? AND test = false" + statusQuery, table), taskID.name().toLowerCase())
                         .mapTo(Integer.class).first()
         );
+    }
+
+    @Override
+    public Set<String> solvedTasks(Set<TaskID> taskIds) {
+        if (taskIds.isEmpty()) {
+            return Collections.emptySet();
+        }
+        String taskIdsStr = taskIds.stream().map(t -> "'" + t.name().toLowerCase() + "'").collect(Collectors.joining(","));
+        return new HashSet<>(jdbi.withHandle(
+                db -> db.select(format("SELECT distinct user FROM %s WHERE test = false AND task IN (" + taskIdsStr + ")", table))
+                        .mapTo(String.class).list()
+        ));
     }
 
     private class SolutionRowMapper implements RowMapper<Solution> {

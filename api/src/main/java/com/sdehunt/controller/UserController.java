@@ -1,9 +1,14 @@
 package com.sdehunt.controller;
 
-import com.sdehunt.commons.model.*;
+import com.sdehunt.commons.model.BestUserResult;
+import com.sdehunt.commons.model.Solution;
+import com.sdehunt.commons.model.User;
 import com.sdehunt.dto.CreateUserDTO;
 import com.sdehunt.exception.UserNotFoundException;
-import com.sdehunt.repository.*;
+import com.sdehunt.repository.BestSolutionRepository;
+import com.sdehunt.repository.SolutionRepository;
+import com.sdehunt.repository.UserQuery;
+import com.sdehunt.repository.UserRepository;
 import com.sdehunt.security.CurrentUser;
 import com.sdehunt.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +16,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.List;
 
 @RestController()
 @RequestMapping("/users")
@@ -27,12 +32,6 @@ public class UserController {
     @Autowired
     private UserRepository usersRepo;
 
-    @Autowired
-    private ReviewRepository reviewsRepo;
-
-    @Autowired
-    private SolutionRepository solutionsRepo;
-
     @GetMapping("/me")
     @PreAuthorize("hasRole('USER')")
     public User getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
@@ -43,19 +42,6 @@ public class UserController {
     @RequestMapping(path = "", method = RequestMethod.GET)
     public Collection<User> getAll(@RequestParam(required = false) boolean test) {
         return usersRepo.getAll(test);
-    }
-
-    @RequestMapping(path = {"/extended", "/reviews"}, method = RequestMethod.GET)
-    public List<ExtendedUser> getAllUsersExtended(@RequestParam(required = false) boolean test) {
-        Collection<User> users = usersRepo.getAll(test);
-        Set<String> userIds = users.stream().map(User::getId).collect(Collectors.toSet());
-        Map<String, List<Review>> reviews = reviewsRepo.forUsers(userIds);
-        Map<String, List<String>> repos = solutionsRepo.getAllRepos();
-        return users.stream().map(
-                u -> new ExtendedUser(u)
-                        .setReviews(reviews.containsKey(u.getId()) ? reviews.get(u.getId()) : new ArrayList<>())
-                        .setRepos(repos.containsKey(u.getId()) ? repos.get(u.getId()) : new ArrayList<>())
-        ).collect(Collectors.toList());
     }
 
     @RequestMapping(path = "/query", method = RequestMethod.POST)

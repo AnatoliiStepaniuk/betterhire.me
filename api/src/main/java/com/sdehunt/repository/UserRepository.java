@@ -16,6 +16,8 @@ public interface UserRepository {
 
     Optional<User> get(String userId);
 
+    Collection<User> getByIds(Collection<String> userIds);
+
     default Optional<User> find(User user) {
         Optional<User> found = Optional.empty();
 

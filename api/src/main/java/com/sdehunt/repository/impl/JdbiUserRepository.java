@@ -62,6 +62,18 @@ public class JdbiUserRepository implements UserRepository {
     }
 
     @Override
+    public Collection<User> getByIds(Collection<String> userIds) {
+        if (userIds.isEmpty()) {
+            return Collections.emptySet();
+        }
+        String userIdsStr = userIds.stream().map(id -> "\"" + id + "\"").collect(Collectors.joining(","));
+        return jdbi.withHandle(
+                db -> db.select(format("SELECT * FROM %s WHERE id IN (" + userIdsStr + ")", userTable))
+                        .map(new UserRowMapper()).list()
+        );
+    }
+
+    @Override
     public Optional<User> byEmail(String email) {
         return jdbi.withHandle(
                 db -> db.select(format("SELECT * FROM %s WHERE email = ?", userTable), email) // TODO make unique column?

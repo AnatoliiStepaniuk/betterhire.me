@@ -64,7 +64,17 @@ public class CachingSolutionRepository implements SolutionRepository {
     }
 
     @Override
+    public Map<String, List<String>> getTasksRepos(Set<TaskID> taskIDS) {
+        return inner.getTasksRepos(taskIDS);
+    }
+
+    @Override
     public int getNumberUsersSolvedTask(TaskID taskID, Set<SolutionStatus> statuses) {
         return inner.getNumberUsersSolvedTask(taskID, statuses);
+    }
+
+    @Override
+    public Set<String> solvedTasks(Set<TaskID> taskIds) {
+        return inner.solvedTasks(taskIds);
     }
 }

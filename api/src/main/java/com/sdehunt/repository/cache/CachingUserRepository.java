@@ -33,6 +33,11 @@ public class CachingUserRepository implements UserRepository {
     }
 
     @Override
+    public Collection<User> getByIds(Collection<String> userIds) {
+        return inner.getByIds(userIds);
+    }
+
+    @Override
     public Optional<User> byEmail(String email) {
         return inner.byEmail(email);
     }

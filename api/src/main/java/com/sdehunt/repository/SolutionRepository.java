@@ -70,9 +70,15 @@ public interface SolutionRepository {
         return getNumberUsersSolvedTask(taskID, Collections.emptySet());
     }
 
+    Map<String, List<String>> getTasksRepos(Set<TaskID> taskIDS);
+
     /**
      * Returns number of users that submitted solution for the task in specified statuses.
      */
     int getNumberUsersSolvedTask(TaskID taskID, Set<SolutionStatus> statuses);
 
+    /**
+     * Returns userIds that solved specified task ids
+     */
+    Set<String> solvedTasks(Set<TaskID> taskIds);
 }

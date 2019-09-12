@@ -54,4 +54,6 @@ public interface TaskRepository {
      * Returns history of task changes.
      */
     List<Task> getHistory(TaskID taskID);
+
+    List<Task> getForCompany(String company);
 }
