@@ -17,6 +17,7 @@ public class User {
     private String phone;
     private String githubLogin;
     private String linkedinId;
+    private String company;
     private String userName; // This field is not saved in DB actually
     private String city;
     private Set<Language> languages;

@@ -11,6 +11,7 @@ public class CreateUserDTO {
     private String name;
     private String githubLogin;
     private String linkedinId;
+    private String company;
     private String nickname;
     private String imageUrl;
     private String cv;

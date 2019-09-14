@@ -18,14 +18,15 @@ public class UserApiIT extends AbstractApiTest {
     @Test
     public void crudTest() {
         String email = UUID.randomUUID().toString() + "@gmail.com";
-        String githubLogin = "GH" + UUID.randomUUID().toString();
-        String linkedInId = "LI" + UUID.randomUUID().toString();
-        String nickname = "NN" + UUID.randomUUID().toString();
-        String imageUrl = "IMG" + UUID.randomUUID().toString();
-        String name = "NAME" + UUID.randomUUID().toString();
-        String cv = "CV" + UUID.randomUUID().toString();
-        String phone = "phone" + UUID.randomUUID().toString().substring(0, 10);
-        String city = "CITY" + UUID.randomUUID().toString();
+        String githubLogin = "GH_" + UUID.randomUUID().toString();
+        String linkedInId = "LI_" + UUID.randomUUID().toString();
+        String nickname = "NN_" + UUID.randomUUID().toString();
+        String imageUrl = "IMG_" + UUID.randomUUID().toString();
+        String name = "NAME_" + UUID.randomUUID().toString();
+        String cv = "CV_" + UUID.randomUUID().toString();
+        String phone = "PHONE_" + UUID.randomUUID().toString().substring(0, 10);
+        String city = "CITY_" + UUID.randomUUID().toString();
+        String company = "COMPANY_" + UUID.randomUUID().toString();
         Language language = Language.values()[new Random().nextInt(Language.values().length)];
         Set<Language> languages = Collections.singleton(language);
 
@@ -35,6 +36,7 @@ public class UserApiIT extends AbstractApiTest {
                 .setEmail(email)
                 .setGithubLogin(githubLogin)
                 .setLinkedinId(linkedInId)
+                .setCompany(company)
                 .setNickname(nickname)
                 .setImageUrl(imageUrl)
                 .setName(name)
@@ -54,6 +56,7 @@ public class UserApiIT extends AbstractApiTest {
                 .body("email", is(email))
                 .body("githubLogin", is(githubLogin))
                 .body("linkedinId", is(linkedInId))
+                .body("company", is(company))
                 .body("nickname", is(nickname))
                 .body("imageUrl", is(imageUrl))
                 .body("userName", is(nickname))
@@ -76,6 +79,7 @@ public class UserApiIT extends AbstractApiTest {
                 .body("email", is(user.getEmail()))
                 .body("githubLogin", is(user.getGithubLogin()))
                 .body("linkedinId", is(user.getLinkedinId()))
+                .body("company", is(user.getCompany()))
                 .body("nickname", is(user.getNickname()))
                 .body("imageUrl", is(user.getImageUrl()))
                 .body("userName", is(nickname))
@@ -106,6 +110,7 @@ public class UserApiIT extends AbstractApiTest {
                 .body("[0].email", is(user.getEmail()))
                 .body("[0].githubLogin", is(user.getGithubLogin()))
                 .body("[0].linkedinId", is(user.getLinkedinId()))
+                .body("[0].company", is(user.getCompany()))
                 .body("[0].nickname", is(user.getNickname()))
                 .body("[0].cv", is(user.getCv()))
                 .body("[0].languages", contains(language.name()))
@@ -130,6 +135,7 @@ public class UserApiIT extends AbstractApiTest {
                 .setEmail(user.getEmail() + "2")
                 .setGithubLogin(user.getGithubLogin() + "2")
                 .setLinkedinId(user.getLinkedinId() + "2")
+                .setCompany(user.getCompany() + "2")
                 .setNickname(user.getNickname() + "2")
                 .setImageUrl(user.getImageUrl() + "2")
                 .setPhone(user.getPhone() + "2")
@@ -148,6 +154,7 @@ public class UserApiIT extends AbstractApiTest {
                 .body("email", is(updateRequest.getEmail()))
                 .body("githubLogin", is(updateRequest.getGithubLogin()))
                 .body("linkedinId", is(updateRequest.getLinkedinId()))
+                .body("company", is(updateRequest.getCompany()))
                 .body("nickname", is(updateRequest.getNickname()))
                 .body("imageUrl", is(updateRequest.getImageUrl()))
                 .body("cv", is(updateRequest.getCv()))
@@ -170,6 +177,7 @@ public class UserApiIT extends AbstractApiTest {
                 .body("email", is(updateRequest.getEmail()))
                 .body("githubLogin", is(updateRequest.getGithubLogin()))
                 .body("linkedinId", is(updateRequest.getLinkedinId()))
+                .body("company", is(updateRequest.getCompany()))
                 .body("nickname", is(updateRequest.getNickname()))
                 .body("imageUrl", is(updateRequest.getImageUrl()))
                 .body("userName", is(updateRequest.getNickname()))

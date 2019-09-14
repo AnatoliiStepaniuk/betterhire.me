@@ -37,8 +37,8 @@ public class JdbiUserRepository implements UserRepository {
         long now = Instant.now().getEpochSecond();
         jdbi.withHandle(
                 db -> db.execute(
-                        format("INSERT INTO %s (`id`, `name`, `nickname`, `email`, `cv`, `city`, `languages`, `phone`, `github_login`, `linkedin_id`, `image_url`, `test`, `created`, `updated`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", userTable),
-                        u.getId(), u.getName(), u.getNickname(), u.getEmail(), u.getCv(), u.getCity(), EnumUtils.stringify(u.getLanguages()), u.getPhone(), u.getGithubLogin(), u.getLinkedinId(), u.getImageUrl(), u.isTest(), now, now
+                        format("INSERT INTO %s (`id`, `name`, `nickname`, `email`, `cv`, `city`, `languages`, `phone`, `github_login`, `linkedin_id`, `company`, `image_url`, `test`, `created`, `updated`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", userTable),
+                        u.getId(), u.getName(), u.getNickname(), u.getEmail(), u.getCv(), u.getCity(), EnumUtils.stringify(u.getLanguages()), u.getPhone(), u.getGithubLogin(), u.getLinkedinId(), u.getCompany(), u.getImageUrl(), u.isTest(), now, now
                 ));
 
         return get(u.getId()).orElse(null);
@@ -99,16 +99,16 @@ public class JdbiUserRepository implements UserRepository {
 
     @Override
     public User update(User updateRequest) {
-        User user = get(updateRequest.getId()).orElseThrow();
-        setFields(user, updateRequest);
+        User u = get(updateRequest.getId()).orElseThrow();
+        setFields(u, updateRequest);
 
         jdbi.withHandle(
                 db -> db.execute(
-                        format("UPDATE %s SET name = ?, nickname = ?, email = ?, cv = ?, city = ?, languages = ?, phone = ?, github_login = ?, linkedin_id = ?, image_url = ?, updated = ?, solved = ?, avg_rank = ?, last_submit = ?, available = ?, manager = ? WHERE id = ?", userTable),
-                        user.getName(), user.getNickname(), user.getEmail(), user.getCv(), user.getCity(), EnumUtils.stringify(user.getLanguages()), user.getPhone(), user.getGithubLogin(), user.getLinkedinId(), user.getImageUrl(), Instant.now().getEpochSecond(), user.getSolved(), user.getAvgRank(), Optional.ofNullable(user.getLastSubmit()).map(Instant::getEpochSecond).orElse(null), user.getAvailable(), user.getManager(), user.getId())
+                        format("UPDATE %s SET name = ?, nickname = ?, email = ?, cv = ?, city = ?, languages = ?, phone = ?, github_login = ?, linkedin_id = ?, company = ?, image_url = ?, updated = ?, solved = ?, avg_rank = ?, last_submit = ?, available = ?, manager = ? WHERE id = ?", userTable),
+                        u.getName(), u.getNickname(), u.getEmail(), u.getCv(), u.getCity(), EnumUtils.stringify(u.getLanguages()), u.getPhone(), u.getGithubLogin(), u.getLinkedinId(), u.getCompany(), u.getImageUrl(), Instant.now().getEpochSecond(), u.getSolved(), u.getAvgRank(), Optional.ofNullable(u.getLastSubmit()).map(Instant::getEpochSecond).orElse(null), u.getAvailable(), u.getManager(), u.getId())
         );
 
-        return get(user.getId()).orElseThrow();
+        return get(u.getId()).orElseThrow();
     }
 
     private void setFields(User existing, User u) {
@@ -128,6 +128,7 @@ public class JdbiUserRepository implements UserRepository {
         Optional.ofNullable(u.getLanguages()).ifPresent(existing::setLanguages);
         Optional.ofNullable(u.getAvailable()).ifPresent(existing::setAvailable);
         Optional.ofNullable(u.getManager()).ifPresent(existing::setManager);
+        Optional.ofNullable(u.getCompany()).ifPresent(existing::setCompany);
     }
 
     @Override
@@ -240,7 +241,8 @@ public class JdbiUserRepository implements UserRepository {
                     .setLastSubmit(Instant.ofEpochSecond(rs.getLong("last_submit")))
                     .setUserName(userName)
                     .setAvailable(rs.getBoolean("available"))
-                    .setManager(rs.getBoolean("manager"));
+                    .setManager(rs.getBoolean("manager"))
+                    .setCompany(rs.getString("company"));
         }
     }
 }
