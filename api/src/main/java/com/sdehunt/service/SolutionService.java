@@ -90,7 +90,7 @@ public class SolutionService {
         } else {
             // For manual task we count each user submitted the solution (not only successful ones.
             int solved = solutionRepository.getNumberUsersSolvedTask(task.getId());
-            task.setUsers(solved);
+            task.setUsers(solved).setLastSubmit(Instant.now());
             taskRepository.update(task);
         }
 
