@@ -34,6 +34,7 @@ public class TaskApiIT extends AbstractApiTest {
         String requirements = UUID.randomUUID().toString();
         String inputFilesUrl = UUID.randomUUID().toString();
         String company = UUID.randomUUID().toString();
+        String city = UUID.randomUUID().toString();
         String job = UUID.randomUUID().toString();
         String jobUrl = UUID.randomUUID().toString();
         TaskType type = TaskType.values()[random.nextInt(TaskType.values().length)];
@@ -61,6 +62,7 @@ public class TaskApiIT extends AbstractApiTest {
                 .setTags(tags)
                 .setLanguages(languages)
                 .setCompany(company)
+                .setCity(city)
                 .setJob(job)
                 .setJobUrl(jobUrl)
                 .setType(type);
@@ -88,6 +90,7 @@ public class TaskApiIT extends AbstractApiTest {
                 .body("requirements", is(requirements))
                 .body("inputFilesUrl", is(inputFilesUrl))
                 .body("company", is(company))
+                .body("city", is(city))
                 .body("job", is(job))
                 .body("jobUrl", is(jobUrl))
                 .body("test", is(true))
@@ -105,6 +108,7 @@ public class TaskApiIT extends AbstractApiTest {
                 .body("descriptionUrl", isEmptyOrNullString())
                 .body("shortDescription", is(shortDescription))
                 .body("company", is(company))
+                .body("city", is(city))
                 .body("name", is(name))
                 .body("test", is(true))
                 .body("tags", contains(tag))
@@ -124,6 +128,7 @@ public class TaskApiIT extends AbstractApiTest {
                 .body("[0].requirements", is(requirements))
                 .body("[0].inputFilesUrl", is(inputFilesUrl))
                 .body("[0].company", is(company))
+                .body("[0].city", is(city))
                 .body("[0].job", is(job))
                 .body("[0].jobUrl", is(jobUrl))
                 .body("[0].test", is(true))
@@ -145,6 +150,7 @@ public class TaskApiIT extends AbstractApiTest {
         Assert.assertEquals(inputFilesUrl, foundTask.getInputFilesUrl());
         Assert.assertEquals(tags, foundTask.getTags());
         Assert.assertEquals(company, foundTask.getCompany());
+        Assert.assertEquals(city, foundTask.getCity());
         Assert.assertEquals(job, foundTask.getJob());
         Assert.assertEquals(jobUrl, foundTask.getJobUrl());
         Assert.assertEquals(type, foundTask.getType());

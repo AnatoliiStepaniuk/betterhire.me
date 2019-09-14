@@ -17,6 +17,7 @@ public class UpdateTaskDTO {
     private String requirements;
     private String inputFilesUrl;
     private String company;
+    private String city;
     private String job;
     private String jobUrl;
     private Set<String> tags;

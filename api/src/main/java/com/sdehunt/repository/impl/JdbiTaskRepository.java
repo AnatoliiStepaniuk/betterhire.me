@@ -92,7 +92,7 @@ public class JdbiTaskRepository implements TaskRepository {
         long now = Instant.now().getEpochSecond();
         jdbi.withHandle(
                 db -> db.execute(
-                        format("INSERT INTO %s (task, type, name, image_url, short_description, description, description_url, requirements, input, tags, languages, participants, users, offers, bestOffer, created, last_submit, submittable, test, enabled, company, job, job_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, true, ?, ?, ?)", table),
+                        format("INSERT INTO %s (task, type, name, image_url, short_description, description, description_url, requirements, input, tags, languages, participants, users, offers, bestOffer, created, last_submit, submittable, test, enabled, company, city, job, job_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, true, ?, ?, ?, ?)", table),
                         t.getId(),
                         t.getType().name().toLowerCase(),
                         t.getName(),
@@ -113,6 +113,7 @@ public class JdbiTaskRepository implements TaskRepository {
                         t.isSubmittable(),
                         t.isTest(),
                         t.getCompany(),
+                        t.getCity(),
                         t.getJob(),
                         t.getJobUrl()
                 )
@@ -154,6 +155,7 @@ public class JdbiTaskRepository implements TaskRepository {
         Optional.ofNullable(t.getCompany()).ifPresent(task::setCompany);
         Optional.ofNullable(t.getJob()).ifPresent(task::setJob);
         Optional.ofNullable(t.getJobUrl()).ifPresent(task::setJobUrl);
+        Optional.ofNullable(t.getCity()).ifPresent(task::setCity);
     }
 
     private Set<String> tagsFromString(String tags) {
@@ -185,6 +187,7 @@ public class JdbiTaskRepository implements TaskRepository {
                     .setJob(rs.getString("job"))
                     .setJobUrl(rs.getString("job_url"))
                     .setCompany(rs.getString("company"))
+                    .setCity(rs.getString("city"))
                     .setLanguages(langsFromString(rs.getString("languages")))
                     .setId(TaskID.of(rs.getString("task")))
                     .setName(rs.getString("name"))
@@ -225,6 +228,7 @@ public class JdbiTaskRepository implements TaskRepository {
                     .setTest(rs.getBoolean("test"))
                     .setTags(tagsFromString(rs.getString("tags").toUpperCase()))
                     .setCompany(rs.getString("company"))
+                    .setCity(rs.getString("city"))
                     .setType(TaskType.of(rs.getString("type")));
         }
     }
