@@ -172,13 +172,18 @@ public class Application implements WebMvcConfigurer {
     }
 
     @Bean
+    public S3Client s3Client() {
+        return new S3Client();
+    }
+
+    @Bean
     public CvService cvService(S3Client s3Client) {
         return new CvService(s3Client);
     }
 
     @Bean
-    public S3Client s3Client() {
-        return new S3Client();
+    public TaskApplicationService taskApplicationService(S3Client s3Client) {
+        return new TaskApplicationService(s3Client);
     }
 
     @Bean

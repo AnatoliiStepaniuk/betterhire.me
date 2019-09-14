@@ -4,7 +4,7 @@ import com.sdehunt.commons.s3.S3Client;
 
 public class CvService {
 
-    private final String bucketName = "betterhire-cv";
+    private final String BUCKET = "betterhire-cv";
     private S3Client s3Client;
 
     public CvService(S3Client s3Client) {
@@ -12,7 +12,7 @@ public class CvService {
     }
 
     public String uploadUrl(String userId, String fileName) {
-        return s3Client.uploadUrl(bucketName, userId + "/" + fileName);
+        return s3Client.uploadUrl(BUCKET, userId + "/" + fileName);
     }
 
 }
