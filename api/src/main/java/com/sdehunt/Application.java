@@ -12,6 +12,7 @@ import com.sdehunt.commons.params.ParameterService;
 import com.sdehunt.commons.params.SsmParameterService;
 import com.sdehunt.commons.repo.AccessTokenRepository;
 import com.sdehunt.commons.repo.JdbiAccessTokenRepository;
+import com.sdehunt.commons.s3.S3Client;
 import com.sdehunt.repository.*;
 import com.sdehunt.repository.cache.CachingSolutionRepository;
 import com.sdehunt.repository.cache.CachingUserRepository;
@@ -171,8 +172,13 @@ public class Application implements WebMvcConfigurer {
     }
 
     @Bean
-    public CvService cvService() {
-        return new CvService();
+    public CvService cvService(S3Client s3Client) {
+        return new CvService(s3Client);
+    }
+
+    @Bean
+    public S3Client s3Client() {
+        return new S3Client();
     }
 
     @Bean
