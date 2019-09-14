@@ -120,6 +120,11 @@ public class Application implements WebMvcConfigurer {
     }
 
     @Bean
+    public TaskApplicationRepository taskApplicationRepository(DataSource dataSource) {
+        return new JdbiTaskApplicationRepository(dataSource, rdsDb);
+    }
+
+    @Bean
     public GithubClient githubClient(AccessTokenRepository accessTokens) {
         return new CachingGithubClient(new UnirestGithubClient(githubAccessToken, accessTokens));
     }
@@ -182,8 +187,8 @@ public class Application implements WebMvcConfigurer {
     }
 
     @Bean
-    public TaskApplicationService taskApplicationService(S3Client s3Client) {
-        return new TaskApplicationService(s3Client);
+    public TaskApplicationService taskApplicationService(S3Client s3Client, TaskApplicationRepository taskApplicationRepository) {
+        return new TaskApplicationService(s3Client, taskApplicationRepository);
     }
 
     @Bean
