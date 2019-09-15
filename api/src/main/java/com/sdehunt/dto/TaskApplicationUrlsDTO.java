@@ -3,8 +3,7 @@ package com.sdehunt.dto;
 import lombok.Data;
 
 @Data
-public class TaskApplicationDTO {
-    private String contact;
+public class TaskApplicationUrlsDTO {
     private String jobUrl;
     private String taskUrl;
 }

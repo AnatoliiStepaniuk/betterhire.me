@@ -20,12 +20,12 @@ public class JdbiTaskApplicationRepository implements TaskApplicationRepository 
     }
 
     @Override
-    public void save(String company, String task, String jobUrl, String taskUrl) {
+    public void save(String company, String contact, String task, String jobUrl, String taskUrl) {
         long now = Instant.now().getEpochSecond();
         jdbi.withHandle(
                 db -> db.execute(
-                        format("INSERT INTO %s (`company`, `task`, `job_url`, `task_url`, `created`) VALUES(?, ?, ?, ?, ?)", table),
-                        company, task, jobUrl, taskUrl, now
+                        format("INSERT INTO %s (`company`, `contact`, `task`, `job_url`, `task_url`, `created`) VALUES(?, ?, ?, ?, ?, ?)", table),
+                        company, contact, task, jobUrl, taskUrl, now
                 ));
     }
 }

@@ -1,6 +1,7 @@
 package com.sdehunt.controller;
 
 import com.sdehunt.dto.TaskApplicationDTO;
+import com.sdehunt.dto.TaskApplicationUrlsDTO;
 import com.sdehunt.service.TaskApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,7 @@ public class TaskApplicationController {
     private TaskApplicationService service;
 
     @RequestMapping(method = RequestMethod.GET, path = "/company/{company}")
-    public TaskApplicationDTO getUrls(@PathVariable("company") String company) {
+    public TaskApplicationUrlsDTO getUrls(@PathVariable("company") String company) {
         return service.getUrls(company);
     }
 
