@@ -17,7 +17,7 @@ public class EmailController {
 
     @RequestMapping(method = RequestMethod.POST, path = "/send")
     public void getUploadUrl(@RequestBody SendEmailRequestDTO request) {
-        emailService.send(request.getTemplateId(), request.getSql());
+        emailService.sendUsersBySql(request.getTemplateId(), request.getSql());
     }
 
 }

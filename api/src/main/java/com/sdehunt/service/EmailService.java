@@ -5,10 +5,10 @@ import com.sdehunt.commons.model.User;
 import com.sdehunt.repository.UserRepository;
 
 import java.util.Collections;
+import java.util.Map;
 
 public class EmailService {
 
-    //    private final String FROM = "hey@betterhire.me";
     private final String FROM = "BetterHire.me <hey@betterhire.me>";
 
     private final UserRepository userRepository;
@@ -20,11 +20,15 @@ public class EmailService {
         this.emailSender = emailSender;
     }
 
-    public void send(String templateId, String sql) {
+    public void sendUsersBySql(String templateId, String sql) {
+        sendUsersBySql(templateId, sql, Collections.emptyMap());
+    }
+
+    public void sendUsersBySql(String templateId, String sql, Map<String, Object> params) {
         userRepository.getBySql(sql).stream()
                 .map(User::getEmail)
                 .filter(this::isNonEmpty)
-                .forEach(e -> emailSender.send(FROM, e, templateId, Collections.emptyMap()));
+                .forEach(e -> emailSender.send(FROM, e, templateId, params));
     }
 
     private boolean isNonEmpty(String s) {

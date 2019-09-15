@@ -1,0 +1,8 @@
+{
+  "Template": {
+    "HtmlPart": "New Task Application from company <b>{{company}}</b>! <br/> <a href=\"{{jobUrl}}\">Job description</a> <br/> <a href=\"{{taskUrl}}\">Task description</a>",
+    "SubjectPart": "New Task Application from company {{company}}",
+    "TextPart": "New Task Application from company {{company}}! Job description - {{jobUrl}} Task description - {{taskUrl}}",
+    "TemplateName": "TaskApplicationInternal"
+  }
+}

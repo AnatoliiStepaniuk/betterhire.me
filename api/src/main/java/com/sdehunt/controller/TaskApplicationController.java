@@ -3,10 +3,7 @@ package com.sdehunt.controller;
 import com.sdehunt.dto.TaskApplicationDTO;
 import com.sdehunt.service.TaskApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/task/application")
@@ -18,6 +15,11 @@ public class TaskApplicationController {
     @RequestMapping(method = RequestMethod.GET, path = "/company/{company}")
     public TaskApplicationDTO getUrls(@PathVariable("company") String company) {
         return service.getUrls(company);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, path = "/company/{company}")
+    public void getUrls(@PathVariable("company") String company, @RequestBody TaskApplicationDTO req) {
+        service.saveAndNotify(company, req);
     }
 
 }
