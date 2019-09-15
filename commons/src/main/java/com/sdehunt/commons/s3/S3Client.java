@@ -10,7 +10,7 @@ import java.time.Instant;
 import java.util.Date;
 
 public class S3Client {
-    private final long ttlMillis = 60 * 1000;
+    private final long TTL_MILLIS = 60 * 1000;
     private AmazonS3 s3Client;
 
     public S3Client() {
@@ -21,6 +21,10 @@ public class S3Client {
     }
 
     public String uploadUrl(String bucketName, String fileName) {
+        return uploadUrl(bucketName, fileName, TTL_MILLIS);
+    }
+
+    public String uploadUrl(String bucketName, String fileName, long ttlMillis) {
         GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucketName, fileName)
                 .withMethod(HttpMethod.PUT)
                 .withExpiration(Date.from(Instant.now().plusMillis(ttlMillis)));
