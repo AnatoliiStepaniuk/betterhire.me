@@ -1,6 +1,5 @@
 package com.sdehunt.repository.impl;
 
-import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.Review;
 import com.sdehunt.repository.ReviewRepository;
 import org.jdbi.v3.core.Jdbi;
@@ -29,11 +28,11 @@ public class JdbiReviewRepository implements ReviewRepository {
     }
 
     @Override
-    public void create(String solutionId, String userId, TaskID taskID, Long grade, String comment, String emoji, String reviewer) {
+    public void create(String solutionId, String userId, String taskId, Long grade, String comment, String emoji, String reviewer) {
         String id = UUID.randomUUID().toString();
         jdbi.withHandle(
                 db -> db.execute(format("INSERT INTO %s (`id`, `user`, `task`, `solution`, `grade`, `comment`, `emoji`, `reviewer`, `created`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", table),
-                        id, userId, taskID, solutionId, grade, comment, emoji, reviewer, Instant.now().getEpochSecond())
+                        id, userId, taskId, solutionId, grade, comment, emoji, reviewer, Instant.now().getEpochSecond())
         );
     }
 
@@ -74,9 +73,9 @@ public class JdbiReviewRepository implements ReviewRepository {
     }
 
     @Override
-    public List<Review> forUserAndTask(String userId, TaskID taskID) {
+    public List<Review> forUserAndTask(String userId, String taskId) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s WHERE task = ? AND user = ? ORDER BY created DESC", table), taskID, userId)
+                db -> db.select(format("SELECT * FROM %s WHERE task = ? AND user = ? ORDER BY created DESC", table), taskId, userId)
                         .map(new ReviewRowMapper()).list()
         );
     }
@@ -87,7 +86,7 @@ public class JdbiReviewRepository implements ReviewRepository {
 
             return new Review()
                     .setId(rs.getString("id"))
-                    .setTaskID(TaskID.of(rs.getString("task")))
+                    .setTaskId(rs.getString("task"))
                     .setUserId(rs.getString("user"))
                     .setSolutionId(rs.getString("solution"))
                     .setGrade(Optional.ofNullable(rs.getString("grade")).map(Long::valueOf).orElse(null))

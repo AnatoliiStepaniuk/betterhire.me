@@ -1,6 +1,5 @@
 package com.sdehunt.controller;
 
-import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.BestTaskResult;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.SolutionStatus;
@@ -52,7 +51,7 @@ public class SolutionController {
                 .setUserId(userId)
                 .setRepo(repo)
                 .setCommit(req.getCommit())
-                .setTaskId(TaskID.of(taskId))
+                .setTaskId(taskId.toLowerCase())
                 .setTest(user.isTest());
 
         return new SolutionIdDTO().setId(solutionService.process(solution));

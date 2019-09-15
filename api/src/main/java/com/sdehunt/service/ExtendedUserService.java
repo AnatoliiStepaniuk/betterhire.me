@@ -1,6 +1,5 @@
 package com.sdehunt.service;
 
-import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.ExtendedUser;
 import com.sdehunt.commons.model.Review;
 import com.sdehunt.commons.model.Task;
@@ -35,18 +34,18 @@ public class ExtendedUserService {
         this.tasksRepo = tasksRepo;
     }
 
-    public List<ExtendedUser> getForTask(TaskID taskId) {
+    public List<ExtendedUser> getForTask(String taskId) {
         return getForTasks(Collections.singleton(taskId));
     }
 
     public List<ExtendedUser> getForCompany(String company) {
         List<Task> tasks = tasksRepo.getForCompany(company); // TODO make it as a route
-        Set<TaskID> taskIds = tasks.stream().map(Task::getId).collect(Collectors.toSet());
+        Set<String> taskIds = tasks.stream().map(Task::getId).collect(Collectors.toSet());
         return getForTasks(taskIds);
     }
 
 
-    private List<ExtendedUser> getForTasks(Set<TaskID> tasks) {
+    private List<ExtendedUser> getForTasks(Set<String> tasks) {
         if (tasks.isEmpty()) {
             return Collections.emptyList();
         }

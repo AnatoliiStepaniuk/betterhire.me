@@ -1,6 +1,5 @@
 package com.sdehunt.controller;
 
-import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.github.GithubClient;
 import com.sdehunt.commons.model.Language;
 import com.sdehunt.commons.model.User;
@@ -46,13 +45,13 @@ public class RepoController {
             @CurrentUser UserPrincipal currentUser,
             @RequestParam("lang") Language language
     ) {
-        TaskID taskID = TaskID.of(taskIdRaw);
+        String taskId = taskIdRaw.toLowerCase();
         String userId = Optional.ofNullable(currentUser).map(UserPrincipal::getId).orElseThrow(UserNotFoundException::new);
         String webhookUrl = host + ":" + port + GITHUB_HOOK_PATH;
 
-        String repoUrl = solutionRepos.find(taskID, userId, language)
+        String repoUrl = solutionRepos.find(taskId, userId, language)
                 .map(r -> GITHUB_DOMAIN + r.getRepo())
-                .orElseGet(() -> solutionRepoService.createSolutionRepo(taskID, language, userId, webhookUrl));
+                .orElseGet(() -> solutionRepoService.createSolutionRepo(taskId, language, userId, webhookUrl));
 
         return new RepoResponseDTO().setRepoUrl(repoUrl);
     }

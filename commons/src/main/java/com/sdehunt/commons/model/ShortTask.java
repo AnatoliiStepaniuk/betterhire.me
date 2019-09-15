@@ -1,6 +1,5 @@
 package com.sdehunt.commons.model;
 
-import com.sdehunt.commons.TaskID;
 import lombok.Data;
 
 import java.time.Instant;
@@ -9,7 +8,7 @@ import java.util.Set;
 @Data
 public class ShortTask {
 
-    private TaskID id;
+    private String id;
     private TaskType type;
     private String name;
     private String imageUrl;

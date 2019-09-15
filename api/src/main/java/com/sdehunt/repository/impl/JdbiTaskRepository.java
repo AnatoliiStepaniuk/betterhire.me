@@ -1,6 +1,5 @@
 package com.sdehunt.repository.impl;
 
-import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.github.JavaGithubClient;
 import com.sdehunt.commons.model.Language;
 import com.sdehunt.commons.model.ShortTask;
@@ -60,7 +59,7 @@ public class JdbiTaskRepository implements TaskRepository {
     }
 
     @Override
-    public Optional<Task> get(TaskID id) {
+    public Optional<Task> get(String id) {
         return jdbi.withHandle(
                 db -> db.select(format("SELECT * FROM %s WHERE task = ? AND enabled = true", table), id)
                         .map(new TaskRowMapper()).findOne()
@@ -121,9 +120,9 @@ public class JdbiTaskRepository implements TaskRepository {
     }
 
     @Override
-    public List<Task> getHistory(TaskID taskID) {
+    public List<Task> getHistory(String taskId) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s WHERE task = ? ORDER BY created DESC", table), taskID)
+                db -> db.select(format("SELECT * FROM %s WHERE task = ? ORDER BY created DESC", table), taskId)
                         .map(new TaskRowMapper()).list()
         );
     }
@@ -189,7 +188,7 @@ public class JdbiTaskRepository implements TaskRepository {
                     .setCompany(rs.getString("company"))
                     .setCity(rs.getString("city"))
                     .setLanguages(langsFromString(rs.getString("languages")))
-                    .setId(TaskID.of(rs.getString("task")))
+                    .setId(rs.getString("task"))
                     .setName(rs.getString("name"))
                     .setShortDescription(rs.getString("short_description"))
                     .setImageUrl(rs.getString("image_url"))
@@ -212,7 +211,7 @@ public class JdbiTaskRepository implements TaskRepository {
         @Override
         public ShortTask map(ResultSet rs, StatementContext ctx) throws SQLException {
             return new ShortTask()
-                    .setId(TaskID.of(rs.getString("task")))
+                    .setId(rs.getString("task"))
                     .setName(rs.getString("name"))
                     .setShortDescription(rs.getString("short_description"))
                     .setLanguages(langsFromString(rs.getString("languages")))

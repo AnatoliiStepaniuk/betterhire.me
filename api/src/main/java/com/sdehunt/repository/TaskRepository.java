@@ -1,6 +1,5 @@
 package com.sdehunt.repository;
 
-import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.ShortTask;
 import com.sdehunt.commons.model.Task;
 
@@ -33,7 +32,7 @@ public interface TaskRepository {
     /**
      * Returns task for provided id if found
      */
-    Optional<Task> get(TaskID id);
+    Optional<Task> get(String id);
 
     /**
      * Returns short task version for provided id if found
@@ -53,7 +52,7 @@ public interface TaskRepository {
     /**
      * Returns history of task changes.
      */
-    List<Task> getHistory(TaskID taskID);
+    List<Task> getHistory(String taskId);
 
     List<Task> getForCompany(String company);
 }

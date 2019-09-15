@@ -1,6 +1,5 @@
 package com.sdehunt.controller;
 
-import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.ShortTask;
 import com.sdehunt.commons.model.Task;
 import com.sdehunt.dto.UpdateTaskDTO;
@@ -38,7 +37,7 @@ public class TaskController {
 
     @RequestMapping(method = GET, path = "/{taskId}", produces = APPLICATION_JSON_VALUE)
     public Task get(@PathVariable("taskId") String taskId) {
-        return tasks.get(TaskID.of(taskId)).orElseThrow(TaskNotFoundException::new);
+        return tasks.get(taskId.toLowerCase()).orElseThrow(TaskNotFoundException::new);
     }
 
     @RequestMapping(method = GET, path = "/{taskId}/short", produces = APPLICATION_JSON_VALUE)
@@ -48,13 +47,13 @@ public class TaskController {
 
     @RequestMapping(method = GET, path = "/{taskId}/history", produces = APPLICATION_JSON_VALUE)
     public List<Task> getTaskHistory(@PathVariable("taskId") String taskId) {
-        return tasks.getHistory(TaskID.of(taskId));
+        return tasks.getHistory(taskId.toLowerCase());
     }
 
     @RequestMapping(method = PUT, path = "/{taskId}", produces = APPLICATION_JSON_VALUE)
     public void update(@PathVariable("taskId") String taskId, @RequestBody UpdateTaskDTO request) {
         Task taskToUpdate = new Task();
-        taskToUpdate.setId(TaskID.of(taskId));
+        taskToUpdate.setId(taskId.toLowerCase());
         taskToUpdate.setDescription(request.getDescription());
         taskToUpdate.setDescriptionUrl(request.getDescriptionUrl());
         taskToUpdate.setName(request.getName());

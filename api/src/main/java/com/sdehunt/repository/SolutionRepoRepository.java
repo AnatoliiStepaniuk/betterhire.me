@@ -1,6 +1,5 @@
 package com.sdehunt.repository;
 
-import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.Language;
 import com.sdehunt.commons.model.SolutionRepo;
 
@@ -14,7 +13,7 @@ public interface SolutionRepoRepository {
     /**
      * Returns repository for task and userId and language if present
      */
-    Optional<SolutionRepo> find(TaskID taskId, String userId, Language language);
+    Optional<SolutionRepo> find(String taskId, String userId, Language language);
 
     /**
      * Returns repository by name
@@ -24,6 +23,6 @@ public interface SolutionRepoRepository {
     /**
      * Creates new solution repo entry.
      */
-    void save(TaskID taskID, String userId, Language language, String repo, String webhookSecret);
+    void save(String taskId, String userId, Language language, String repo, String webhookSecret);
 
 }

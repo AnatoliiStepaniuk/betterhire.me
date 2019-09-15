@@ -44,7 +44,7 @@ public class WebhookController {
                 .setUserId(solutionRepo.getUserId())
                 .setRepo(repo)
                 .setCommit(commit)
-                .setTaskId(solutionRepo.getTaskID())
+                .setTaskId(solutionRepo.getTaskId())
                 .setTest(user.isTest());
 
         solutionService.process(solution);

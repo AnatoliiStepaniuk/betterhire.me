@@ -1,6 +1,5 @@
 package com.sdehunt.commons.model;
 
-import com.sdehunt.commons.TaskID;
 import lombok.Data;
 
 import java.time.Instant;
@@ -10,7 +9,7 @@ public class Review implements Comparable<Review> {
 
     private String id;
     private String userId;
-    private TaskID taskID;
+    private String taskId;
     private String solutionId;
     private Long grade;
     private String comment;

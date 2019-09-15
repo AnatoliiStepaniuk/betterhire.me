@@ -1,6 +1,5 @@
 package com.sdehunt.controller;
 
-import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.ExtendedUser;
 import com.sdehunt.service.ExtendedUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +23,8 @@ public class ExtendedUserController {
     }
 
     @RequestMapping(path = "/task/{taskId}", method = RequestMethod.GET)
-    public List<ExtendedUser> getForTask(@PathVariable TaskID taskId) {
-        return extendedUserService.getForTask(taskId);
+    public List<ExtendedUser> getForTask(@PathVariable String taskId) {
+        return extendedUserService.getForTask(taskId.toLowerCase());
     }
 
     @RequestMapping(path = "/company/{company}", method = RequestMethod.GET)

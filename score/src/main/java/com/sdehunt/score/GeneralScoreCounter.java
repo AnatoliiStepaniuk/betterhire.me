@@ -1,6 +1,5 @@
 package com.sdehunt.score;
 
-import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.score.cars.CarsScoreCounter;
@@ -17,17 +16,17 @@ import java.util.Map;
  */
 public class GeneralScoreCounter {
 
-    private Map<TaskID, TaskScoreCounter> taskCounters = new HashMap<>();
+    private Map<String, TaskScoreCounter> taskCounters = new HashMap<>();
 
     public GeneralScoreCounter(GeneralFilesDownloader filesDownloader) {
-        taskCounters.put(TaskID.SLIDES, new SlidesScoreCounter(filesDownloader));
-        taskCounters.put(TaskID.SLIDES_TEST, SlidesScoreCounter.test(filesDownloader));
-        taskCounters.put(TaskID.PIZZA, new PizzaScoreCounter(filesDownloader));
-        taskCounters.put(TaskID.CARS, new CarsScoreCounter(filesDownloader));
-        taskCounters.put(TaskID.LETTERS, new GeneralLettersScoreCounter(filesDownloader));
-        taskCounters.put(TaskID.CITIES, new CitiesScoreCounter(filesDownloader));
-        taskCounters.put(TaskID.LETTER, new GeneralLettersScoreCounter(filesDownloader));
-        taskCounters.put(TaskID.CITY, new CitiesScoreCounter(filesDownloader));
+        taskCounters.put("slides", new SlidesScoreCounter(filesDownloader));
+        taskCounters.put("slides_test", SlidesScoreCounter.test(filesDownloader));
+        taskCounters.put("pizza", new PizzaScoreCounter(filesDownloader));
+        taskCounters.put("cars", new CarsScoreCounter(filesDownloader));
+        taskCounters.put("letters", new GeneralLettersScoreCounter(filesDownloader));
+        taskCounters.put("cities", new CitiesScoreCounter(filesDownloader));
+        taskCounters.put("letter", new GeneralLettersScoreCounter(filesDownloader));
+        taskCounters.put("city", new CitiesScoreCounter(filesDownloader));
     }
 
     public long count(Solution solution) throws CommitOrFileNotFoundException {

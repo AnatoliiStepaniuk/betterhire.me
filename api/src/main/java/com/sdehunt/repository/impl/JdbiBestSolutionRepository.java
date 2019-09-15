@@ -1,6 +1,5 @@
 package com.sdehunt.repository.impl;
 
-import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.BestSolution;
 import com.sdehunt.commons.model.BestTaskResult;
 import com.sdehunt.commons.model.BestUserResult;
@@ -32,9 +31,9 @@ public class JdbiBestSolutionRepository implements BestSolutionRepository {
     }
 
     @Override
-    public List<BestSolution> getForTask(TaskID taskID, boolean test) {
+    public List<BestSolution> getForTask(String taskId, boolean test) {
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s WHERE task = ? AND test = ? ORDER BY score DESC", table), taskID, test)
+                db -> db.select(format("SELECT * FROM %s WHERE task = ? AND test = ? ORDER BY score DESC", table), taskId, test)
                         .map(new BestSolutionRowMapper()).list()
         );
     }
@@ -58,7 +57,7 @@ public class JdbiBestSolutionRepository implements BestSolutionRepository {
         for (int i = 0; i < bestSolutionsList.size(); i++) {
             BestSolution bs = bestSolutionsList.get(i);
             args.add(bs.getUserId());
-            args.add(bs.getTaskID().name().toLowerCase());
+            args.add(bs.getTaskId());
             args.add(bs.getSolutionId());
             args.add(String.valueOf(bs.getRank()));
             args.add(String.valueOf(bs.getScore()));
@@ -102,7 +101,7 @@ public class JdbiBestSolutionRepository implements BestSolutionRepository {
 
             return new BestSolution()
                     .setUserId(rs.getString("user"))
-                    .setTaskID(TaskID.of(rs.getString("task")))
+                    .setTaskId(rs.getString("task"))
                     .setScore(rs.getLong("score"))
                     .setSolutionId(rs.getString("solution"))
                     .setRank(rs.getInt("rank"))
@@ -127,7 +126,7 @@ public class JdbiBestSolutionRepository implements BestSolutionRepository {
         @Override
         public BestUserResult map(ResultSet rs, StatementContext ctx) throws SQLException {
             return new BestUserResult()
-                    .setTaskID(TaskID.valueOf(rs.getString("task").toUpperCase()))
+                    .setTaskId(rs.getString("task"))
                     .setRank(rs.getLong("rank"));
         }
     }

@@ -1,6 +1,5 @@
 package com.sdehunt.repository;
 
-import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.SolutionStatus;
 import com.sdehunt.repository.impl.SolutionQueryImpl;
@@ -66,19 +65,19 @@ public interface SolutionRepository {
     /**
      * Returns number of users that submitted solution for the task (any status).
      */
-    default int getNumberUsersSolvedTask(TaskID taskID) {
-        return getNumberUsersSolvedTask(taskID, Collections.emptySet());
+    default int getNumberUsersSolvedTask(String taskId) {
+        return getNumberUsersSolvedTask(taskId, Collections.emptySet());
     }
 
-    Map<String, List<String>> getTasksRepos(Set<TaskID> taskIDS);
+    Map<String, List<String>> getTasksRepos(Set<String> taskIds);
 
     /**
      * Returns number of users that submitted solution for the task in specified statuses.
      */
-    int getNumberUsersSolvedTask(TaskID taskID, Set<SolutionStatus> statuses);
+    int getNumberUsersSolvedTask(String taskId, Set<SolutionStatus> statuses);
 
     /**
      * Returns userIds that solved specified task ids
      */
-    Set<String> solvedTasks(Set<TaskID> taskIds);
+    Set<String> solvedTasks(Set<String> taskIds);
 }

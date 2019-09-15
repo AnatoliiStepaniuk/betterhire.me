@@ -1,6 +1,5 @@
 package com.sdehunt.service;
 
-import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.github.GithubClient;
 import com.sdehunt.commons.model.Language;
 import com.sdehunt.commons.model.Template;
@@ -31,9 +30,9 @@ public class SolutionRepoService {
         this.solutionRepos = solutionRepos;
     }
 
-    public String createSolutionRepo(TaskID taskID, Language language, String userId, String webhookUrl) {
+    public String createSolutionRepo(String taskId, Language language, String userId, String webhookUrl) {
 
-        Template template = templates.find(taskID, language).orElseThrow();
+        Template template = templates.find(taskId, language).orElseThrow();
         User user = users.get(userId).orElseThrow();
         String repoName = template.getRepo() + "_" + user.getGithubLogin();
 
@@ -41,19 +40,19 @@ public class SolutionRepoService {
                 githubLogin + "/" + template.getRepo(),
                 githubLogin,
                 repoName,
-                getDescription(user.getGithubLogin(), taskID),
+                getDescription(user.getGithubLogin(), taskId),
                 true
         );
 
         String webhookSecret = null;
         githubClient.createWebhook(githubLogin + "/" + repoName, webhookUrl, webhookSecret);
 
-        solutionRepos.save(taskID, userId, language, githubLogin + "/" + repoName, webhookSecret);
+        solutionRepos.save(taskId, userId, language, githubLogin + "/" + repoName, webhookSecret);
 
         return githubClient.invite(githubLogin + "/" + repoName, user.getGithubLogin());
     }
 
-    private String getDescription(String githubLogin, TaskID taskID) {
-        return String.format("%s solution for %s task", githubLogin, taskID);
+    private String getDescription(String githubLogin, String taskId) {
+        return String.format("%s solution for %s task", githubLogin, taskId);
     }
 }

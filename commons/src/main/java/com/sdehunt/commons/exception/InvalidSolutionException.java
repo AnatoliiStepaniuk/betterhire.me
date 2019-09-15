@@ -1,6 +1,5 @@
 package com.sdehunt.commons.exception;
 
-import com.sdehunt.commons.TaskID;
 import lombok.Getter;
 
 public class InvalidSolutionException extends RuntimeException {
@@ -12,8 +11,8 @@ public class InvalidSolutionException extends RuntimeException {
         this.description = description;
     }
 
-    public InvalidSolutionException(TaskID taskID, String solutionId, String description) {
-        super("Invalid solution (" + solutionId + ") for task " + taskID);
+    public InvalidSolutionException(String taskId, String solutionId, String description) {
+        super("Invalid solution (" + solutionId + ") for task " + taskId);
         this.description = description;
     }
 }

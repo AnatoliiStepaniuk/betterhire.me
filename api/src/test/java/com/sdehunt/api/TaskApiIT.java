@@ -1,6 +1,5 @@
 package com.sdehunt.api;
 
-import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.Language;
 import com.sdehunt.commons.model.ShortTask;
 import com.sdehunt.commons.model.Task;
@@ -26,7 +25,7 @@ public class TaskApiIT extends AbstractApiTest {
     @Test
     public void updateTaskTest() {
 
-        TaskID taskId = TaskID.SLIDES_TEST;
+        String taskId = "slides_test";
         String description = UUID.randomUUID().toString();
         String descriptionUrl = UUID.randomUUID().toString();
         String shortDescription = UUID.randomUUID().toString();
@@ -45,7 +44,7 @@ public class TaskApiIT extends AbstractApiTest {
 
         // Verify task is present
         host().contentType(APP_JSON)
-                .get(TASKS + "/" + taskId.name().toLowerCase())
+                .get(TASKS + "/" + taskId)
                 .then()
                 .log().ifValidationFails()
                 .statusCode(SUCCESS)
@@ -71,18 +70,18 @@ public class TaskApiIT extends AbstractApiTest {
         host()
                 .body(taskForUpdate)
                 .contentType(APP_JSON)
-                .put(TASKS + "/" + taskId.name().toLowerCase())
+                .put(TASKS + "/" + taskId)
                 .then()
                 .statusCode(SUCCESS)
                 .body(isEmptyString());
 
         // Verify updated
         host().contentType(APP_JSON)
-                .get(TASKS + "/" + taskId.name().toLowerCase())
+                .get(TASKS + "/" + taskId)
                 .then()
                 .log().ifValidationFails()
                 .statusCode(SUCCESS)
-                .body("id", equalToIgnoringCase(taskId.name()))
+                .body("id", equalToIgnoringCase(taskId))
                 .body("description", is(description))
                 .body("descriptionUrl", is(descriptionUrl))
                 .body("shortDescription", is(shortDescription))
@@ -99,11 +98,11 @@ public class TaskApiIT extends AbstractApiTest {
 
         // Verify updated
         host().contentType(APP_JSON)
-                .get(TASKS + "/" + taskId.name().toLowerCase() + SHORT)
+                .get(TASKS + "/" + taskId + SHORT)
                 .then()
                 .log().ifValidationFails()
                 .statusCode(SUCCESS)
-                .body("id", equalToIgnoringCase(taskId.name()))
+                .body("id", equalToIgnoringCase(taskId))
                 .body("description", isEmptyOrNullString())
                 .body("descriptionUrl", isEmptyOrNullString())
                 .body("shortDescription", is(shortDescription))
@@ -116,11 +115,11 @@ public class TaskApiIT extends AbstractApiTest {
 
         // Check history
         host().contentType(APP_JSON)
-                .get(TASKS + "/" + taskId.name().toLowerCase() + HISTORY)
+                .get(TASKS + "/" + taskId + HISTORY)
                 .then()
                 .log().ifValidationFails()
                 .statusCode(SUCCESS)
-                .body("[0].id", equalToIgnoringCase(taskId.name()))
+                .body("[0].id", equalToIgnoringCase(taskId))
                 .body("[0].description", is(description))
                 .body("[0].descriptionUrl", is(descriptionUrl))
                 .body("[0].shortDescription", is(shortDescription))
@@ -141,7 +140,7 @@ public class TaskApiIT extends AbstractApiTest {
                 .as(Task[].class);
 
         Task foundTask = Arrays.stream(tasks)
-                .filter(t -> t.getId() == taskId)
+                .filter(t -> t.getId().equalsIgnoreCase(taskId))
                 .findFirst()
                 .orElseThrow();
         Assert.assertEquals(description, foundTask.getDescription());
@@ -158,7 +157,7 @@ public class TaskApiIT extends AbstractApiTest {
         ShortTask[] shortTasks = host().get(TASKS + SHORT + "?test=true")
                 .as(ShortTask[].class);
         ShortTask foundShortTask = Arrays.stream(shortTasks)
-                .filter(t -> t.getId() == taskId)
+                .filter(t -> t.getId().equalsIgnoreCase(taskId))
                 .findFirst()
                 .orElseThrow();
         Assert.assertEquals(shortDescription, foundShortTask.getShortDescription());

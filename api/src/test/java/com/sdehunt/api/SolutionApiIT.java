@@ -1,6 +1,5 @@
 package com.sdehunt.api;
 
-import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.*;
 import com.sdehunt.dto.SaveSolutionDTO;
 import com.sdehunt.dto.SolutionIdDTO;
@@ -27,7 +26,7 @@ public class SolutionApiIT extends AbstractApiTest {
 
     @Test
     public void crudAutoTest() {
-        TaskID taskId = TaskID.SLIDES_TEST;
+        String taskId = "slides_test";
         String githubLogin = "sdehuntdeveloper"; // TODo restore access_token somehow.
         User user = getUserIdByGithubLogin(githubLogin);
         String repo = "google_hash_code_2019_public";
@@ -37,7 +36,7 @@ public class SolutionApiIT extends AbstractApiTest {
         host()
                 .body(new UpdateTaskDTO().setType(TaskType.AUTO))
                 .contentType(APP_JSON)
-                .put(TASKS + "/" + taskId.name().toLowerCase())
+                .put(TASKS + "/" + taskId)
                 .then()
                 .statusCode(SUCCESS)
                 .body(isEmptyString());
@@ -57,7 +56,7 @@ public class SolutionApiIT extends AbstractApiTest {
         String id = host().contentType(APP_JSON)
                 .header(new Header("Authorization", "Bearer " + jwt))
                 .body(solutionDTO)
-                .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
+                .post("/tasks/{taskId}/solutions/", taskId)
                 .as(SolutionIdDTO.class).getId();
 
         SolutionStatus status = SolutionStatus.ACCEPTED;
@@ -66,7 +65,7 @@ public class SolutionApiIT extends AbstractApiTest {
         // Verify save (query by userId)
         host().get("/tasks/{taskId}/solutions?userId=" + user.getId() + "&test=true&status=" + status, taskId).then()
                 .body("size()", equalTo(1))
-                .body("[0].taskId", equalTo(taskId.name()))
+                .body("[0].taskId", equalTo(taskId))
                 .body("[0].userId", equalTo(user.getId()))
                 .body("[0].repo", equalTo(githubLogin + "/" + repo))
                 .body("[0].commit", equalTo(commit))
@@ -78,7 +77,7 @@ public class SolutionApiIT extends AbstractApiTest {
                 .then().log().ifValidationFails()
                 .statusCode(SUCCESS)
                 .body("id", equalTo(id))
-                .body("taskId", equalToIgnoringCase(taskId.name()))
+                .body("taskId", equalToIgnoringCase(taskId))
                 .body("userId", equalTo(user.getId()))
                 .body("repo", equalTo(githubLogin + "/" + repo))
                 .body("commit", equalTo(commit))
@@ -90,7 +89,7 @@ public class SolutionApiIT extends AbstractApiTest {
                 .statusCode(SUCCESS)
                 .body("size()", equalTo(1))
                 .body("[0].id", equalTo(id))
-                .body("[0].taskId", equalToIgnoringCase(taskId.name()))
+                .body("[0].taskId", equalToIgnoringCase(taskId))
                 .body("[0].userId", equalTo(user.getId()))
                 .body("[0].repo", equalTo(githubLogin + "/" + repo))
                 .body("[0].commit", equalTo(commit))
@@ -117,7 +116,7 @@ public class SolutionApiIT extends AbstractApiTest {
                 .statusCode(NOT_FOUND);
 
         // Verify delete (query)
-        host().get("/tasks/{taskId}/solutions?userId=" + user.getId(), taskId.name().toLowerCase())
+        host().get("/tasks/{taskId}/solutions?userId=" + user.getId(), taskId)
                 .then().log().ifValidationFails()
                 .statusCode(SUCCESS)
                 .body("size()", is(0));
@@ -125,7 +124,7 @@ public class SolutionApiIT extends AbstractApiTest {
 
     @Test
     public void crudManualTest() {
-        TaskID taskId = TaskID.SLIDES_TEST;
+        String taskId = "slides_test";
         String githubLogin = "sdehuntdeveloper"; // TODo restore access_token somehow.
         User user = getUserIdByGithubLogin(githubLogin);
         String repo = "google_hash_code_2019_public";
@@ -135,7 +134,7 @@ public class SolutionApiIT extends AbstractApiTest {
         host()
                 .body(new UpdateTaskDTO().setType(TaskType.MANUAL))
                 .contentType(APP_JSON)
-                .put(TASKS + "/" + taskId.name().toLowerCase())
+                .put(TASKS + "/" + taskId)
                 .then()
                 .statusCode(SUCCESS)
                 .body(isEmptyString());
@@ -155,7 +154,7 @@ public class SolutionApiIT extends AbstractApiTest {
         String id = host().contentType(APP_JSON)
                 .header(new Header("Authorization", "Bearer " + jwt))
                 .body(solutionDTO)
-                .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
+                .post("/tasks/{taskId}/solutions/", taskId)
                 .as(SolutionIdDTO.class).getId();
 
         SolutionStatus status = SolutionStatus.WAITING_FOR_REVIEW;
@@ -164,7 +163,7 @@ public class SolutionApiIT extends AbstractApiTest {
         // Verify save (query by userId)
         host().get("/tasks/{taskId}/solutions?userId=" + user.getId() + "&test=true&status=" + status, taskId).then()
                 .body("size()", equalTo(1))
-                .body("[0].taskId", equalTo(taskId.name()))
+                .body("[0].taskId", equalTo(taskId))
                 .body("[0].userId", equalTo(user.getId()))
                 .body("[0].repo", equalTo(githubLogin + "/" + repo))
                 .body("[0].commit", equalTo(commit))
@@ -176,7 +175,7 @@ public class SolutionApiIT extends AbstractApiTest {
                 .then().log().ifValidationFails()
                 .statusCode(SUCCESS)
                 .body("id", equalTo(id))
-                .body("taskId", equalToIgnoringCase(taskId.name()))
+                .body("taskId", equalToIgnoringCase(taskId))
                 .body("userId", equalTo(user.getId()))
                 .body("repo", equalTo(githubLogin + "/" + repo))
                 .body("commit", equalTo(commit))
@@ -188,7 +187,7 @@ public class SolutionApiIT extends AbstractApiTest {
                 .statusCode(SUCCESS)
                 .body("size()", equalTo(1))
                 .body("[0].id", equalTo(id))
-                .body("[0].taskId", equalToIgnoringCase(taskId.name()))
+                .body("[0].taskId", equalToIgnoringCase(taskId))
                 .body("[0].userId", equalTo(user.getId()))
                 .body("[0].repo", equalTo(githubLogin + "/" + repo))
                 .body("[0].commit", equalTo(commit))
@@ -215,7 +214,7 @@ public class SolutionApiIT extends AbstractApiTest {
                 .statusCode(NOT_FOUND);
 
         // Verify delete (query)
-        host().get("/tasks/{taskId}/solutions?userId=" + user.getId(), taskId.name().toLowerCase())
+        host().get("/tasks/{taskId}/solutions?userId=" + user.getId(), taskId)
                 .then().log().ifValidationFails()
                 .statusCode(SUCCESS)
                 .body("size()", is(0));
@@ -223,7 +222,7 @@ public class SolutionApiIT extends AbstractApiTest {
 
     @Test
     public void invalidInputTest() {
-        TaskID taskId = TaskID.SLIDES_TEST;
+        String taskId = "slides_test";
         String userId = getUserIdByGithubLogin("sdehuntdeveloper").getId();
         String repo = "google_hash_code_2019_public";
         String commit = "master";
@@ -241,7 +240,7 @@ public class SolutionApiIT extends AbstractApiTest {
         host()
                 .body(new UpdateTaskDTO().setType(TaskType.AUTO))
                 .contentType(APP_JSON)
-                .put(TASKS + "/" + taskId.name().toLowerCase())
+                .put(TASKS + "/" + taskId)
                 .then()
                 .statusCode(SUCCESS)
                 .body(isEmptyString());
@@ -255,7 +254,7 @@ public class SolutionApiIT extends AbstractApiTest {
         Response submitResponse = host().contentType(APP_JSON)
                 .header(new Header("Authorization", "Bearer " + jwt))
                 .body(validDTO)
-                .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase());
+                .post("/tasks/{taskId}/solutions/", taskId);
         submitResponse.then().statusCode(is(SUCCESS));
         String solutionId = submitResponse.as(SolutionIdDTO.class).getId();
         // Delete
@@ -271,7 +270,7 @@ public class SolutionApiIT extends AbstractApiTest {
         host().contentType(APP_JSON)
                 .header(new Header("Authorization", "Bearer " + jwt))
                 .body(invalidRepoDTO)
-                .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
+                .post("/tasks/{taskId}/solutions/", taskId)
                 .then().statusCode(is(NOT_FOUND));
 
         // Verify invalid Commit response
@@ -282,7 +281,7 @@ public class SolutionApiIT extends AbstractApiTest {
         host().contentType(APP_JSON)
                 .header(new Header("Authorization", "Bearer " + jwt))
                 .body(invalidCommitDTO)
-                .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
+                .post("/tasks/{taskId}/solutions/", taskId)
                 .then().statusCode(is(NOT_FOUND));
 
         // Verify invalid User response
@@ -301,13 +300,13 @@ public class SolutionApiIT extends AbstractApiTest {
         host().contentType(APP_JSON)
                 .header(new Header("Authorization", "Bearer " + invalidUserJwt))
                 .body(invalidSolutionDTO)
-                .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
+                .post("/tasks/{taskId}/solutions/", taskId)
                 .then().statusCode(is(NOT_FOUND));
     }
 
     @Test
     public void invalidSolutionTest() {
-        TaskID taskId = TaskID.SLIDES_TEST;
+        String taskId = "slides_test";
         String userId = getUserIdByGithubLogin("sdehuntdeveloper").getId();
         String invalidSolutionRepo = "google_hash_code_2019_invalid";
         String commit = "master";
@@ -316,7 +315,7 @@ public class SolutionApiIT extends AbstractApiTest {
         host()
                 .body(new UpdateTaskDTO().setType(TaskType.AUTO))
                 .contentType(APP_JSON)
-                .put(TASKS + "/" + taskId.name().toLowerCase())
+                .put(TASKS + "/" + taskId)
                 .then()
                 .statusCode(SUCCESS)
                 .body(isEmptyString());
@@ -336,7 +335,7 @@ public class SolutionApiIT extends AbstractApiTest {
         String invalidSolutionId = host().contentType(APP_JSON)
                 .header(new Header("Authorization", "Bearer " + jwt))
                 .body(invalidSolutionDTO)
-                .post("/tasks/{taskId}/solutions/", taskId.name().toLowerCase())
+                .post("/tasks/{taskId}/solutions/", taskId)
                 .as(SolutionIdDTO.class).getId();
 
         verifySolutionStatus(invalidSolutionId, SolutionStatus.INVALID_SOLUTION);

@@ -1,6 +1,5 @@
 package com.sdehunt.repository.impl;
 
-import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.SolutionStatus;
 import com.sdehunt.repository.SolutionQuery;
@@ -128,10 +127,8 @@ public class JdbiSolutionRepository implements SolutionRepository {
     }
 
     @Override
-    public Map<String, List<String>> getTasksRepos(Set<TaskID> taskIDS) {
-        String tasksStr = taskIDS.stream()
-                .map(Enum::name)
-                .map(String::toLowerCase)
+    public Map<String, List<String>> getTasksRepos(Set<String> taskIds) {
+        String tasksStr = taskIds.stream()
                 .map(s -> "'" + s + "'")
                 .collect(Collectors.joining(","));
         return jdbi.withHandle(
@@ -143,21 +140,21 @@ public class JdbiSolutionRepository implements SolutionRepository {
     }
 
     @Override
-    public int getNumberUsersSolvedTask(TaskID taskID, Set<SolutionStatus> statuses) {
+    public int getNumberUsersSolvedTask(String taskId, Set<SolutionStatus> statuses) {
         String statusString = statuses.stream().map(s -> "'" + s + "'").collect(Collectors.joining(","));
         String statusQuery = statuses.isEmpty() ? "" : " AND status IN (" + statusString + ")";
         return jdbi.withHandle(
-                db -> db.select(format("SELECT count(distinct user) FROM %s WHERE task = ? AND test = false" + statusQuery, table), taskID.name().toLowerCase())
+                db -> db.select(format("SELECT count(distinct user) FROM %s WHERE task = ? AND test = false" + statusQuery, table), taskId)
                         .mapTo(Integer.class).first()
         );
     }
 
     @Override
-    public Set<String> solvedTasks(Set<TaskID> taskIds) {
+    public Set<String> solvedTasks(Set<String> taskIds) {
         if (taskIds.isEmpty()) {
             return Collections.emptySet();
         }
-        String taskIdsStr = taskIds.stream().map(t -> "'" + t.name().toLowerCase() + "'").collect(Collectors.joining(","));
+        String taskIdsStr = taskIds.stream().map(t -> "'" + t + "'").collect(Collectors.joining(","));
         return new HashSet<>(jdbi.withHandle(
                 db -> db.select(format("SELECT distinct user FROM %s WHERE test = false AND task IN (" + taskIdsStr + ")", table))
                         .mapTo(String.class).list()
@@ -169,7 +166,7 @@ public class JdbiSolutionRepository implements SolutionRepository {
         public Solution map(ResultSet rs, StatementContext ctx) throws SQLException {
             return new Solution()
                     .setId(rs.getString("id"))
-                    .setTaskId(TaskID.of(rs.getString("task")))
+                    .setTaskId(rs.getString("task"))
                     .setUserId(rs.getString("user"))
                     .setRepo(rs.getString("repo"))
                     .setCommit(rs.getString("commit"))

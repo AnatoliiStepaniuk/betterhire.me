@@ -1,6 +1,5 @@
 package com.sdehunt.service;
 
-import com.sdehunt.commons.TaskID;
 import com.sdehunt.commons.github.JavaGithubClient;
 import com.sdehunt.commons.model.BestSolution;
 import com.sdehunt.commons.model.Solution;
@@ -52,10 +51,10 @@ public class BestSolutionService {
         solutionsToUpdate.forEach(bs -> updateUser(bs.getUserId()));
     }
 
-    private void updateTask(TaskID taskID, List<BestSolution> solutions) {
+    private void updateTask(String taskId, List<BestSolution> solutions) {
         int usersCount = solutions.stream().filter(s -> !s.isTest()).collect(Collectors.groupingBy(BestSolution::getUserId)).size();
         Task task = new Task();
-        task.setId(taskID);
+        task.setId(taskId);
         task.setUsers(usersCount);
         task.setLastSubmit(Instant.now());
         tasks.update(task);
@@ -67,7 +66,7 @@ public class BestSolutionService {
 
     private Optional<BestSolution> updateUserSolutionIfBetter(List<BestSolution> solutions, Solution solution, long score) {
         Optional<BestSolution> found = solutions.stream()
-                .filter(s -> s.getTaskID() == solution.getTaskId() && s.getUserId().equals(solution.getUserId()))
+                .filter(s -> s.getTaskId() == solution.getTaskId() && s.getUserId().equals(solution.getUserId()))
                 .findAny();
         BestSolution bestSolution = null;
         if (found.isPresent()) {
@@ -76,7 +75,7 @@ public class BestSolutionService {
             }
         } else {
             bestSolution = new BestSolution()
-                    .setTaskID(solution.getTaskId())
+                    .setTaskId(solution.getTaskId())
                     .setUserId(solution.getUserId())
                     .setSolutionId(solution.getId())
                     .setScore(score)
