@@ -54,5 +54,10 @@ public interface TaskRepository {
      */
     List<Task> getHistory(String taskId);
 
-    List<Task> getForCompany(String company);
+    List<Task> getForCompany(String company, boolean enabledOnly);
+
+    default List<Task> getForCompany(String company) {
+        return getForCompany(company, true);
+    }
+
 }

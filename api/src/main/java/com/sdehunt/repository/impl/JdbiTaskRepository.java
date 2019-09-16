@@ -128,9 +128,17 @@ public class JdbiTaskRepository implements TaskRepository {
     }
 
     @Override
-    public List<Task> getForCompany(String company) {
+    public List<Task> getForCompany(String company, boolean enabledOnly) {
+        String sql = "SELECT * FROM %s WHERE company = ? AND test = false";
+        String enabledClause;
+        if (enabledOnly) {
+            enabledClause = " AND enabled = true";
+        } else {
+            enabledClause = "";
+        }
+        String orderByClause = " ORDER BY created DESC";
         return jdbi.withHandle(
-                db -> db.select(format("SELECT * FROM %s WHERE company = ? AND test = false AND enabled = true ORDER BY created DESC", table), company)
+                db -> db.select(format(sql + enabledClause + orderByClause, table), company)
                         .map(new TaskRowMapper()).list()
         );
     }

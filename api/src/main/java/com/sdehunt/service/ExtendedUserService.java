@@ -39,7 +39,7 @@ public class ExtendedUserService {
     }
 
     public List<ExtendedUser> getForCompany(String company) {
-        List<Task> tasks = tasksRepo.getForCompany(company); // TODO make it as a route
+        List<Task> tasks = tasksRepo.getForCompany(company, false); // TODO false is a hotfix until we have Practice tab
         Set<String> taskIds = tasks.stream().map(Task::getId).collect(Collectors.toSet());
         return getForTasks(taskIds);
     }
