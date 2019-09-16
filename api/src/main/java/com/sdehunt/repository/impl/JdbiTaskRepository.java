@@ -209,7 +209,7 @@ public class JdbiTaskRepository implements TaskRepository {
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")))
                     .setLastSubmit(Optional.ofNullable(rs.getString("last_submit")).map(Long::valueOf).map(Instant::ofEpochSecond).orElse(null))
                     .setTest(rs.getBoolean("test"))
-                    .setTags(tagsFromString(rs.getString("tags").toUpperCase()))
+                    .setTags(Optional.ofNullable(rs.getString("tags")).map(String::toUpperCase).map(JdbiTaskRepository.this::tagsFromString).orElseGet(HashSet::new))
                     .setType(TaskType.of(rs.getString("type")));
             return task;
         }
