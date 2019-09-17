@@ -1,12 +1,10 @@
 package com.sdehunt.service;
 
-import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.Task;
 import com.sdehunt.commons.model.User;
 import com.sdehunt.repository.SolutionRepository;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class SolutionNotificationService {
@@ -22,15 +20,18 @@ public class SolutionNotificationService {
     }
 
     public void notifyOnFirstSolution(Task task, User user) {
-        List<Solution> userSolutions = solutionRepository.forUserAndTask(user.getId(), task.getId());
-        int totalSolutions = solutionRepository.getNumberUsersSolvedTask(task.getId());
-        if (userSolutions.size() == 2) {
+        if (isFirstSolution(user.getId(), task.getId())) {
+            int totalSolutions = solutionRepository.getNumberUsersSolvedTask(task.getId());
             Map<String, Object> params = new HashMap<>();
             params.put("taskName", task.getName());
-            params.put("url", "https://betterhire.me/scoreboard_manager"); // TODO fix
-            params.put("solved", totalSolutions);
+            params.put("url", "https://betterhire.me/scoreboard_manager");
+            params.put("count", totalSolutions);
             task.getEmails().forEach(e -> emailService.send(e, TEMPLATE, params));
         }
+    }
+
+    private boolean isFirstSolution(String userId, String taskId) {
+        return solutionRepository.forUserAndTask(userId, taskId).size() == 1;
     }
 
 }

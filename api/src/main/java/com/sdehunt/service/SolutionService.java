@@ -37,6 +37,7 @@ public class SolutionService {
     private ParameterService params;
     private BestSolutionService bestSolutionService;
     private ProfileNotificationService profileNotificationService;
+    private SolutionNotificationService solutionNotificationService;
 
     public SolutionService(
             GeneralScoreCounter scoreCounter,
@@ -46,7 +47,8 @@ public class SolutionService {
             GithubClient githubClient,
             ParameterService params,
             BestSolutionService bestSolutionService,
-            ProfileNotificationService profileNotificationService
+            ProfileNotificationService profileNotificationService,
+            SolutionNotificationService solutionNotificationService
     ) {
         this.taskRepository = taskRepository;
         this.scoreCounter = scoreCounter;
@@ -58,6 +60,7 @@ public class SolutionService {
         this.logger = LoggerFactory.getLogger(SolutionService.class);
         this.bestSolutionService = bestSolutionService;
         this.profileNotificationService = profileNotificationService;
+        this.solutionNotificationService = solutionNotificationService;
     }
 
     /**
@@ -84,6 +87,7 @@ public class SolutionService {
         User user = userRepository.get(solution.getUserId()).orElseThrow();
         updateUser(user, solution.getRepo());
         profileNotificationService.notifyIfNotFilled(user, solution.getRepo());
+        solutionNotificationService.notifyOnFirstSolution(task, user);
 
         if (task.getType() == TaskType.AUTO) {
             countScoreBackground(solution);

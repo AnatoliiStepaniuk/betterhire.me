@@ -187,6 +187,7 @@ public class JdbiTaskRepository implements TaskRepository {
                     .setDescription(rs.getString("description"))
                     .setDescriptionUrl(rs.getString("description_url"))
                     .setInputFilesUrl(rs.getString("input"))
+                    .setEmails(Optional.ofNullable(rs.getString("emails")).map(JdbiTaskRepository.this::stringToSet).orElseGet(HashSet::new))
                     .setRequirements(rs.getString("requirements"))
                     .setJob(rs.getString("job"))
                     .setJobUrl(rs.getString("job_url"))
@@ -207,7 +208,6 @@ public class JdbiTaskRepository implements TaskRepository {
                     .setLastSubmit(Optional.ofNullable(rs.getString("last_submit")).map(Long::valueOf).map(Instant::ofEpochSecond).orElse(null))
                     .setTest(rs.getBoolean("test"))
                     .setTags(Optional.ofNullable(rs.getString("tags")).map(String::toUpperCase).map(JdbiTaskRepository.this::stringToSet).orElseGet(HashSet::new))
-                    .setTags(Optional.ofNullable(rs.getString("emails")).map(JdbiTaskRepository.this::stringToSet).orElseGet(HashSet::new))
                     .setType(TaskType.of(rs.getString("type")));
             return task;
         }

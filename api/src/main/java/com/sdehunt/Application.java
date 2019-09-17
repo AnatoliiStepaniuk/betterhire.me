@@ -171,9 +171,20 @@ public class Application implements WebMvcConfigurer {
             GithubClient githubClient,
             ParameterService params,
             BestSolutionService bestSolutionService,
-            ProfileNotificationService profileNotificationService
+            ProfileNotificationService profileNotificationService,
+            SolutionNotificationService solutionNotificationService
     ) {
-        return new SolutionService(scoreCounter, taskRepository, solutionRepository, userRepository, githubClient, params, bestSolutionService, profileNotificationService);
+        return new SolutionService(
+                scoreCounter,
+                taskRepository,
+                solutionRepository,
+                userRepository,
+                githubClient,
+                params,
+                bestSolutionService,
+                profileNotificationService,
+                solutionNotificationService
+        );
     }
 
     @Bean
@@ -198,6 +209,11 @@ public class Application implements WebMvcConfigurer {
     @Bean
     public EmailSender emailSender() {
         return new SesEmailSender();
+    }
+
+    @Bean
+    public SolutionNotificationService solutionNotificationService(SolutionRepository solutionRepository, EmailService emailService) {
+        return new SolutionNotificationService(solutionRepository, emailService);
     }
 
     @Bean
