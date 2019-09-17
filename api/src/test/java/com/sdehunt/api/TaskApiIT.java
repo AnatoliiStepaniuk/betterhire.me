@@ -116,7 +116,6 @@ public class TaskApiIT extends AbstractApiTest {
                 .body("name", is(name))
                 .body("test", is(true))
                 .body("tags", contains(tag))
-                .body("emails", contains(email))
                 .body("type", is(type.name()));
 
         // Check history

@@ -70,6 +70,7 @@ public class TaskController {
         taskToUpdate.setJob(request.getJob());
         taskToUpdate.setJobUrl(request.getJobUrl());
         taskToUpdate.setType(request.getType());
+        taskToUpdate.setEmails(request.getEmails());
 
         tasks.update(taskToUpdate);
     }
