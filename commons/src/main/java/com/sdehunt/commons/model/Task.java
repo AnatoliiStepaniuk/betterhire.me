@@ -2,6 +2,8 @@ package com.sdehunt.commons.model;
 
 import lombok.Data;
 
+import java.util.Set;
+
 @Data
 public class Task extends ShortTask {
 
@@ -16,4 +18,6 @@ public class Task extends ShortTask {
     private String job;
 
     private String jobUrl;
+
+    private Set<String> emails;
 }

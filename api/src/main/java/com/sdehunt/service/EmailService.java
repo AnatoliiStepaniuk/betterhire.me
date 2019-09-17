@@ -28,7 +28,11 @@ public class EmailService {
         userRepository.getBySql(sql).stream()
                 .map(User::getEmail)
                 .filter(this::isNonEmpty)
-                .forEach(e -> emailSender.send(FROM, e, templateId, params));
+                .forEach(e -> send(e, templateId, params));
+    }
+
+    public void send(String email, String templateId, Map<String, Object> params) {
+        emailSender.send(FROM, email, templateId, params);
     }
 
     private boolean isNonEmpty(String s) {

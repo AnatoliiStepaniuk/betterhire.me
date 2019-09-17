@@ -16,6 +16,6 @@ public class Solution {
     private SolutionStatus status;
     private Instant created;
     private boolean test;
-    private String cause;
+    private String cause; // TODO add languages?
 
 }

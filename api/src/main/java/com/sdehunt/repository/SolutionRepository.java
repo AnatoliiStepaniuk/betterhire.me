@@ -58,6 +58,13 @@ public interface SolutionRepository {
     }
 
     /**
+     * Returns all solutions of the user for the task
+     */
+    default List<Solution> forUserAndTask(String userId, String taskId) {
+        return query(new SolutionQueryImpl().user(userId).task(taskId));
+    }
+
+    /**
      * Returns all repositories mapped by userId
      */
     Map<String, List<String>> getAllRepos();

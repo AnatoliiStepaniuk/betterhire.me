@@ -38,8 +38,10 @@ public class TaskApiIT extends AbstractApiTest {
         String jobUrl = UUID.randomUUID().toString();
         TaskType type = TaskType.values()[random.nextInt(TaskType.values().length)];
         String tag = UUID.randomUUID().toString().toUpperCase();
+        String email = UUID.randomUUID().toString() + "@" + UUID.randomUUID().toString();
         Language language = Language.values()[random.nextInt(Language.values().length)];
         Set<String> tags = Collections.singleton(tag);
+        Set<String> emails = Collections.singleton(email);
         Set<Language> languages = Collections.singleton(language);
 
         // Verify task is present
@@ -59,6 +61,7 @@ public class TaskApiIT extends AbstractApiTest {
                 .setRequirements(requirements)
                 .setInputFilesUrl(inputFilesUrl)
                 .setTags(tags)
+                .setEmails(emails)
                 .setLanguages(languages)
                 .setCompany(company)
                 .setCity(city)
@@ -90,10 +93,12 @@ public class TaskApiIT extends AbstractApiTest {
                 .body("inputFilesUrl", is(inputFilesUrl))
                 .body("company", is(company))
                 .body("city", is(city))
+                .body("city", is(city))
                 .body("job", is(job))
                 .body("jobUrl", is(jobUrl))
                 .body("test", is(true))
                 .body("tags", contains(tag))
+                .body("emails", contains(email))
                 .body("type", is(type.name()));
 
         // Verify updated
@@ -111,6 +116,7 @@ public class TaskApiIT extends AbstractApiTest {
                 .body("name", is(name))
                 .body("test", is(true))
                 .body("tags", contains(tag))
+                .body("emails", contains(email))
                 .body("type", is(type.name()));
 
         // Check history
@@ -132,6 +138,7 @@ public class TaskApiIT extends AbstractApiTest {
                 .body("[0].jobUrl", is(jobUrl))
                 .body("[0].test", is(true))
                 .body("[0].tags", contains(tag))
+                .body("[0].emails", contains(email))
                 .body("[0].type", is(type.name()));
 
 
@@ -148,6 +155,7 @@ public class TaskApiIT extends AbstractApiTest {
         Assert.assertEquals(requirements, foundTask.getRequirements());
         Assert.assertEquals(inputFilesUrl, foundTask.getInputFilesUrl());
         Assert.assertEquals(tags, foundTask.getTags());
+        Assert.assertEquals(emails, foundTask.getEmails());
         Assert.assertEquals(company, foundTask.getCompany());
         Assert.assertEquals(city, foundTask.getCity());
         Assert.assertEquals(job, foundTask.getJob());

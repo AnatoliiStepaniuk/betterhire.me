@@ -21,6 +21,7 @@ public class UpdateTaskDTO {
     private String job;
     private String jobUrl;
     private Set<String> tags;
+    private Set<String> emails;
     private Set<Language> languages;
     private boolean enabled;
     private boolean submittable;

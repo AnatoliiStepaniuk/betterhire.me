@@ -1,0 +1,2 @@
+ALTER TABLE `task`
+    ADD COLUMN `emails` VARCHAR(500) NULL AFTER `city`;

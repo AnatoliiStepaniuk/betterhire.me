@@ -1,0 +1,8 @@
+{
+  "Template": {
+    "HtmlPart": "Received new solution for <b>{{taskName}}</b>! <br/> Review all <a href=\"{{url}}\">{{count}} solutions</a>",
+    "SubjectPart": "New Solution for {{task}}",
+    "TextPart": "Received new solution for {{taskName}}! Review all {{count}} solutions - {{url}}",
+    "TemplateName": "NewTaskSolution"
+  }
+}

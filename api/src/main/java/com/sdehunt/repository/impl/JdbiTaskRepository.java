@@ -1,6 +1,5 @@
 package com.sdehunt.repository.impl;
 
-import com.sdehunt.commons.github.JavaGithubClient;
 import com.sdehunt.commons.model.Language;
 import com.sdehunt.commons.model.ShortTask;
 import com.sdehunt.commons.model.Task;
@@ -10,8 +9,6 @@ import com.sdehunt.repository.TaskRepository;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
@@ -26,12 +23,10 @@ public class JdbiTaskRepository implements TaskRepository {
 
     private final String table;
     private final Jdbi jdbi;
-    private final Logger logger;
 
     public JdbiTaskRepository(DataSource dataSource, String db) {
         this.jdbi = Jdbi.create(dataSource);
         this.table = "`" + db + "`.`task`";
-        this.logger = LoggerFactory.getLogger(JavaGithubClient.class);
     }
 
     @Override
@@ -91,7 +86,7 @@ public class JdbiTaskRepository implements TaskRepository {
         long now = Instant.now().getEpochSecond();
         jdbi.withHandle(
                 db -> db.execute(
-                        format("INSERT INTO %s (task, type, name, image_url, short_description, description, description_url, requirements, input, tags, languages, participants, users, offers, bestOffer, created, last_submit, submittable, test, enabled, company, city, job, job_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, true, ?, ?, ?, ?)", table),
+                        format("INSERT INTO %s (task, type, name, image_url, short_description, description, description_url, requirements, input, tags, languages, participants, users, offers, bestOffer, created, last_submit, submittable, test, enabled, company, city, job, job_url, emails) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, true, ?, ?, ?, ?, ?)", table),
                         t.getId(),
                         t.getType().name().toLowerCase(),
                         t.getName(),
@@ -114,7 +109,8 @@ public class JdbiTaskRepository implements TaskRepository {
                         t.getCompany(),
                         t.getCity(),
                         t.getJob(),
-                        t.getJobUrl()
+                        t.getJobUrl(),
+                        String.join(",", t.getEmails())
                 )
         );
     }
@@ -163,9 +159,10 @@ public class JdbiTaskRepository implements TaskRepository {
         Optional.ofNullable(t.getJob()).ifPresent(task::setJob);
         Optional.ofNullable(t.getJobUrl()).ifPresent(task::setJobUrl);
         Optional.ofNullable(t.getCity()).ifPresent(task::setCity);
+        Optional.ofNullable(t.getEmails()).ifPresent(task::setEmails);
     }
 
-    private Set<String> tagsFromString(String tags) {
+    private Set<String> stringToSet(String tags) {
         if (tags == null || tags.isEmpty()) {
             return Collections.emptySet();
         }
@@ -209,7 +206,8 @@ public class JdbiTaskRepository implements TaskRepository {
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")))
                     .setLastSubmit(Optional.ofNullable(rs.getString("last_submit")).map(Long::valueOf).map(Instant::ofEpochSecond).orElse(null))
                     .setTest(rs.getBoolean("test"))
-                    .setTags(Optional.ofNullable(rs.getString("tags")).map(String::toUpperCase).map(JdbiTaskRepository.this::tagsFromString).orElseGet(HashSet::new))
+                    .setTags(Optional.ofNullable(rs.getString("tags")).map(String::toUpperCase).map(JdbiTaskRepository.this::stringToSet).orElseGet(HashSet::new))
+                    .setTags(Optional.ofNullable(rs.getString("emails")).map(JdbiTaskRepository.this::stringToSet).orElseGet(HashSet::new))
                     .setType(TaskType.of(rs.getString("type")));
             return task;
         }
@@ -233,7 +231,7 @@ public class JdbiTaskRepository implements TaskRepository {
                     .setCreated(Instant.ofEpochSecond(rs.getLong("created")))
                     .setLastSubmit(Optional.ofNullable(rs.getString("last_submit")).map(Long::valueOf).map(Instant::ofEpochSecond).orElse(null))
                     .setTest(rs.getBoolean("test"))
-                    .setTags(tagsFromString(rs.getString("tags").toUpperCase()))
+                    .setTags(stringToSet(rs.getString("tags").toUpperCase()))
                     .setCompany(rs.getString("company"))
                     .setCity(rs.getString("city"))
                     .setType(TaskType.of(rs.getString("type")));
