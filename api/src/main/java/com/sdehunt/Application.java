@@ -201,10 +201,9 @@ public class Application implements WebMvcConfigurer {
     public TaskApplicationService taskApplicationService(
             S3Client s3Client,
             TaskApplicationRepository taskApplicationRepository,
-            EmailService emailService,
-            ParameterService parameterService
+            EmailService emailService
     ) {
-        return new TaskApplicationService(s3Client, taskApplicationRepository, emailService, parameterService);
+        return new TaskApplicationService(s3Client, taskApplicationRepository, emailService);
     }
 
     @Bean

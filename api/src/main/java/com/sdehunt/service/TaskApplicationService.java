@@ -1,11 +1,9 @@
 package com.sdehunt.service;
 
-import com.sdehunt.commons.params.ParameterService;
 import com.sdehunt.commons.s3.S3Client;
 import com.sdehunt.dto.TaskApplicationDTO;
 import com.sdehunt.dto.TaskApplicationUrlsDTO;
 import com.sdehunt.repository.TaskApplicationRepository;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,18 +20,15 @@ public class TaskApplicationService {
     private S3Client s3Client;
     private TaskApplicationRepository taskApplicationRepository;
     private EmailService emailService;
-    private ParameterService parameterService;// TODO remove
 
     public TaskApplicationService(
             S3Client s3Client,
             TaskApplicationRepository taskApplicationRepository,
-            EmailService emailService,
-            ParameterService parameterService // TODO remove
+            EmailService emailService
     ) {
         this.s3Client = s3Client;
         this.taskApplicationRepository = taskApplicationRepository;
         this.emailService = emailService;
-        this.parameterService = parameterService;
     }
 
     public TaskApplicationUrlsDTO getUrls(String company) {
@@ -51,7 +46,6 @@ public class TaskApplicationService {
         String taskUrl = trim(req.getTaskUrl());
         String contact = req.getContact();
         taskApplicationRepository.save(company, contact, taskId, jobUrl, taskUrl);
-        LoggerFactory.getLogger(getClass()).warn("RDS_HOST = " + parameterService.get("RDS_HOST")); // TODO remove
         notify(company, contact, jobUrl, taskUrl);
     }
 
