@@ -1,5 +1,6 @@
 package com.sdehunt.commons.email;
 
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
@@ -19,6 +20,7 @@ public class SesEmailSender implements EmailSender {
 
     public SesEmailSender() {
         this.client = AmazonSimpleEmailServiceClientBuilder.standard()
+                .withCredentials(new ProfileCredentialsProvider(".aws/credentials", null))
                 .withRegion(Regions.EU_WEST_1).build(); // We have SES in EU_WEST_1 region
         this.objectMapper = new ObjectMapper();
 
