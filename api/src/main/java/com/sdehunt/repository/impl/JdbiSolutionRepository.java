@@ -24,7 +24,7 @@ public class JdbiSolutionRepository implements SolutionRepository {
 
     private final Jdbi jdbi;
 
-    private String invalidStatuses = "invalid_files,invalid_solution,timeout,error";
+    private String invalidStatuses = "'invalid_files','invalid_solution','timeout,error'";
 
     public JdbiSolutionRepository(DataSource dataSource, String db) {
         this.jdbi = Jdbi.create(dataSource);
