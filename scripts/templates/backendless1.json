@@ -1,0 +1,8 @@
+{
+  "Template": {
+    "HtmlPart": "Привет! <br/>У нас появилась новая вакансия Junior Java от продуктовой компании Backendless - https://betterhire.me/tasks/backendless1 <br/> Это отличная вакансия для первой работы - хорошая команда и новый стек технологий! <br/> Удачи с тестовым заданием! \uD83D\uDE09 <br/>(Оно не простое, но это того стоит)",
+    "SubjectPart": "Новая вакансия Junior Java \uD83D\uDE0E",
+    "TextPart": "Привет! У нас появилась новая вакансия Junior Java от продуктовой компании Backendless - https://betterhire.me/tasks/backendless1 Это отличная вакансия для первой работы - хорошая команда и новый стек технологий. Удачи с тестовым заданием! Не простое, но это того стоит.",
+    "TemplateName": "Backendless1"
+  }
+}
