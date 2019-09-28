@@ -24,6 +24,8 @@ public class JdbiSolutionRepository implements SolutionRepository {
 
     private final Jdbi jdbi;
 
+    private String invalidStatuses = "invalid_files,invalid_solution,timeout,error";
+
     public JdbiSolutionRepository(DataSource dataSource, String db) {
         this.jdbi = Jdbi.create(dataSource);
         this.table = "`" + db + "`.`solution`";
@@ -156,7 +158,7 @@ public class JdbiSolutionRepository implements SolutionRepository {
         }
         String taskIdsStr = taskIds.stream().map(t -> "'" + t + "'").collect(Collectors.joining(","));
         return new HashSet<>(jdbi.withHandle(
-                db -> db.select(format("SELECT distinct user FROM %s WHERE test = false AND task IN (" + taskIdsStr + ")", table))
+                db -> db.select(format("SELECT distinct user FROM %s WHERE test = false AND task IN (" + taskIdsStr + ") AND status NOT IN (" + invalidStatuses + ")", table))
                         .mapTo(String.class).list()
         ));
     }
