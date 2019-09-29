@@ -50,6 +50,11 @@ public interface TaskRepository {
     void update(Task task);
 
     /**
+     * Creates tasks
+     */
+    void create(Task task);
+
+    /**
      * Returns history of task changes.
      */
     List<Task> getHistory(String taskId);

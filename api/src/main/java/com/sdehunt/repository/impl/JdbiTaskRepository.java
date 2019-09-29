@@ -77,12 +77,17 @@ public class JdbiTaskRepository implements TaskRepository {
     }
 
     @Override
-    public void update(Task updateRequest) {
+    public void update(Task updateRequest) { // TODO return value!
         Task t = get(updateRequest.getId()).orElseThrow();
         setFields(t, updateRequest);
         // Disabling old entry
         jdbi.withHandle(db -> db.execute(format("UPDATE %s SET enabled = false WHERE task = ? AND enabled = true", table), t.getId()));
         // Creating new entry
+        create(t);
+    }
+
+    @Override
+    public void create(Task t) { // TODO return value!
         long now = Instant.now().getEpochSecond();
         jdbi.withHandle(
                 db -> db.execute(
@@ -98,10 +103,10 @@ public class JdbiTaskRepository implements TaskRepository {
                         t.getInputFilesUrl(),
                         String.join(",", t.getTags()),
                         EnumUtils.stringify(t.getLanguages()),
-                        t.getParticipants(),
-                        t.getUsers(),
-                        t.getOffers(),
-                        t.getBestOffer(),
+                        Optional.ofNullable(t.getParticipants()).orElse(0),
+                        Optional.ofNullable(t.getUsers()).orElse(0),
+                        Optional.ofNullable(t.getOffers()).orElse(0),
+                        Optional.ofNullable(t.getBestOffer()).orElse(0),
                         now,
                         Optional.ofNullable(t.getLastSubmit()).map(Instant::getEpochSecond).orElse(null),
                         t.isSubmittable(),

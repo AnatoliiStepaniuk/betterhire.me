@@ -78,6 +78,12 @@ public class TaskController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(method = POST, path = "", produces = APPLICATION_JSON_VALUE)
+    public void create(@RequestBody Task task) { // TODO create tests
+        tasks.create(task);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(method = DELETE, path = "/{taskId}")
     public void delete(@PathVariable("taskId") String taskId) {
         tasks.delete(taskId);
