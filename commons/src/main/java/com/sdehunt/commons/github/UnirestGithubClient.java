@@ -223,7 +223,7 @@ public class UnirestGithubClient implements GithubClient {
                 .reduce((e1, e2) -> e1.getValue() > e2.getValue() ? e1 : e2)
                 .map(Map.Entry::getKey)
                 .map(GithubLanguageConverter::convert)
-                .orElse(Language.OTHER);
+                .orElse(null);
     }
 
     @Override

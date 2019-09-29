@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.concurrent.*;
 
 import static com.sdehunt.commons.model.SolutionStatus.*;
@@ -103,7 +104,7 @@ public class SolutionService {
 
     private void updateUser(User user, String repo) {
         user.setLastSubmit(Instant.now());
-        user.getLanguages().add(githubClient.getRepoLanguage(repo));
+        Optional.ofNullable(githubClient.getRepoLanguage(repo)).ifPresent(l -> user.getLanguages().add(l));
         userRepository.update(user);
     }
 
