@@ -9,6 +9,7 @@ public abstract class AbstractApiTest {
     protected final static int PORT = 8080;
     protected final static String APP_JSON = "application/json";
     protected final static int SUCCESS = 200;
+    protected final static int NO_CONTENT = 204;
     protected final static int NOT_FOUND = 404;
 
     protected RequestSpecification host() {

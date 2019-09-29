@@ -75,7 +75,7 @@ public class TaskApiIT extends AbstractApiTest {
                 .contentType(APP_JSON)
                 .put(TASKS + "/" + taskId)
                 .then()
-                .statusCode(SUCCESS)
+                .statusCode(NO_CONTENT)
                 .body(isEmptyString());
 
         // Verify updated

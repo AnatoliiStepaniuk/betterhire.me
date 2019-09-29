@@ -38,7 +38,7 @@ public class SolutionApiIT extends AbstractApiTest {
                 .contentType(APP_JSON)
                 .put(TASKS + "/" + taskId)
                 .then()
-                .statusCode(SUCCESS)
+                .statusCode(NO_CONTENT)
                 .body(isEmptyString());
 
         String jwt = Jwts.builder()
@@ -108,7 +108,7 @@ public class SolutionApiIT extends AbstractApiTest {
         // Delete
         host().delete("/solutions/{id}", id)
                 .then().log().ifValidationFails()
-                .statusCode(SUCCESS);
+                .statusCode(NO_CONTENT);
 
         // Verify delete
         host().get("/solutions/" + id)
@@ -136,7 +136,7 @@ public class SolutionApiIT extends AbstractApiTest {
                 .contentType(APP_JSON)
                 .put(TASKS + "/" + taskId)
                 .then()
-                .statusCode(SUCCESS)
+                .statusCode(NO_CONTENT)
                 .body(isEmptyString());
 
         String jwt = Jwts.builder()
@@ -206,7 +206,7 @@ public class SolutionApiIT extends AbstractApiTest {
         // Delete
         host().delete("/solutions/{id}", id)
                 .then().log().ifValidationFails()
-                .statusCode(SUCCESS);
+                .statusCode(NO_CONTENT);
 
         // Verify delete
         host().get("/solutions/" + id)
@@ -242,7 +242,7 @@ public class SolutionApiIT extends AbstractApiTest {
                 .contentType(APP_JSON)
                 .put(TASKS + "/" + taskId)
                 .then()
-                .statusCode(SUCCESS)
+                .statusCode(NO_CONTENT)
                 .body(isEmptyString());
 
         // First verify successful response for valid request
@@ -260,7 +260,7 @@ public class SolutionApiIT extends AbstractApiTest {
         // Delete
         host().delete("/solutions/{id}", solutionId)
                 .then().log().ifValidationFails()
-                .statusCode(SUCCESS);
+                .statusCode(NO_CONTENT);
 
         // Verify invalid Repo response
         SaveSolutionDTO invalidRepoDTO = new SaveSolutionDTO()
@@ -317,7 +317,7 @@ public class SolutionApiIT extends AbstractApiTest {
                 .contentType(APP_JSON)
                 .put(TASKS + "/" + taskId)
                 .then()
-                .statusCode(SUCCESS)
+                .statusCode(NO_CONTENT)
                 .body(isEmptyString());
 
         String jwt = Jwts.builder()
@@ -347,7 +347,7 @@ public class SolutionApiIT extends AbstractApiTest {
         // Delete
         host().delete("/solutions/{id}", invalidSolutionId)
                 .then().log().ifValidationFails()
-                .statusCode(SUCCESS);
+                .statusCode(NO_CONTENT);
     }
 
     @SneakyThrows(InterruptedException.class)

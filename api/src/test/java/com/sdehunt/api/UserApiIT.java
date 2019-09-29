@@ -195,7 +195,7 @@ public class UserApiIT extends AbstractApiTest {
 
         host().delete("/users/{userId}", user.getId())
                 .then().log().ifValidationFails()
-                .statusCode(SUCCESS)
+                .statusCode(NO_CONTENT)
                 .body(isEmptyString());
 
         int usersCountAfterRemoval = host().get("/users?test=true").as(Collection.class).size();
