@@ -9,6 +9,7 @@ import com.sdehunt.repository.SolutionRepository;
 import com.sdehunt.repository.UserRepository;
 import com.sdehunt.repository.impl.SolutionQueryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +27,7 @@ public class ReviewController {
     @Autowired
     private UserRepository users;
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(
             method = RequestMethod.POST, path = "/solutions/{solutionId}/review",
             consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -33,13 +35,13 @@ public class ReviewController {
     )
     public void save(
             @PathVariable String solutionId,
-//            @CurrentUser UserPrincipal currentUser, // TODO use it as reviewer
             @RequestBody SaveReviewDTO req
     ) {
         Solution solution = solutions.get(solutionId).orElseThrow();
         reviews.create(solutionId, solution.getUserId(), solution.getTaskId(), req.getGrade(), req.getComment(), req.getEmoji(), "betterhire");
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(
             method = RequestMethod.POST, path = "/user/github/{github}/review/last",
             consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -47,7 +49,6 @@ public class ReviewController {
     )
     public void reviewLastSolutionByGithubLogin(
             @PathVariable String github,
-//            @CurrentUser UserPrincipal currentUser, // TODO use it as reviewer
             @RequestBody SaveReviewDTO req
     ) {
         User user = users.byGithubLogin(github).orElseThrow();

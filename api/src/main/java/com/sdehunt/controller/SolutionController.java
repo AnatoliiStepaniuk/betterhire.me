@@ -17,6 +17,7 @@ import com.sdehunt.security.CurrentUser;
 import com.sdehunt.security.UserPrincipal;
 import com.sdehunt.service.SolutionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,6 +63,7 @@ public class SolutionController {
         return solutions.get(solutionId).orElseThrow(SolutionNotFoundException::new);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(method = RequestMethod.DELETE, path = "/solutions/{solutionId}")
     public void delete(@PathVariable String solutionId) {
         solutions.delete(solutionId);

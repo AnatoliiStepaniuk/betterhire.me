@@ -12,6 +12,7 @@ import com.sdehunt.repository.UserRepository;
 import com.sdehunt.security.CurrentUser;
 import com.sdehunt.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -93,6 +94,7 @@ public class UserController {
         return usersRepo.update(user);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(path = "/{userId}", method = RequestMethod.DELETE)
     public void delete(@PathVariable("userId") String userId) {
         usersRepo.delete(userId);

@@ -6,6 +6,7 @@ import com.sdehunt.dto.UpdateTaskDTO;
 import com.sdehunt.exception.TaskNotFoundException;
 import com.sdehunt.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -50,6 +51,7 @@ public class TaskController {
         return tasks.getHistory(taskId.toLowerCase());
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(method = PUT, path = "/{taskId}", produces = APPLICATION_JSON_VALUE)
     public void update(@PathVariable("taskId") String taskId, @RequestBody UpdateTaskDTO request) {
         Task taskToUpdate = new Task();
@@ -75,6 +77,7 @@ public class TaskController {
         tasks.update(taskToUpdate);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(method = DELETE, path = "/{taskId}")
     public void delete(@PathVariable("taskId") String taskId) {
         tasks.delete(taskId);
