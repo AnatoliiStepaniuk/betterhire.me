@@ -77,17 +77,17 @@ public class JdbiTaskRepository implements TaskRepository {
     }
 
     @Override
-    public void update(Task updateRequest) { // TODO return value!
+    public Task update(Task updateRequest) {
         Task t = get(updateRequest.getId()).orElseThrow();
         setFields(t, updateRequest);
         // Disabling old entry
         jdbi.withHandle(db -> db.execute(format("UPDATE %s SET enabled = false WHERE task = ? AND enabled = true", table), t.getId()));
         // Creating new entry
-        create(t);
+        return create(t);
     }
 
     @Override
-    public void create(Task t) { // TODO return value!
+    public Task create(Task t) {
         long now = Instant.now().getEpochSecond();
         jdbi.withHandle(
                 db -> db.execute(
@@ -118,6 +118,8 @@ public class JdbiTaskRepository implements TaskRepository {
                         String.join(",", t.getEmails())
                 )
         );
+
+        return get(t.getId()).orElseThrow();
     }
 
     @Override

@@ -69,14 +69,6 @@ public class TaskApiIT extends AbstractApiTest {
                 .post(TASKS)
                 .then()
                 .log().ifValidationFails()
-                .statusCode(NO_CONTENT)
-                .body(isEmptyOrNullString());
-
-        // Verify created
-        host().contentType(APP_JSON)
-                .get(TASKS + "/" + taskId)
-                .then()
-                .log().ifValidationFails()
                 .statusCode(SUCCESS)
                 .body("id", equalToIgnoringCase(taskId))
                 .body("description", is(description))
@@ -116,13 +108,6 @@ public class TaskApiIT extends AbstractApiTest {
                 .body(taskForUpdate)
                 .contentType(APP_JSON)
                 .put(TASKS + "/" + taskId)
-                .then()
-                .statusCode(NO_CONTENT)
-                .body(isEmptyString());
-
-        // Verify updated
-        host().contentType(APP_JSON)
-                .get(TASKS + "/" + taskId)
                 .then()
                 .log().ifValidationFails()
                 .statusCode(SUCCESS)

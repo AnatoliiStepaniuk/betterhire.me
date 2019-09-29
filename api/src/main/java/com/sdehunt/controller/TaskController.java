@@ -51,9 +51,8 @@ public class TaskController {
         return tasks.getHistory(taskId.toLowerCase());
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(method = PUT, path = "/{taskId}", produces = APPLICATION_JSON_VALUE)
-    public void update(@PathVariable("taskId") String taskId, @RequestBody UpdateTaskDTO request) {
+    public Task update(@PathVariable("taskId") String taskId, @RequestBody UpdateTaskDTO request) {
         Task taskToUpdate = new Task();
         taskToUpdate.setId(taskId.toLowerCase());
         taskToUpdate.setDescription(request.getDescription());
@@ -74,13 +73,12 @@ public class TaskController {
         taskToUpdate.setType(request.getType());
         taskToUpdate.setEmails(request.getEmails());
 
-        tasks.update(taskToUpdate);
+        return tasks.update(taskToUpdate);
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(method = POST, path = "", produces = APPLICATION_JSON_VALUE)
-    public void create(@RequestBody Task task) { // TODO create tests
-        tasks.create(task);
+    public Task create(@RequestBody Task task) {
+        return tasks.create(task);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

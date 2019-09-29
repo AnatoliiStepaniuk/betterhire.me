@@ -47,12 +47,12 @@ public interface TaskRepository {
     /**
      * Updates tasks
      */
-    void update(Task task);
+    Task update(Task task);
 
     /**
      * Creates tasks
      */
-    void create(Task task);
+    Task create(Task task);
 
     /**
      * Returns history of task changes.
