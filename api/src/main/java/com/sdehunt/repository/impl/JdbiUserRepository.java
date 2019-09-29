@@ -1,6 +1,7 @@
 package com.sdehunt.repository.impl;
 
 import com.sdehunt.commons.model.Language;
+import com.sdehunt.commons.model.SolutionStatus;
 import com.sdehunt.commons.model.User;
 import com.sdehunt.commons.util.EnumUtils;
 import com.sdehunt.repository.UserQuery;
@@ -21,14 +22,12 @@ import static java.lang.String.format;
 public class JdbiUserRepository implements UserRepository {
     private final String userTable;
     private final String solutionTable;
-    private final String bestSolutionTable;
     private final Jdbi jdbi;
 
     public JdbiUserRepository(DataSource dataSource, String db) {
         this.jdbi = Jdbi.create(dataSource);
         this.userTable = "`" + db + "`.`user`";
         this.solutionTable = "`" + db + "`.`solution`";
-        this.bestSolutionTable = "`" + db + "`.`best_solution`";
     }
 
     @Override
@@ -193,7 +192,8 @@ public class JdbiUserRepository implements UserRepository {
 
     @Override
     public long getTotalUsers() {
-        return jdbi.withHandle(db -> db.select(format("SELECT count(distinct user) FROM %s WHERE test = false", bestSolutionTable))
+        String statuses = SolutionStatus.successful().stream().map(s -> "'" + s.name().toLowerCase() + "'").collect(Collectors.joining(","));
+        return jdbi.withHandle(db -> db.select(format("SELECT count(distinct user) FROM %s WHERE test = false AND status IN (" + statuses + ")", solutionTable))
                 .mapTo(Long.class).first());
     }
 

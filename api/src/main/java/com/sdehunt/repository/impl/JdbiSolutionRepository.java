@@ -112,8 +112,9 @@ public class JdbiSolutionRepository implements SolutionRepository {
 
     @Override
     public long getTotalSolutions() {
+        String statuses = SolutionStatus.successful().stream().map(s -> "'" + s.name().toLowerCase() + "'").collect(Collectors.joining(","));
         return jdbi.withHandle(
-                db -> db.select(format("SELECT count(*) FROM %s WHERE status = 'accepted' AND test = false", table))
+                db -> db.select(format("SELECT count(*) FROM %s WHERE status = 'accepted' AND test = false AND status IN(" + statuses + ")", table))
                         .mapTo(Long.class).first()
         );
     }

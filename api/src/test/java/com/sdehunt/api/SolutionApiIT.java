@@ -38,8 +38,8 @@ public class SolutionApiIT extends AbstractApiTest {
                 .contentType(APP_JSON)
                 .put(TASKS + "/" + taskId)
                 .then()
-                .statusCode(NO_CONTENT)
-                .body(isEmptyString());
+                .statusCode(SUCCESS)
+                .body("type", is(TaskType.AUTO.name()));
 
         String jwt = Jwts.builder()
                 .setSubject(user.getId())
@@ -136,8 +136,8 @@ public class SolutionApiIT extends AbstractApiTest {
                 .contentType(APP_JSON)
                 .put(TASKS + "/" + taskId)
                 .then()
-                .statusCode(NO_CONTENT)
-                .body(isEmptyString());
+                .statusCode(SUCCESS)
+                .body("type", is(TaskType.MANUAL.name()));
 
         String jwt = Jwts.builder()
                 .setSubject(user.getId())
@@ -242,8 +242,8 @@ public class SolutionApiIT extends AbstractApiTest {
                 .contentType(APP_JSON)
                 .put(TASKS + "/" + taskId)
                 .then()
-                .statusCode(NO_CONTENT)
-                .body(isEmptyString());
+                .statusCode(SUCCESS)
+                .body("type", is(TaskType.AUTO.name()));
 
         // First verify successful response for valid request
         SaveSolutionDTO validDTO = new SaveSolutionDTO()
@@ -317,8 +317,8 @@ public class SolutionApiIT extends AbstractApiTest {
                 .contentType(APP_JSON)
                 .put(TASKS + "/" + taskId)
                 .then()
-                .statusCode(NO_CONTENT)
-                .body(isEmptyString());
+                .statusCode(SUCCESS)
+                .body("type", is(TaskType.AUTO.name()));
 
         String jwt = Jwts.builder()
                 .setSubject(userId)

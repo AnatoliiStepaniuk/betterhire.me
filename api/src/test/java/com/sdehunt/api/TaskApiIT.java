@@ -25,7 +25,7 @@ public class TaskApiIT extends AbstractApiTest {
     private final static Random random = new Random();
 
     @Test
-    public void updateTaskTest() {
+    public void updateTaskTest() throws InterruptedException {
 
         String taskId = UUID.randomUUID().toString();
         String description = UUID.randomUUID().toString();
@@ -102,6 +102,8 @@ public class TaskApiIT extends AbstractApiTest {
                 .setJob(job + UPDATED)
                 .setJobUrl(jobUrl + UPDATED)
                 .setType(TaskType.AUTO);
+
+        Thread.sleep(1000); // Because of sorting by timestamp seconds
 
         // Updating task
         host()
