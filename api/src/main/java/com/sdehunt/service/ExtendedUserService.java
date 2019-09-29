@@ -50,7 +50,7 @@ public class ExtendedUserService {
             return Collections.emptyList();
         }
         Set<String> userIds = solutionsRepo.solvedTasks(tasks);
-        Collection<User> users = usersRepo.getByIds(userIds);
+        Collection<User> users = usersRepo.getByIds(userIds).stream().filter(u -> u.getAvailable()).collect(Collectors.toList());
         Map<String, List<Review>> reviews = reviewsRepo.forUsers(userIds);
         Map<String, List<String>> repos = solutionsRepo.getTasksRepos(tasks);
         return users.stream().map(
@@ -61,7 +61,7 @@ public class ExtendedUserService {
     }
 
     public List<ExtendedUser> getAll() {
-        Collection<User> users = usersRepo.getAll(false);
+        Collection<User> users = usersRepo.getAll(false).stream().filter(User::getAvailable).collect(Collectors.toList());
         Set<String> userIds = users.stream().map(User::getId).collect(Collectors.toSet());
         Map<String, List<Review>> reviews = reviewsRepo.forUsers(userIds);
         Map<String, List<String>> repos = solutionsRepo.getAllRepos();
