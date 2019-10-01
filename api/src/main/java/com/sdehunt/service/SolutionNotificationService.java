@@ -24,7 +24,7 @@ public class SolutionNotificationService {
             int totalSolutions = solutionRepository.getNumberUsersSolvedTask(task.getId());
             Map<String, Object> params = new HashMap<>();
             params.put("taskName", task.getName());
-            params.put("url", "https://betterhire.me/scoreboard_manager");
+            params.put("url", "https://betterhire.me/auth_manager?company=" + task.getCompany());
             params.put("count", totalSolutions);
             task.getEmails().forEach(e -> emailService.send(e, TEMPLATE, params));
         }
