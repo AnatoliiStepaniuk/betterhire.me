@@ -19,7 +19,7 @@ public class LinkedinUserFactory {
 
     public static User getUser(Map<String, Object> attributes, String token) {
         return new User()
-                .setName((String) attributes.get("localizedFirstName") + " " + attributes.get("localizedLastName"))
+                .setName(attributes.get("localizedFirstName") + " " + attributes.get("localizedLastName"))
                 .setEmail(getEmail(token))
                 .setImageUrl(getProfileImage(token)) // TODO can get also login?
                 .setLinkedinId(attributes.get("id").toString());
