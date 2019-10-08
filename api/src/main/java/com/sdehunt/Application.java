@@ -231,6 +231,11 @@ public class Application implements WebMvcConfigurer {
     }
 
     @Bean
+    public UserService userService(UserRepository userRepository, EmailService emailService) {
+        return new UserService(userRepository, emailService);
+    }
+
+    @Bean
     public ExtendedUserService extendedUserService(UserRepository usersRepo,
                                                    ReviewRepository reviewsRepo,
                                                    SolutionRepository solutionsRepo,

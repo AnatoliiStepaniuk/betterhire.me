@@ -3,7 +3,7 @@ package com.sdehunt.security;
 import com.sdehunt.commons.model.User;
 import com.sdehunt.commons.repo.AccessTokenRepository;
 import com.sdehunt.commons.security.OAuthProvider;
-import com.sdehunt.repository.UserRepository;
+import com.sdehunt.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -26,7 +26,7 @@ import java.util.Optional;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
     @Autowired
     private AccessTokenRepository accessTokenRepository;
 
@@ -62,13 +62,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuthProvider provider = OAuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId().toUpperCase());
         String token = oAuth2UserRequest.getAccessToken().getTokenValue();
         User oAuthUser = OAuth2DataUserFactory.getUser(provider, attributes, token);
-        Optional<User> found = userRepository.find(oAuthUser);
+        Optional<User> found = userService.find(oAuthUser);
         User user;
         if (found.isPresent()) {
             oAuthUser.setId(found.get().getId());
-            user = userRepository.update(oAuthUser);
+            user = userService.update(oAuthUser);
         } else {
-            user = userRepository.create(oAuthUser);
+            user = userService.create(oAuthUser);
         }
 
         accessTokenRepository.save(user.getId(), provider, token);
