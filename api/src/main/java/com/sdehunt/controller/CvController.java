@@ -1,7 +1,7 @@
 package com.sdehunt.controller;
 
-import com.sdehunt.dto.CvUrlDTO;
 import com.sdehunt.dto.UploadCvUrlRequestDTO;
+import com.sdehunt.dto.UrlDTO;
 import com.sdehunt.service.CvService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,13 +17,13 @@ public class CvController {
     private CvService cvService;
 
     @RequestMapping(method = RequestMethod.POST, path = "/upload")
-    public CvUrlDTO getUploadUrl(@RequestBody UploadCvUrlRequestDTO request) {
-        return new CvUrlDTO().setUrl(cvService.uploadUrl(request.getUserId(), request.getFileName()));
+    public UrlDTO getUploadUrl(@RequestBody UploadCvUrlRequestDTO request) {
+        return new UrlDTO().setUrl(cvService.uploadUrl(request.getUserId(), request.getFileName()));
     }
 
 //    @RequestMapping(method = RequestMethod.GET, path = "/download")
-//    public CvUrlDTO getDownloadUrl(@PathVariable("userId") String userId) {
-//        return new CvUrlDTO().setUrl(cvService.downloadUrl(userId));
+//    public UrlDTO getDownloadUrl(@PathVariable("userId") String userId) {
+//        return new UrlDTO().setUrl(cvService.downloadUrl(userId));
 //    }
 
 }

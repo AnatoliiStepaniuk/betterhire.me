@@ -3,6 +3,6 @@ package com.sdehunt.dto;
 import lombok.Data;
 
 @Data
-public class CvUrlDTO {
+public class UrlDTO {
     private String url;
 }

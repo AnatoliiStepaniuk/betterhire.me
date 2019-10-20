@@ -10,7 +10,7 @@ import java.time.Instant;
 import java.util.Date;
 
 public class S3Client {
-    private final long TTL_MILLIS = 60 * 1000;
+    private final long TTL_MILLIS = 60 * 60 * 1000;
     private AmazonS3 s3Client;
 
     public S3Client() {

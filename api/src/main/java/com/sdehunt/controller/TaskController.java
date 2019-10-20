@@ -3,8 +3,10 @@ package com.sdehunt.controller;
 import com.sdehunt.commons.model.ShortTask;
 import com.sdehunt.commons.model.Task;
 import com.sdehunt.dto.UpdateTaskDTO;
+import com.sdehunt.dto.UrlDTO;
 import com.sdehunt.exception.TaskNotFoundException;
 import com.sdehunt.repository.TaskRepository;
+import com.sdehunt.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,9 @@ public class TaskController {
 
     @Autowired
     private TaskRepository tasks;
+
+    @Autowired
+    private TaskService taskService;
 
     @RequestMapping(method = GET, path = "", produces = APPLICATION_JSON_VALUE) // TODO use field `enabled`
     public List<Task> getAll(@RequestParam(required = false) boolean test) {
@@ -85,5 +90,10 @@ public class TaskController {
     @RequestMapping(method = DELETE, path = "/{taskId}")
     public void delete(@PathVariable("taskId") String taskId) {
         tasks.delete(taskId);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, path = "/{taskId}/file/{file}/upload")
+    public UrlDTO getUploadUrl(@PathVariable("taskId") String taskId, @PathVariable("file") String file) {
+        return new UrlDTO().setUrl(taskService.uploadUrl(taskId, file));
     }
 }

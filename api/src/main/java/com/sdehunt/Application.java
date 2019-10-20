@@ -198,6 +198,11 @@ public class Application implements WebMvcConfigurer {
     }
 
     @Bean
+    public TaskService taskService(S3Client s3Client) {
+        return new TaskService(s3Client);
+    }
+
+    @Bean
     public TaskApplicationService taskApplicationService(
             S3Client s3Client,
             TaskApplicationRepository taskApplicationRepository,
