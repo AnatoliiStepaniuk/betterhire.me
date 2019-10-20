@@ -10,6 +10,14 @@ CREATE TABLE `invitation`
 ALTER TABLE `invitation`
     ADD COLUMN `status` ENUM ('accepted', 'declined') NOT NULL DEFAULT 'pending' AFTER `terms`;
 
+ALTER TABLE `invitation`
+    CHANGE COLUMN `inviter` `id` VARCHAR(36) NOT NULL;
+
+ALTER TABLE `invitation`
+    ADD COLUMN `inviter` VARCHAR(39) NOT NULL AFTER `id`;
+
+CREATE UNIQUE INDEX inviterIdx ON invitation (inviter);
+
 
 CREATE TABLE `offer`
 (
@@ -26,6 +34,12 @@ ALTER TABLE `offer`
     ADD COLUMN `offer_currency` VARCHAR(3) NOT NULL AFTER `offer_amount`,
     CHANGE COLUMN `offer` `offer_amount` INT(10) NOT NULL;
 
+ALTER TABLE `offer`
+    ADD COLUMN `id` INT NOT NULL AUTO_INCREMENT FIRST,
+    DROP PRIMARY KEY,
+    ADD PRIMARY KEY (`id`);
+;
+
 
 CREATE TABLE `contract`
 (
@@ -36,6 +50,13 @@ CREATE TABLE `contract`
     PRIMARY KEY (`company`)
 );
 
+ALTER TABLE `contract`
+    ADD COLUMN `id` INT NOT NULL AUTO_INCREMENT FIRST,
+    ADD COLUMN `comment` VARCHAR(2000) NULL DEFAULT NULL AFTER `contract`,
+    ADD COLUMN `enabled` TINYINT(1) NOT NULL DEFAULT 1 AFTER `comment`,
+    DROP PRIMARY KEY,
+    ADD PRIMARY KEY (`id`);
+;
 
 CREATE TABLE `interest`
 (
@@ -46,6 +67,12 @@ CREATE TABLE `interest`
     `date`    INT(10)                                                           NOT NULL,
     PRIMARY KEY (`user`)
 );
+
+ALTER TABLE `betterhire_test`.`interest`
+    ADD COLUMN `id` INT NOT NULL AUTO_INCREMENT FIRST,
+    DROP PRIMARY KEY,
+    ADD PRIMARY KEY (`id`);
+;
 
 
 CREATE TABLE `bonus_invitation`
