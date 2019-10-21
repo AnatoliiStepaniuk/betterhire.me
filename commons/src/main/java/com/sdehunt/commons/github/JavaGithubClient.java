@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
 import com.sdehunt.commons.github.exceptions.GithubTimeoutException;
 import com.sdehunt.commons.github.exceptions.RepositoryNotFoundException;
+import com.sdehunt.commons.github.model.FileInfoDTO;
 import com.sdehunt.commons.github.model.IssueDTO;
 import com.sdehunt.commons.model.Language;
 import com.sdehunt.commons.model.SimpleCommit;
@@ -26,6 +27,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
@@ -165,6 +167,26 @@ public class JavaGithubClient implements GithubClient {
 
     @Override
     public Collection<IssueDTO> getRepoIssues(String repo, boolean ignored) {
+        throw new RuntimeException("Method not implemented;");
+    }
+
+    @Override
+    public void createRepo(String name, boolean isTemplate) {
+        throw new RuntimeException("Method not implemented;");
+    }
+
+    @Override
+    public void createFile(String repo, String filePath, String b64Content, String branch) {
+        throw new RuntimeException("Method not implemented;");
+    }
+
+    @Override
+    public void updateFile(String repo, String filePath, String b64Content, String sha, String branch) {
+        throw new RuntimeException("Method not implemented;");
+    }
+
+    @Override
+    public Optional<FileInfoDTO> getFileInfo(String repo, String filePath, String ref) {
         throw new RuntimeException("Method not implemented;");
     }
 

@@ -5,7 +5,6 @@ import com.sdehunt.commons.model.Task;
 import com.sdehunt.dto.UpdateTaskDTO;
 import com.sdehunt.dto.UrlDTO;
 import com.sdehunt.exception.TaskNotFoundException;
-import com.sdehunt.repository.TaskRepository;
 import com.sdehunt.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,39 +20,36 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 public class TaskController {
 
     @Autowired
-    private TaskRepository tasks;
-
-    @Autowired
     private TaskService taskService;
 
     @RequestMapping(method = GET, path = "", produces = APPLICATION_JSON_VALUE) // TODO use field `enabled`
     public List<Task> getAll(@RequestParam(required = false) boolean test) {
-        return tasks.getAll(test);
+        return taskService.getAll(test);
     }
 
     @RequestMapping(method = GET, path = "/company/{company}", produces = APPLICATION_JSON_VALUE)
     public List<Task> getForCompany(@PathVariable String company) {
-        return tasks.getForCompany(company);
+        return taskService.getForCompany(company);
     }
 
     @RequestMapping(method = GET, path = "/short", produces = APPLICATION_JSON_VALUE) // TODO use field `enabled`
     public List<ShortTask> getAllShort(@RequestParam(required = false) boolean test) { // TODO test
-        return tasks.getAllShort(test);
+        return taskService.getAllShort(test);
     }
 
     @RequestMapping(method = GET, path = "/{taskId}", produces = APPLICATION_JSON_VALUE)
     public Task get(@PathVariable("taskId") String taskId) {
-        return tasks.get(taskId.toLowerCase()).orElseThrow(TaskNotFoundException::new);
+        return taskService.get(taskId.toLowerCase()).orElseThrow(TaskNotFoundException::new);
     }
 
     @RequestMapping(method = GET, path = "/{taskId}/short", produces = APPLICATION_JSON_VALUE)
     public ShortTask getShortTask(@PathVariable("taskId") String taskId) {
-        return tasks.getShort(taskId).orElseThrow(TaskNotFoundException::new);
+        return taskService.getShort(taskId).orElseThrow(TaskNotFoundException::new);
     }
 
     @RequestMapping(method = GET, path = "/{taskId}/history", produces = APPLICATION_JSON_VALUE)
     public List<Task> getTaskHistory(@PathVariable("taskId") String taskId) {
-        return tasks.getHistory(taskId.toLowerCase());
+        return taskService.getHistory(taskId.toLowerCase());
     }
 
     @RequestMapping(method = PUT, path = "/{taskId}", produces = APPLICATION_JSON_VALUE)
@@ -78,18 +74,18 @@ public class TaskController {
         taskToUpdate.setType(request.getType());
         taskToUpdate.setEmails(request.getEmails());
 
-        return tasks.update(taskToUpdate);
+        return taskService.update(taskToUpdate);
     }
 
     @RequestMapping(method = POST, path = "", produces = APPLICATION_JSON_VALUE)
     public Task create(@RequestBody Task task) {
-        return tasks.create(task);
+        return taskService.create(task);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(method = DELETE, path = "/{taskId}")
     public void delete(@PathVariable("taskId") String taskId) {
-        tasks.delete(taskId);
+        taskService.delete(taskId);
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/{taskId}/file/{file}/upload")

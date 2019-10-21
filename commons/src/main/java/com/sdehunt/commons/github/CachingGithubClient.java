@@ -5,10 +5,12 @@ import com.sdehunt.commons.cache.CacheImpl;
 import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
 import com.sdehunt.commons.github.exceptions.GithubTimeoutException;
 import com.sdehunt.commons.github.exceptions.RepositoryNotFoundException;
+import com.sdehunt.commons.github.model.FileInfoDTO;
 import com.sdehunt.commons.github.model.IssueDTO;
 import com.sdehunt.commons.model.Language;
 
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * Caches some of the responses of underlying client
@@ -75,5 +77,25 @@ public class CachingGithubClient implements GithubClient {
     @Override
     public Collection<IssueDTO> getRepoIssues(String repo, boolean allStates) {
         return inner.getRepoIssues(repo, allStates);
+    }
+
+    @Override
+    public void createRepo(String name, boolean isTemplate) {
+        inner.createRepo(name, isTemplate);
+    }
+
+    @Override
+    public void createFile(String repo, String filePath, String b64Content, String branch) {
+        inner.createFile(repo, filePath, b64Content, branch);
+    }
+
+    @Override
+    public void updateFile(String repo, String filePath, String b64Content, String sha, String branch) {
+        inner.updateFile(repo, filePath, b64Content, sha, branch);
+    }
+
+    @Override
+    public Optional<FileInfoDTO> getFileInfo(String repo, String filePath, String ref) {
+        return inner.getFileInfo(repo, filePath, ref);
     }
 }

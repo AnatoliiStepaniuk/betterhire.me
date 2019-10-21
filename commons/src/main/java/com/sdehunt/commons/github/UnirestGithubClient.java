@@ -21,10 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
@@ -40,8 +37,10 @@ public class UnirestGithubClient implements GithubClient {
     private final static String WEB_DOMAIN = "https://github.com";
     private final static String GIT = "git";
     private final static String REPOS = "repos";
+    private final static String USER = "user";
     private final static String COMMITS = "commits";
     private final static String BRANCHES = "branches";
+    private final static String CONTENTS = "contents";
     private final static String GENERATE = "generate";
     private final static String COLLABORATORS = "collaborators";
     private final static String HOOKS = "hooks";
@@ -246,7 +245,7 @@ public class UnirestGithubClient implements GithubClient {
     @Override
     @SneakyThrows({IOException.class})
     public Collection<IssueDTO> getRepoIssues(String repo, boolean allStates) {
-        String url = API_DOMAIN + "/" + REPOS + "/" + repo + "/" + ISSUES; // TODO verify that closed issue is also listed
+        String url = API_DOMAIN + "/" + REPOS + "/" + repo + "/" + ISSUES;
         url += allStates ? "?state=all" : "";
         HttpResponse<String> response = Unirest.get(url)
                 .header("Authorization", "token " + systemAccessToken)
@@ -257,6 +256,84 @@ public class UnirestGithubClient implements GithubClient {
         }
 
         return Arrays.asList(objectMapper.readValue(response.getBody(), IssueDTO[].class));
+    }
+
+    @Override
+    public void createRepo(String name, boolean isTemplate) {
+        String url = API_DOMAIN + "/" + USER + "/" + REPOS;
+        CreateRepoDTO dto = new CreateRepoDTO()
+                .setName(name)
+                .setPrivate(true)
+                .setTemplate(isTemplate);
+        HttpResponse<JsonNode> response = Unirest.post(url)
+                .header("Authorization", "token " + systemAccessToken)
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/vnd.github.baptiste-preview+json")
+                .body(dto)
+                .asJson();
+        if (response.getStatus() != 201) {
+            logger.warn("Status code " + response.getStatus() + " for URL " + url);
+            throw new RuntimeException("Status code " + response.getStatus() + " for URL " + url);
+        }
+    }
+
+    @Override
+    public void createFile(String repo, String filePath, String b64Content, String branch) {
+        String url = API_DOMAIN + "/" + REPOS + "/" + repo + "/" + CONTENTS + "/" + filePath;
+        CreateFileDTO body = new CreateFileDTO()
+                .setB64Content(b64Content)
+                .setBranch(branch)
+                .setMessage("Creating file " + filePath);
+
+        HttpResponse response = Unirest.put(url)
+                .header("Authorization", "token " + systemAccessToken)
+                .body(body)
+                .asEmpty();
+
+        if (response.getStatus() != 201) {
+            logger.warn("Status code " + response.getStatus() + " for URL " + url);
+            throw new RuntimeException("Status code " + response.getStatus() + " for URL " + url);
+        }
+    }
+
+    @Override
+    public void updateFile(String repo, String filePath, String b64Content, String sha, String branch) {
+        String url = API_DOMAIN + "/" + REPOS + "/" + repo + "/" + CONTENTS + "/" + filePath;
+        UpdateFileDTO body = new UpdateFileDTO();
+        body.setSha(sha);
+        body.setB64Content(b64Content);
+        body.setBranch(branch);
+        body.setMessage("Updating file " + filePath);
+
+        HttpResponse response = Unirest.put(url)
+                .header("Authorization", "token " + systemAccessToken)
+                .body(body)
+                .asEmpty();
+
+        if (response.getStatus() != 200) {
+            logger.warn("Status code " + response.getStatus() + " for URL " + url);
+            throw new RuntimeException("Status code " + response.getStatus() + " for URL " + url);
+        }
+    }
+
+    @Override
+    @SneakyThrows({IOException.class, UnirestException.class})
+    public Optional<FileInfoDTO> getFileInfo(String repo, String filePath, String ref) {
+        String url = API_DOMAIN + "/" + REPOS + "/" + repo + "/" + CONTENTS + "/" + filePath;
+
+        logger.debug(format("Getting file info for path %s and repo %s", filePath, repo));
+        HttpResponse<String> response = Unirest.get(url).header("Authorization", "token " + systemAccessToken).asString();
+
+        logger.debug(format("Received response %d for file info request for repo %s and filePath %s", response.getStatus(), repo, filePath));
+        if (response.getStatus() == 404 || response.getStatus() == 403) {
+            Optional.empty();
+        }
+        if (response.getStatus() != 200) {
+            logger.warn("Status code " + response.getStatus() + " for URL " + url);
+            throw new RuntimeException("Status code " + response.getStatus() + " for URL " + url);
+        }
+
+        return Optional.of(objectMapper.readValue(response.getBody(), FileInfoDTO.class));
     }
 
     @SneakyThrows({IOException.class, UnirestException.class})

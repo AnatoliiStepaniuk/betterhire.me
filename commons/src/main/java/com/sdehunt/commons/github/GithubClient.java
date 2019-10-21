@@ -3,12 +3,16 @@ package com.sdehunt.commons.github;
 import com.sdehunt.commons.github.exceptions.CommitOrFileNotFoundException;
 import com.sdehunt.commons.github.exceptions.GithubTimeoutException;
 import com.sdehunt.commons.github.exceptions.RepositoryNotFoundException;
+import com.sdehunt.commons.github.model.FileInfoDTO;
 import com.sdehunt.commons.github.model.IssueDTO;
 import com.sdehunt.commons.model.Language;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public interface GithubClient {
+
+    String MASTER = "master";
 
     /**
      * Downloads repo directory of repository on specified commit
@@ -107,4 +111,38 @@ public interface GithubClient {
      * @return list of repository issues
      */
     Collection<IssueDTO> getRepoIssues(String repo, boolean allStates);
+
+    /**
+     * Creates repository for authenticated user.
+     */
+    void createRepo(String name, boolean isTemplate);
+
+    /**
+     * Creates file in specified repository.
+     */
+    void createFile(String repo, String filePath, String b64Content, String branch);
+
+    /**
+     * Updates file in specified repository.
+     */
+    void updateFile(String repo, String filePath, String b64Content, String sha, String branch);
+
+    /**
+     * Gets file info, if present
+     * WARNING! Only files less than 1Mb are supported
+     */
+    Optional<FileInfoDTO> getFileInfo(String repo, String filePath, String ref);
+
+    default Optional<FileInfoDTO> getFileInfo(String repo, String filePath) {
+        return getFileInfo(repo, filePath, MASTER);
+    }
+
+    default void createFile(String repo, String filePath, String b64Content) {
+        createFile(repo, filePath, b64Content, MASTER);
+    }
+
+    default void updateFile(String repo, String filePath, String b64Content, String sha) {
+        updateFile(repo, filePath, b64Content, sha, MASTER);
+    }
+
 }
