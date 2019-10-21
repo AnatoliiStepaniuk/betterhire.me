@@ -7,7 +7,6 @@ import com.sdehunt.commons.file.UnirestFileDownloader;
 import com.sdehunt.commons.github.CachingGithubClient;
 import com.sdehunt.commons.github.GithubClient;
 import com.sdehunt.commons.github.UnirestGithubClient;
-import com.sdehunt.commons.github.model.FileInfoDTO;
 import com.sdehunt.commons.params.EhcacheParameterService;
 import com.sdehunt.commons.params.ParameterService;
 import com.sdehunt.commons.params.SsmParameterService;
@@ -36,7 +35,6 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 
 import javax.sql.DataSource;
-import java.util.Optional;
 
 @SpringBootApplication
 @EnableConfigurationProperties(AppProperties.class)
@@ -206,8 +204,6 @@ public class Application implements WebMvcConfigurer {
 
     @Bean
     public ReadmeService readmeService(GithubClient githubClient) {
-        Optional<FileInfoDTO> res0 = githubClient.getFileInfo("sdehuntdeveloper/test8", "README.md"); // TODo remove
-        Optional<FileInfoDTO> res = githubClient.getFileInfo("sdehuntdeveloper/test8", "slides.zip"); // TODo remove
         return new ReadmeService(githubClient, githubLogin);
     }
 
