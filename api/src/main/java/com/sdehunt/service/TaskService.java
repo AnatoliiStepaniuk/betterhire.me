@@ -27,7 +27,9 @@ public class TaskService {
 
     public Task update(Task task) {
         Task updated = tasks.update(task);
-        readmeService.update(task.getId(), task.getDescription());
+        if (task.getDescription() != null) {
+            readmeService.update(task.getId(), task.getDescription());
+        }
         return updated;
     }
 
