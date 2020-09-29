@@ -13,7 +13,7 @@ import java.util.Map;
 public class LinkedinUserFactory {
 
     private static final ParameterizedTypeReference<Map<String, Object>> PARAMETERIZED_RESPONSE_TYPE =
-            new ParameterizedTypeReference<>() {
+            new ParameterizedTypeReference<Map<String, Object>>() {
             };
     private static RestTemplate restTemplate = new RestTemplate();
 

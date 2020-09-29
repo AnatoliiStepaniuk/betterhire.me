@@ -32,12 +32,10 @@ public class CitiesScoreCounter implements TaskScoreCounter {
 
         String inputFile = FileUtils.fileName(inputFileS3);
         List<String> availableCities = Files.readAllLines(Paths.get(inputFile)).stream()
-                .filter(l -> !l.isBlank())
-                .filter(l -> !l.isEmpty())
+                .filter(l -> !l.trim().isEmpty())
                 .collect(Collectors.toList());
         List<String> citiesList = Files.readAllLines(Paths.get(solutionFile)).stream()
-                .filter(l -> !l.isBlank())
-                .filter(l -> !l.isEmpty())
+                .filter(l -> !l.trim().isEmpty())
                 .collect(Collectors.toList());
 
         return checkAndCountScore(citiesList, availableCities);

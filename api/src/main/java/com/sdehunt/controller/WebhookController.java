@@ -36,8 +36,8 @@ public class WebhookController {
             return; // Ignoring non push events
         }
         String commit = hook.getCommits().get(hook.getCommits().size() - 1).getId();
-        SolutionRepo solutionRepo = solutionRepos.find(repo).orElseThrow();
-        User user = users.get(solutionRepo.getUserId()).orElseThrow();
+        SolutionRepo solutionRepo = solutionRepos.find(repo).orElseThrow(RuntimeException::new);
+        User user = users.get(solutionRepo.getUserId()).orElseThrow(RuntimeException::new);
 
         Solution solution = new Solution()
                 .setUserId(solutionRepo.getUserId())

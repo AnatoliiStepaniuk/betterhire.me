@@ -78,7 +78,7 @@ public class JdbiTaskRepository implements TaskRepository {
 
     @Override
     public Task update(Task updateRequest) {
-        Task t = get(updateRequest.getId()).orElseThrow();
+        Task t = get(updateRequest.getId()).orElseThrow(RuntimeException::new);
         setFields(t, updateRequest);
         // Disabling old entry
         jdbi.withHandle(db -> db.execute(format("UPDATE %s SET enabled = false WHERE task = ? AND enabled = true", table), t.getId()));
@@ -119,7 +119,7 @@ public class JdbiTaskRepository implements TaskRepository {
                 )
         );
 
-        return get(t.getId()).orElseThrow();
+        return get(t.getId()).orElseThrow(RuntimeException::new);
     }
 
     @Override
@@ -178,7 +178,7 @@ public class JdbiTaskRepository implements TaskRepository {
 
     private Set<Language> langsFromString(String langs) {
         return Optional.ofNullable(langs)
-                .filter(t -> !t.isEmpty() && !t.isBlank())
+                .filter(t -> !t.trim().isEmpty())
                 .map(String::toUpperCase)
                 .map(s -> s.split(","))
                 .map(t -> Arrays.stream(t).map(Language::valueOf).collect(Collectors.toSet()))

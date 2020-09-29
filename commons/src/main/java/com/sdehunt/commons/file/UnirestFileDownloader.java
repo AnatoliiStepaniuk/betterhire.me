@@ -7,14 +7,15 @@ import lombok.SneakyThrows;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class UnirestFileDownloader implements FileDownloader {
 
     @Override
     @SneakyThrows({UnirestException.class, IOException.class})
     public void download(String uri, String targetFile) {
-        if (Files.exists(Path.of(targetFile))) {
-            Files.delete(Path.of(targetFile));
+        if (Files.exists(Paths.get(targetFile))) {
+            Files.delete(Paths.get(targetFile));
         }
         Unirest.get(uri).asFile(targetFile);
     }

@@ -36,6 +36,6 @@ public class EmailService {
     }
 
     private boolean isNonEmpty(String s) {
-        return s != null && !s.isEmpty() && !s.isBlank();
+        return s != null && !s.trim().isEmpty();
     }
 }

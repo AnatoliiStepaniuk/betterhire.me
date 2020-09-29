@@ -1,6 +1,5 @@
 package com.sdehunt.service;
 
-import com.sdehunt.commons.github.JavaGithubClient;
 import com.sdehunt.commons.model.BestSolution;
 import com.sdehunt.commons.model.Solution;
 import com.sdehunt.commons.model.Task;
@@ -21,7 +20,7 @@ public class BestSolutionService {
     private final UserRepository users;
     private final TaskRepository tasks;
 
-    private final Logger logger = LoggerFactory.getLogger(JavaGithubClient.class);
+    private final Logger logger = LoggerFactory.getLogger(BestSolutionService.class);
 
     public BestSolutionService(BestSolutionRepository bestSolutions, UserRepository users, TaskRepository tasks) {
         this.bestSolutions = bestSolutions;
@@ -37,7 +36,7 @@ public class BestSolutionService {
         // Updating number of users that solved this task
         updateTask(s.getTaskId(), solutions);
 
-        if (betterSolution.isEmpty()) {
+        if (!betterSolution.isPresent()) {
             return;
         }
         // Sorting by score to define new order

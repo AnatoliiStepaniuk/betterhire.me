@@ -113,7 +113,7 @@ public class JdbiBestSolutionRepository implements BestSolutionRepository {
         @Override
         public BestTaskResult map(ResultSet rs, StatementContext ctx) throws SQLException {
             String userName = rs.getString("nickname");
-            if (userName == null || userName.isEmpty() || userName.isBlank()) {
+            if (userName == null || userName.trim().isEmpty()) {
                 userName = rs.getString("github_login");
             }
             return new BestTaskResult()

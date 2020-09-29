@@ -37,7 +37,7 @@ public class ReviewController {
             @PathVariable String solutionId,
             @RequestBody SaveReviewDTO req
     ) {
-        Solution solution = solutions.get(solutionId).orElseThrow();
+        Solution solution = solutions.get(solutionId).orElseThrow(RuntimeException::new);
         reviews.create(solutionId, solution.getUserId(), solution.getTaskId(), req.getGrade(), req.getComment(), req.getEmoji(), "betterhire");
     }
 
@@ -51,7 +51,7 @@ public class ReviewController {
             @PathVariable String github,
             @RequestBody SaveReviewDTO req
     ) {
-        User user = users.byGithubLogin(github).orElseThrow();
+        User user = users.byGithubLogin(github).orElseThrow(RuntimeException::new);
         Solution solution = solutions.query(new SolutionQueryImpl().user(user.getId())).get(0);
         reviews.create(solution.getId(), solution.getUserId(), solution.getTaskId(), req.getGrade(), req.getComment(), req.getEmoji(), "betterhire");
     }

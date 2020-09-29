@@ -10,7 +10,7 @@ import java.util.Map;
 public class OAuth2DataUserFactory {
 
     private static final ParameterizedTypeReference<Map<String, Object>> PARAMETERIZED_RESPONSE_TYPE =
-            new ParameterizedTypeReference<>() {
+            new ParameterizedTypeReference<Map<String, Object>>() {
             };
     private static RestTemplate restTemplate = new RestTemplate();
 

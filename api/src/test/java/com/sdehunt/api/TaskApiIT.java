@@ -192,7 +192,7 @@ public class TaskApiIT extends AbstractApiTest {
         Task foundTask = Arrays.stream(tasks)
                 .filter(t -> t.getId().equalsIgnoreCase(taskId))
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(RuntimeException::new);
         Assert.assertEquals(description + UPDATED, foundTask.getDescription());
         Assert.assertEquals(descriptionUrl + UPDATED, foundTask.getDescriptionUrl());
         Assert.assertEquals(requirements + UPDATED, foundTask.getRequirements());
@@ -210,7 +210,7 @@ public class TaskApiIT extends AbstractApiTest {
         ShortTask foundShortTask = Arrays.stream(shortTasks)
                 .filter(t -> t.getId().equalsIgnoreCase(taskId))
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(RuntimeException::new);
         Assert.assertEquals(shortDescription + UPDATED, foundShortTask.getShortDescription());
         Assert.assertEquals(TaskType.AUTO, foundShortTask.getType());
 

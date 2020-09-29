@@ -45,7 +45,7 @@ public class JdbiUserRepository implements UserRepository {
 
     private Set<Language> langsFromString(String langs) { // TODO duplicate
         return Optional.ofNullable(langs)
-                .filter(t -> !t.isEmpty() && !t.isBlank())
+                .filter(t -> !t.trim().isEmpty())
                 .map(String::toUpperCase)
                 .map(s -> s.split(","))
                 .map(t -> Arrays.stream(t).map(Language::valueOf).collect(Collectors.toSet()))
@@ -98,7 +98,7 @@ public class JdbiUserRepository implements UserRepository {
 
     @Override
     public User update(User updateRequest) {
-        User u = get(updateRequest.getId()).orElseThrow();
+        User u = get(updateRequest.getId()).orElseThrow(RuntimeException::new);
         setFields(u, updateRequest);
 
         jdbi.withHandle(
@@ -107,7 +107,7 @@ public class JdbiUserRepository implements UserRepository {
                         u.getName(), u.getNickname(), u.getEmail(), u.getCv(), u.getCity(), EnumUtils.stringify(u.getLanguages()), u.getPhone(), u.getGithubLogin(), u.getLinkedinId(), u.getCompany(), u.getImageUrl(), Instant.now().getEpochSecond(), u.getSolved(), u.getAvgRank(), Optional.ofNullable(u.getLastSubmit()).map(Instant::getEpochSecond).orElse(null), u.getAvailable(), u.getManager(), u.getId())
         );
 
-        return get(u.getId()).orElseThrow();
+        return get(u.getId()).orElseThrow(RuntimeException::new);
     }
 
     private void setFields(User existing, User u) {
@@ -218,7 +218,7 @@ public class JdbiUserRepository implements UserRepository {
         @Override
         public User map(ResultSet rs, StatementContext ctx) throws SQLException {
             String userName = rs.getString("nickname");
-            if (userName == null || userName.isEmpty() || userName.isBlank()) {
+            if (userName == null || userName.trim().isEmpty()) {
                 userName = rs.getString("github_login");
             }
             return new User()
